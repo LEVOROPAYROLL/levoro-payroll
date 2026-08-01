@@ -1,200 +1,1443 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="en">
 <head>
-    <title>LEVORO</title>
-    <style>
-        body { font-family: Arial; background: #4c63d2; padding: 20px; margin: 0; }
-        .box { background: white; max-width: 400px; margin: 100px auto; padding: 30px; border-radius: 8px; }
-        h1 { text-align: center; color: #3b5bdb; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
-        button { width: 100%; padding: 12px; background: #3b5bdb; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; margin-top: 10px; }
-        button:hover { background: #2c4ab0; }
-        p { text-align: center; font-size: 12px; color: #666; margin-top: 15px; }
-        .panel { background: white; padding: 20px; border-radius: 8px; margin: 20px auto; max-width: 1000px; }
-        .item { background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .item:hover { background: #e8e8e8; }
-        .item-selected { background: #e3f2fd !important; }
-        h2 { color: white; text-align: center; margin: 20px 0; }
-        .grid { display: grid; grid-template-columns: 300px 1fr; gap: 20px; max-width: 1000px; margin: 0 auto; }
-        .emp-info { background: white; padding: 20px; border-radius: 8px; margin: 20px auto; max-width: 1000px; text-align: center; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#111827">
+    <title>LEVORO — Management Portal</title>
+
+```
+<style>
+    :root {
+        --primary: #2563eb;
+        --primary-dark: #1d4ed8;
+        --primary-light: #eff6ff;
+        --danger: #dc2626;
+        --danger-light: #fef2f2;
+        --success: #16a34a;
+        --text: #111827;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+        --background: #f3f6fb;
+        --white: #ffffff;
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, .05);
+        --shadow-md: 0 10px 30px rgba(15, 23, 42, .08);
+        --radius: 14px;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                     Roboto, Helvetica, Arial, sans-serif;
+        color: var(--text);
+        background: var(--background);
+    }
+
+    button,
+    input {
+        font: inherit;
+    }
+
+    button {
+        border: 0;
+    }
+
+    /* =========================
+       LOGIN
+    ========================= */
+
+    .login-page {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background:
+            radial-gradient(circle at top left, rgba(37, 99, 235, .18), transparent 35%),
+            linear-gradient(135deg, #0f172a, #172554);
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 430px;
+        padding: 42px;
+        background: rgba(255, 255, 255, .98);
+        border-radius: 22px;
+        box-shadow: 0 30px 70px rgba(0, 0, 0, .25);
+    }
+
+    .brand {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .brand-logo {
+        width: 58px;
+        height: 58px;
+        margin: 0 auto 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 16px;
+        background: var(--primary);
+        color: white;
+        font-size: 24px;
+        font-weight: 800;
+        box-shadow: 0 10px 25px rgba(37, 99, 235, .28);
+    }
+
+    .brand h1 {
+        margin: 0;
+        font-size: 30px;
+        letter-spacing: 2px;
+    }
+
+    .brand p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .input {
+        width: 100%;
+        height: 48px;
+        padding: 0 14px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        outline: none;
+        background: #fff;
+        color: var(--text);
+        transition: .2s ease;
+    }
+
+    .input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, .10);
+    }
+
+    .login-demo {
+        margin-top: 18px;
+        padding: 12px;
+        border-radius: 10px;
+        background: #f8fafc;
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+    }
+
+    /* =========================
+       BUTTONS
+    ========================= */
+
+    .btn {
+        min-height: 42px;
+        padding: 0 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border-radius: 9px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        transition: .2s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-1px);
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-dark);
+    }
+
+    .btn-danger {
+        background: var(--danger-light);
+        color: var(--danger);
+    }
+
+    .btn-danger:hover {
+        background: #fee2e2;
+    }
+
+    .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .btn-secondary:hover {
+        background: #e5e7eb;
+    }
+
+    .btn-full {
+        width: 100%;
+    }
+
+    .btn-small {
+        min-height: 34px;
+        padding: 0 11px;
+        font-size: 12px;
+    }
+
+    /* =========================
+       APP HEADER
+    ========================= */
+
+    .app-shell {
+        min-height: 100vh;
+    }
+
+    .topbar {
+        height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 32px;
+        background: white;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .topbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 19px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+    }
+
+    .mini-logo {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: var(--primary);
+        color: white;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .topbar-right {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .user-badge {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        color: #374151;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .avatar {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--primary-light);
+        color: var(--primary);
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    /* =========================
+       DASHBOARD
+    ========================= */
+
+    .dashboard {
+        max-width: 1250px;
+        margin: 0 auto;
+        padding: 32px;
+    }
+
+    .page-heading {
+        margin-bottom: 26px;
+    }
+
+    .page-heading h1 {
+        margin: 0;
+        font-size: 28px;
+        letter-spacing: -.5px;
+    }
+
+    .page-heading p {
+        margin: 7px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+        margin-bottom: 24px;
+    }
+
+    .stat-card {
+        padding: 20px;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .stat-label {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .stat-number {
+        margin-top: 7px;
+        font-size: 28px;
+        font-weight: 800;
+    }
+
+    .workspace {
+        display: grid;
+        grid-template-columns: 330px 1fr;
+        gap: 22px;
+    }
+
+    .card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .card-header-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .card-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 750;
+    }
+
+    .card-subtitle {
+        margin: 5px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .card-body {
+        padding: 16px;
+    }
+
+    /* =========================
+       COMPANY LIST
+    ========================= */
+
+    .company-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .company-item {
+        width: 100%;
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        background: #f8fafc;
+        cursor: pointer;
+        transition: .2s ease;
+    }
+
+    .company-item:hover {
+        background: #f1f5f9;
+    }
+
+    .company-item.selected {
+        background: var(--primary-light);
+        border-color: #bfdbfe;
+    }
+
+    .company-name {
+        min-width: 0;
+        font-size: 14px;
+        font-weight: 650;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .company-count {
+        color: var(--muted);
+        font-size: 11px;
+        margin-top: 3px;
+    }
+
+    .company-actions {
+        display: flex;
+        gap: 5px;
+        flex-shrink: 0;
+    }
+
+    /* =========================
+       EMPLOYEES
+    ========================= */
+
+    .employee-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .employee-item {
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        background: #f8fafc;
+        border: 1px solid #eef0f3;
+        border-radius: 11px;
+    }
+
+    .employee-main {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .employee-avatar {
+        width: 42px;
+        height: 42px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: #dbeafe;
+        color: var(--primary);
+        font-weight: 800;
+    }
+
+    .employee-name {
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .employee-meta {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .empty-state {
+        padding: 45px 20px;
+        text-align: center;
+        color: var(--muted);
+    }
+
+    .empty-icon {
+        width: 50px;
+        height: 50px;
+        margin: 0 auto 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #f3f4f6;
+        font-size: 20px;
+    }
+
+    .empty-state strong {
+        display: block;
+        color: #374151;
+        margin-bottom: 5px;
+    }
+
+    /* =========================
+       EMPLOYEE PROFILE
+    ========================= */
+
+    .profile-wrapper {
+        max-width: 760px;
+        margin: 50px auto;
+        padding: 0 24px;
+    }
+
+    .profile-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: var(--shadow-md);
+    }
+
+    .profile-header {
+        padding: 34px;
+        text-align: center;
+        background: linear-gradient(135deg, #eff6ff, #ffffff);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .profile-avatar {
+        width: 76px;
+        height: 76px;
+        margin: 0 auto 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 22px;
+        background: var(--primary);
+        color: white;
+        font-size: 27px;
+        font-weight: 800;
+    }
+
+    .profile-header h1 {
+        margin: 0;
+        font-size: 25px;
+    }
+
+    .profile-header p {
+        margin: 7px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .profile-details {
+        padding: 24px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .detail {
+        padding: 16px;
+        border-radius: 11px;
+        background: #f8fafc;
+    }
+
+    .detail-label {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+    }
+
+    .detail-value {
+        margin-top: 6px;
+        font-size: 14px;
+        font-weight: 700;
+        word-break: break-word;
+    }
+
+    .profile-footer {
+        padding: 0 24px 24px;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 850px) {
+        .workspace {
+            grid-template-columns: 1fr;
+        }
+
+        .stats {
+            grid-template-columns: 1fr;
+        }
+
+        .dashboard {
+            padding: 22px;
+        }
+
+        .topbar {
+            padding: 0 20px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .login-card {
+            padding: 30px 22px;
+        }
+
+        .topbar-brand span {
+            display: none;
+        }
+
+        .user-badge {
+            display: none;
+        }
+
+        .dashboard {
+            padding: 18px;
+        }
+
+        .page-heading h1 {
+            font-size: 23px;
+        }
+
+        .profile-details {
+            grid-template-columns: 1fr;
+        }
+
+        .employee-item {
+            align-items: flex-start;
+        }
+    }
+</style>
+```
+
 </head>
+
 <body>
-    <div id="app"></div>
 
-    <script>
-        let db = {
-            companies: [],
-            employees: []
-        };
-        let user = null;
-        let selectedCo = null;
+<div id="app"></div>
 
-        function loadDB() {
-            const saved = localStorage.getItem('levoro');
+<script>
+    "use strict";
+
+    /* =========================================
+       APPLICATION STATE
+    ========================================= */
+
+    const STORAGE_KEY = "levoro";
+
+    let db = {
+        companies: [],
+        employees: []
+    };
+
+    let currentUser = null;
+    let selectedCompanyId = null;
+
+    /* =========================================
+       STORAGE
+    ========================================= */
+
+    function loadDB() {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+
             if (saved) {
-                db = JSON.parse(saved);
+                const parsed = JSON.parse(saved);
+
+                db = {
+                    companies: Array.isArray(parsed.companies)
+                        ? parsed.companies
+                        : [],
+                    employees: Array.isArray(parsed.employees)
+                        ? parsed.employees
+                        : []
+                };
             }
+        } catch (error) {
+            console.error("Could not load database:", error);
+            db = {
+                companies: [],
+                employees: []
+            };
+        }
+    }
+
+    function saveDB() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+    }
+
+    /* =========================================
+       HELPERS
+    ========================================= */
+
+    function escapeHTML(value) {
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function getInitials(name) {
+        const words = String(name || "User")
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean);
+
+        if (words.length === 1) {
+            return words[0].substring(0, 2).toUpperCase();
         }
 
-        function saveDB() {
-            localStorage.setItem('levoro', JSON.stringify(db));
+        return (
+            words[0][0] +
+            words[words.length - 1][0]
+        ).toUpperCase();
+    }
+
+    function getCompany(id) {
+        return db.companies.find(company => company.id === id);
+    }
+
+    function getCompanyEmployees(id) {
+        return db.employees.filter(employee => employee.c === id);
+    }
+
+    /* =========================================
+       AUTHENTICATION
+    ========================================= */
+
+    function login() {
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value;
+
+        if (!username || !password) {
+            alert("Please enter your username and password.");
+            return;
         }
 
-        function login() {
-            const u = document.getElementById('u').value;
-            const p = document.getElementById('p').value;
-            
-            if (u === 'admin' && p === 'admin123') {
-                user = { role: 'admin', name: 'Admin' };
-                show();
-                return;
-            }
-            
-            const emp = db.employees.find(e => e.u === u && e.p === p);
-            if (emp) {
-                user = emp;
-                user.role = 'employee';
-                selectedCo = emp.c;
-                show();
-                return;
-            }
-            
-            alert('Wrong username or password!');
+        if (username === "admin" && password === "admin123") {
+            currentUser = {
+                role: "admin",
+                name: "Administrator"
+            };
+
+            selectedCompanyId = null;
+            render();
+            return;
         }
 
-        function logout() {
-            user = null;
-            selectedCo = null;
-            document.getElementById('u').value = 'admin';
-            document.getElementById('p').value = 'admin123';
-            show();
+        const employee = db.employees.find(
+            employee =>
+                employee.u === username &&
+                employee.p === password
+        );
+
+        if (employee) {
+            currentUser = {
+                ...employee,
+                role: "employee"
+            };
+
+            selectedCompanyId = employee.c;
+            render();
+            return;
         }
 
-        function addCo() {
-            const name = prompt('Company name:');
-            if (name) {
-                db.companies.push({ id: Date.now(), name: name });
-                saveDB();
-                show();
-            }
+        alert("Incorrect username or password.");
+    }
+
+    function logout() {
+        currentUser = null;
+        selectedCompanyId = null;
+        render();
+    }
+
+    /* =========================================
+       COMPANY MANAGEMENT
+    ========================================= */
+
+    function addCompany() {
+        const name = prompt("Enter company name:");
+
+        if (!name || !name.trim()) {
+            return;
         }
 
-        function selectCo(id) {
-            selectedCo = id;
-            show();
+        db.companies.push({
+            id: Date.now(),
+            name: name.trim()
+        });
+
+        saveDB();
+        render();
+    }
+
+    function selectCompany(id) {
+        selectedCompanyId = id;
+        render();
+    }
+
+    function deleteCompany(id) {
+        const company = getCompany(id);
+
+        if (!company) return;
+
+        const employeeCount = getCompanyEmployees(id).length;
+
+        const message = employeeCount
+            ? `Delete "${company.name}" and its ${employeeCount} employee(s)?`
+            : `Delete "${company.name}"?`;
+
+        if (!confirm(message)) {
+            return;
         }
 
-        function addEmp() {
-            const n = prompt('Name:');
-            if (!n) return;
-            const u = prompt('Username:');
-            if (!u) return;
-            const p = prompt('Password:');
-            if (!p) return;
-            const e = prompt('Email:');
-            const r = prompt('Rate (default 15):', '15');
-            
-            db.employees.push({
-                id: Date.now(),
-                name: n,
-                u: u,
-                p: p,
-                email: e,
-                rate: parseFloat(r),
-                c: selectedCo,
-                role: 'employee'
-            });
-            saveDB();
-            alert('Employee added!\nUsername: ' + u + '\nPassword: ' + p);
-            show();
+        db.companies = db.companies.filter(
+            company => company.id !== id
+        );
+
+        db.employees = db.employees.filter(
+            employee => employee.c !== id
+        );
+
+        if (selectedCompanyId === id) {
+            selectedCompanyId = null;
         }
 
-        function delCo(id) {
-            db.companies = db.companies.filter(c => c.id !== id);
-            db.employees = db.employees.filter(e => e.c !== id);
-            if (selectedCo === id) selectedCo = null;
-            saveDB();
-            show();
+        saveDB();
+        render();
+    }
+
+    /* =========================================
+       EMPLOYEE MANAGEMENT
+    ========================================= */
+
+    function addEmployee() {
+        if (!selectedCompanyId) {
+            alert("Please select a company first.");
+            return;
         }
 
-        function delEmp(id) {
-            db.employees = db.employees.filter(e => e.id !== id);
-            saveDB();
-            show();
+        const name = prompt("Employee name:");
+        if (!name || !name.trim()) return;
+
+        const username = prompt("Username:");
+        if (!username || !username.trim()) return;
+
+        const existingUsername = db.employees.some(
+            employee =>
+                employee.u.toLowerCase() === username.trim().toLowerCase()
+        );
+
+        if (existingUsername) {
+            alert("That username is already in use.");
+            return;
         }
 
-        function show() {
-            const app = document.getElementById('app');
-            
-            // LOGIN PAGE
-            if (!user) {
-                app.innerHTML = `
-                    <div class="box">
+        const password = prompt("Password:");
+        if (!password) return;
+
+        const email = prompt("Email address:") || "";
+
+        const rateInput = prompt(
+            "Hourly rate:",
+            "15.00"
+        );
+
+        const rate = parseFloat(rateInput);
+
+        if (isNaN(rate) || rate < 0) {
+            alert("Please enter a valid hourly rate.");
+            return;
+        }
+
+        db.employees.push({
+            id: Date.now(),
+            name: name.trim(),
+            u: username.trim(),
+            p: password,
+            email: email.trim(),
+            rate,
+            c: selectedCompanyId,
+            role: "employee"
+        });
+
+        saveDB();
+
+        alert(
+            `Employee created successfully.\n\n` +
+            `Username: ${username.trim()}\n` +
+            `Password: ${password}`
+        );
+
+        render();
+    }
+
+    function deleteEmployee(id) {
+        const employee = db.employees.find(
+            employee => employee.id === id
+        );
+
+        if (!employee) return;
+
+        if (!confirm(`Delete ${employee.name}?`)) {
+            return;
+        }
+
+        db.employees = db.employees.filter(
+            employee => employee.id !== id
+        );
+
+        saveDB();
+        render();
+    }
+
+    /* =========================================
+       LOGIN VIEW
+    ========================================= */
+
+    function renderLogin() {
+        return `
+            <div class="login-page">
+                <div class="login-card">
+
+                    <div class="brand">
+                        <div class="brand-logo">L</div>
                         <h1>LEVORO</h1>
-                        <input type="text" id="u" placeholder="Username" value="admin">
-                        <input type="password" id="p" placeholder="Password" value="admin123">
-                        <button onclick="login()">Login</button>
-                        <p>Demo: admin / admin123</p>
+                        <p>Business Management Portal</p>
                     </div>
-                `;
-                return;
-            }
 
-            // ADMIN PAGE
-            if (user.role === 'admin') {
-                const co = db.companies.find(c => c.id === selectedCo);
-                const emps = selectedCo ? db.employees.filter(e => e.c === selectedCo) : [];
-                
-                app.innerHTML = `
-                    <h2>LEVORO Admin <button style="width: auto; padding: 8px 16px; margin: 0;" onclick="logout()">Logout</button></h2>
-                    <div class="grid">
-                        <div class="panel">
-                            <h3 style="margin-top: 0; color: #3b5bdb;">Companies (${db.companies.length})</h3>
-                            ${db.companies.map(c => `
-                                <div class="item ${selectedCo === c.id ? 'item-selected' : ''}" onclick="selectCo(${c.id})">
-                                    <span><strong>${c.name}</strong></span>
-                                    <button onclick="delCo(${c.id}); event.stopPropagation();" style="width: auto; padding: 4px 8px; font-size: 12px; background: #dc3545;">Delete</button>
-                                </div>
-                            `).join('')}
-                            <button onclick="addCo()" style="margin-top: 15px;">+ Add Company</button>
+                    <div class="form-group">
+                        <label class="form-label" for="username">
+                            Username
+                        </label>
+
+                        <input
+                            class="input"
+                            id="username"
+                            type="text"
+                            placeholder="Enter username"
+                            autocomplete="username"
+                            onkeydown="if(event.key === 'Enter') login()"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="password">
+                            Password
+                        </label>
+
+                        <input
+                            class="input"
+                            id="password"
+                            type="password"
+                            placeholder="Enter password"
+                            autocomplete="current-password"
+                            onkeydown="if(event.key === 'Enter') login()"
+                        >
+                    </div>
+
+                    <button
+                        class="btn btn-primary btn-full"
+                        onclick="login()"
+                    >
+                        Sign In
+                    </button>
+
+                    <div class="login-demo">
+                        Demo access: <strong>admin</strong> / <strong>admin123</strong>
+                    </div>
+
+                </div>
+            </div>
+        `;
+    }
+
+    /* =========================================
+       TOP BAR
+    ========================================= */
+
+    function renderTopbar(title = "Management Portal") {
+        return `
+            <header class="topbar">
+
+                <div class="topbar-brand">
+                    <div class="mini-logo">L</div>
+                    <span>LEVORO</span>
+                </div>
+
+                <div class="topbar-right">
+
+                    <div class="user-badge">
+                        <div class="avatar">
+                            ${escapeHTML(getInitials(currentUser.name))}
                         </div>
 
-                        <div class="panel">
-                            <h3 style="margin-top: 0; color: #3b5bdb;">${co ? co.name : 'Select company'}</h3>
-                            ${selectedCo ? `
-                                <button onclick="addEmp()" style="margin-bottom: 15px;">+ Add Employee</button>
-                                ${emps.length === 0 ? '<p style="color: #999;">No employees</p>' : ''}
-                                ${emps.map(e => `
-                                    <div class="item">
-                                        <div><strong>${e.name}</strong><br><small>@${e.u} • $${e.rate}/hr</small></div>
-                                        <button onclick="delEmp(${e.id})" style="width: auto; padding: 4px 8px; font-size: 12px; background: #dc3545;">Delete</button>
+                        ${escapeHTML(currentUser.name)}
+                    </div>
+
+                    <button
+                        class="btn btn-secondary btn-small"
+                        onclick="logout()"
+                    >
+                        Sign Out
+                    </button>
+
+                </div>
+            </header>
+        `;
+    }
+
+    /* =========================================
+       ADMIN VIEW
+    ========================================= */
+
+    function renderAdmin() {
+        const company = getCompany(selectedCompanyId);
+        const employees = selectedCompanyId
+            ? getCompanyEmployees(selectedCompanyId)
+            : [];
+
+        return `
+            <div class="app-shell">
+
+                ${renderTopbar()}
+
+                <main class="dashboard">
+
+                    <div class="page-heading">
+                        <h1>Dashboard</h1>
+                        <p>
+                            Manage your companies and employees from one place.
+                        </p>
+                    </div>
+
+                    <section class="stats">
+
+                        <div class="stat-card">
+                            <div class="stat-label">
+                                Total Companies
+                            </div>
+
+                            <div class="stat-number">
+                                ${db.companies.length}
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-label">
+                                Total Employees
+                            </div>
+
+                            <div class="stat-number">
+                                ${db.employees.length}
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-label">
+                                Selected Company
+                            </div>
+
+                            <div
+                                class="stat-number"
+                                style="font-size:18px;"
+                            >
+                                ${company
+                                    ? escapeHTML(company.name)
+                                    : "None"
+                                }
+                            </div>
+                        </div>
+
+                    </section>
+
+                    <section class="workspace">
+
+                        <!-- Companies -->
+
+                        <div class="card">
+
+                            <div class="card-header">
+                                <div class="card-header-row">
+
+                                    <div>
+                                        <h2 class="card-title">
+                                            Companies
+                                        </h2>
+
+                                        <p class="card-subtitle">
+                                            Select a company to manage employees.
+                                        </p>
                                     </div>
-                                `).join('')}
-                            ` : '<p style="color: #999;">Select a company to add employees</p>'}
-                        </div>
-                    </div>
-                `;
-                return;
-            }
 
-            // EMPLOYEE PAGE
-            if (user.role === 'employee') {
-                app.innerHTML = `
-                    <div class="emp-info">
-                        <h1 style="color: #3b5bdb; margin: 0 0 20px 0;">Welcome ${user.name}</h1>
-                        <p><strong>Username:</strong> ${user.u}</p>
-                        <p><strong>Email:</strong> ${user.email}</p>
-                        <p><strong>Hourly Rate:</strong> $${user.rate}/hr</p>
-                        <button onclick="logout()" style="width: auto; padding: 10px 20px; margin-top: 20px;">Logout</button>
+                                    <button
+                                        class="btn btn-primary btn-small"
+                                        onclick="addCompany()"
+                                    >
+                                        + Add
+                                    </button>
+
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+
+                                ${
+                                    db.companies.length === 0
+                                    ? `
+                                        <div class="empty-state">
+                                            <div class="empty-icon">+</div>
+                                            <strong>No companies yet</strong>
+                                            <span>Add your first company to get started.</span>
+                                        </div>
+                                    `
+                                    : `
+                                        <div class="company-list">
+
+                                            ${db.companies.map(company => {
+
+                                                const count =
+                                                    getCompanyEmployees(company.id).length;
+
+                                                return `
+                                                    <div
+                                                        class="company-item ${
+                                                            selectedCompanyId === company.id
+                                                                ? "selected"
+                                                                : ""
+                                                        }"
+                                                        onclick="selectCompany(${company.id})"
+                                                    >
+
+                                                        <div style="min-width:0;">
+                                                            <div class="company-name">
+                                                                ${escapeHTML(company.name)}
+                                                            </div>
+
+                                                            <div class="company-count">
+                                                                ${count}
+                                                                employee${count === 1 ? "" : "s"}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="company-actions">
+
+                                                            <button
+                                                                class="btn btn-danger btn-small"
+                                                                onclick="
+                                                                    event.stopPropagation();
+                                                                    deleteCompany(${company.id});
+                                                                "
+                                                                title="Delete company"
+                                                            >
+                                                                Delete
+                                                            </button>
+
+                                                        </div>
+
+                                                    </div>
+                                                `;
+                                            }).join("")}
+
+                                        </div>
+                                    `
+                                }
+
+                            </div>
+                        </div>
+
+                        <!-- Employees -->
+
+                        <div class="card">
+
+                            <div class="card-header">
+
+                                <div class="card-header-row">
+
+                                    <div>
+                                        <h2 class="card-title">
+                                            ${
+                                                company
+                                                    ? escapeHTML(company.name)
+                                                    : "Employee Management"
+                                            }
+                                        </h2>
+
+                                        <p class="card-subtitle">
+                                            ${
+                                                company
+                                                    ? "Manage employees assigned to this company."
+                                                    : "Select a company to view employees."
+                                            }
+                                        </p>
+                                    </div>
+
+                                    ${
+                                        company
+                                        ? `
+                                            <button
+                                                class="btn btn-primary btn-small"
+                                                onclick="addEmployee()"
+                                            >
+                                                + Add Employee
+                                            </button>
+                                        `
+                                        : ""
+                                    }
+
+                                </div>
+
+                            </div>
+
+                            <div class="card-body">
+
+                                ${
+                                    !company
+                                    ? `
+                                        <div class="empty-state">
+                                            <div class="empty-icon">⌂</div>
+                                            <strong>Select a company</strong>
+                                            <span>
+                                                Choose a company from the left to manage employees.
+                                            </span>
+                                        </div>
+                                    `
+                                    : employees.length === 0
+                                    ? `
+                                        <div class="empty-state">
+                                            <div class="empty-icon">+</div>
+                                            <strong>No employees</strong>
+                                            <span>
+                                                Add an employee to this company to get started.
+                                            </span>
+                                        </div>
+                                    `
+                                    : `
+                                        <div class="employee-list">
+
+                                            ${employees.map(employee => `
+                                                <div class="employee-item">
+
+                                                    <div class="employee-main">
+
+                                                        <div class="employee-avatar">
+                                                            ${escapeHTML(
+                                                                getInitials(employee.name)
+                                                            )}
+                                                        </div>
+
+                                                        <div>
+                                                            <div class="employee-name">
+                                                                ${escapeHTML(employee.name)}
+                                                            </div>
+
+                                                            <div class="employee-meta">
+                                                                @${escapeHTML(employee.u)}
+                                                                &nbsp;•&nbsp;
+                                                                $${Number(employee.rate).toFixed(2)}/hr
+                                                                ${
+                                                                    employee.email
+                                                                        ? `&nbsp;•&nbsp; ${escapeHTML(employee.email)}`
+                                                                        : ""
+                                                                }
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                    <button
+                                                        class="btn btn-danger btn-small"
+                                                        onclick="deleteEmployee(${employee.id})"
+                                                    >
+                                                        Delete
+                                                    </button>
+
+                                                </div>
+                                            `).join("")}
+
+                                        </div>
+                                    `
+                                }
+
+                            </div>
+                        </div>
+
+                    </section>
+
+                </main>
+            </div>
+        `;
+    }
+
+    /* =========================================
+       EMPLOYEE VIEW
+    ========================================= */
+
+    function renderEmployee() {
+        const company = getCompany(currentUser.c);
+
+        return `
+            <div class="app-shell">
+
+                ${renderTopbar()}
+
+                <main class="profile-wrapper">
+
+                    <div class="profile-card">
+
+                        <div class="profile-header">
+
+                            <div class="profile-avatar">
+                                ${escapeHTML(getInitials(currentUser.name))}
+                            </div>
+
+                            <h1>
+                                Welcome, ${escapeHTML(currentUser.name)}
+                            </h1>
+
+                            <p>
+                                ${company
+                                    ? escapeHTML(company.name)
+                                    : "Employee Profile"
+                                }
+                            </p>
+
+                        </div>
+
+                        <div class="profile-details">
+
+                            <div class="detail">
+                                <div class="detail-label">
+                                    Username
+                                </div>
+
+                                <div class="detail-value">
+                                    @${escapeHTML(currentUser.u)}
+                                </div>
+                            </div>
+
+                            <div class="detail">
+                                <div class="detail-label">
+                                    Email
+                                </div>
+
+                                <div class="detail-value">
+                                    ${currentUser.email
+                                        ? escapeHTML(currentUser.email)
+                                        : "Not provided"
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="detail">
+                                <div class="detail-label">
+                                    Hourly Rate
+                                </div>
+
+                                <div class="detail-value">
+                                    $${Number(currentUser.rate).toFixed(2)} / hour
+                                </div>
+                            </div>
+
+                            <div class="detail">
+                                <div class="detail-label">
+                                    Company
+                                </div>
+
+                                <div class="detail-value">
+                                    ${company
+                                        ? escapeHTML(company.name)
+                                        : "Not assigned"
+                                    }
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="profile-footer">
+
+                            <button
+                                class="btn btn-secondary btn-full"
+                                onclick="logout()"
+                            >
+                                Sign Out
+                            </button>
+
+                        </div>
+
                     </div>
-                `;
-                return;
-            }
+
+                </main>
+
+            </div>
+        `;
+    }
+
+    /* =========================================
+       RENDER APPLICATION
+    ========================================= */
+
+    function render() {
+        const app = document.getElementById("app");
+
+        if (!currentUser) {
+            app.innerHTML = renderLogin();
+
+            setTimeout(() => {
+                document.getElementById("username")?.focus();
+            }, 0);
+
+            return;
         }
 
-        loadDB();
-        show();
-    </script>
+        if (currentUser.role === "admin") {
+            app.innerHTML = renderAdmin();
+            return;
+        }
+
+        if (currentUser.role === "employee") {
+            app.innerHTML = renderEmployee();
+            return;
+        }
+
+        currentUser = null;
+        app.innerHTML = renderLogin();
+    }
+
+    /* =========================================
+       START APPLICATION
+    ========================================= */
+
+    loadDB();
+    render();
+</script>
+
 </body>
 </html>
