@@ -1,640 +1,805 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#111827">
-    <title>LEVORO — Management Portal</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LEVORO | Payroll & Time Tracking</title>
 
-```
 <style>
-    :root {
-        --primary: #2563eb;
-        --primary-dark: #1d4ed8;
-        --primary-light: #eff6ff;
-        --danger: #dc2626;
-        --danger-light: #fef2f2;
-        --success: #16a34a;
-        --text: #111827;
-        --muted: #6b7280;
-        --border: #e5e7eb;
-        --background: #f3f6fb;
-        --white: #ffffff;
-        --shadow-sm: 0 1px 2px rgba(0, 0, 0, .05);
-        --shadow-md: 0 10px 30px rgba(15, 23, 42, .08);
-        --radius: 14px;
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --primary-light: #eff6ff;
+    --dark: #111827;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --bg: #f5f7fb;
+    --white: #fff;
+    --success: #16a34a;
+    --success-bg: #f0fdf4;
+    --danger: #dc2626;
+    --danger-bg: #fef2f2;
+    --warning: #d97706;
+    --warning-bg: #fffbeb;
+    --sidebar: #111827;
+    --sidebar-hover: #1f2937;
+    --radius: 12px;
+    --shadow: 0 4px 18px rgba(15,23,42,.06);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* LOGIN */
+
+.login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background:
+        radial-gradient(circle at top left, rgba(37,99,235,.22), transparent 35%),
+        linear-gradient(135deg,#0f172a,#172554);
+}
+
+.login-card {
+    width: 100%;
+    max-width: 430px;
+    background: white;
+    padding: 42px;
+    border-radius: 22px;
+    box-shadow: 0 30px 80px rgba(0,0,0,.3);
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo-mark {
+    width: 58px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto auto 14px;
+    border-radius: 16px;
+    background: var(--primary);
+    color: white;
+    font-weight: 800;
+    font-size: 25px;
+}
+
+.logo h1 {
+    margin: 0;
+    letter-spacing: 3px;
+    font-size: 29px;
+}
+
+.logo p {
+    color: var(--muted);
+    margin: 7px 0 0;
+    font-size: 13px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.input,
+select,
+textarea {
+    width: 100%;
+    padding: 11px 13px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    outline: none;
+    background: white;
+    color: var(--text);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+}
+
+.demo-box {
+    margin-top: 18px;
+    padding: 12px;
+    border-radius: 9px;
+    background: #f8fafc;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+/* BUTTONS */
+
+.btn {
+    border: 0;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-weight: 650;
+    font-size: 13px;
+    transition: .15s;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+.btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.btn-danger {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+.btn-success {
+    background: var(--success);
+    color: white;
+}
+
+.btn-warning {
+    background: var(--warning-bg);
+    color: var(--warning);
+}
+
+.btn-sm {
+    padding: 7px 10px;
+    font-size: 11px;
+}
+
+.btn-block {
+    width: 100%;
+}
+
+/* APP */
+
+.app {
+    min-height: 100vh;
+    display: flex;
+}
+
+.sidebar {
+    width: 245px;
+    flex-shrink: 0;
+    background: var(--sidebar);
+    color: white;
+    min-height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 20;
+}
+
+.sidebar-brand {
+    height: 72px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 0 22px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.sidebar-brand-mark {
+    width: 35px;
+    height: 35px;
+    border-radius: 9px;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+
+.sidebar-brand span {
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.nav {
+    padding: 18px 12px;
+}
+
+.nav-section {
+    color: #6b7280;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 10px;
+    font-weight: 700;
+}
+
+.nav-item {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: #d1d5db;
+    text-align: left;
+    padding: 11px 12px;
+    border-radius: 8px;
+    margin-bottom: 3px;
+    font-size: 13px;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    background: var(--sidebar-hover);
+    color: white;
+}
+
+.nav-icon {
+    width: 24px;
+    display: inline-block;
+}
+
+.main {
+    margin-left: 245px;
+    width: calc(100% - 245px);
+}
+
+.topbar {
+    height: 72px;
+    background: white;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.topbar-title {
+    font-size: 18px;
+    font-weight: 750;
+}
+
+.topbar-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 12px;
+}
+
+.content {
+    padding: 28px;
+    max-width: 1500px;
+    margin: auto;
+}
+
+/* CARDS */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.stat {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.stat-label {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.stat-value {
+    font-size: 27px;
+    font-weight: 800;
+    margin-top: 7px;
+}
+
+.stat-note {
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+.card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.card-title {
+    font-weight: 750;
+    font-size: 15px;
+}
+
+.card-subtitle {
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* GRID */
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 15px;
+}
+
+.admin-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 20px;
+}
+
+/* COMPANY LIST */
+
+.company-item {
+    padding: 13px;
+    background: #f8fafc;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    margin-bottom: 7px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.company-item:hover {
+    background: #f1f5f9;
+}
+
+.company-item.active {
+    background: var(--primary-light);
+    border-color: #bfdbfe;
+}
+
+.company-name {
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.company-meta {
+    color: var(--muted);
+    font-size: 10px;
+    margin-top: 4px;
+}
+
+/* TABLE */
+
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: #f8fafc;
+    color: var(--muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    text-align: left;
+    padding: 11px 13px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+td {
+    padding: 13px;
+    border-bottom: 1px solid #f0f1f3;
+    font-size: 12px;
+    vertical-align: middle;
+}
+
+tr:hover td {
+    background: #fafafa;
+}
+
+.actions {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+/* BADGES */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 99px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.badge-pending {
+    background: var(--warning-bg);
+    color: var(--warning);
+}
+
+.badge-approved {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+.badge-rejected {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+.badge-admin {
+    background: #ede9fe;
+    color: #7c3aed;
+}
+
+.badge-manager {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.badge-employee {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+/* FILTERS */
+
+.filters {
+    display: flex;
+    align-items: end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.filter-item {
+    min-width: 170px;
+}
+
+.filter-item label {
+    font-size: 11px;
+}
+
+.filter-item input,
+.filter-item select {
+    height: 39px;
+}
+
+/* EMPLOYEE PROFILE */
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.profile-avatar {
+    width: 62px;
+    height: 62px;
+    border-radius: 16px;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.profile-name {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.profile-company {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* CLOCK */
+
+.clock-card {
+    text-align: center;
+    padding: 35px 20px;
+}
+
+.current-time {
+    font-size: 38px;
+    font-weight: 800;
+    margin: 10px 0;
+}
+
+.current-date {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.clock-status {
+    margin: 20px 0;
+    padding: 12px;
+    border-radius: 9px;
+    background: #f8fafc;
+    font-size: 12px;
+}
+
+/* EMPTY */
+
+.empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--muted);
+}
+
+.empty strong {
+    display: block;
+    color: var(--text);
+    margin-bottom: 5px;
+}
+
+/* MODAL */
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15,23,42,.55);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal {
+    background: white;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 15px;
+    box-shadow: 0 30px 80px rgba(0,0,0,.25);
+}
+
+.modal-header {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.full {
+    grid-column: 1 / -1;
+}
+
+/* MOBILE */
+
+@media(max-width:1050px) {
+    .stats {
+        grid-template-columns: repeat(2,1fr);
     }
 
-    * {
-        box-sizing: border-box;
+    .admin-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width:800px) {
+    .sidebar {
+        width: 65px;
     }
 
-    html {
-        scroll-behavior: smooth;
-    }
-
-    body {
-        margin: 0;
-        min-height: 100vh;
-        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
-                     Roboto, Helvetica, Arial, sans-serif;
-        color: var(--text);
-        background: var(--background);
-    }
-
-    button,
-    input {
-        font: inherit;
-    }
-
-    button {
-        border: 0;
-    }
-
-    /* =========================
-       LOGIN
-    ========================= */
-
-    .login-page {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
+    .sidebar-brand {
         justify-content: center;
-        padding: 24px;
-        background:
-            radial-gradient(circle at top left, rgba(37, 99, 235, .18), transparent 35%),
-            linear-gradient(135deg, #0f172a, #172554);
+        padding: 0;
     }
 
-    .login-card {
-        width: 100%;
-        max-width: 430px;
-        padding: 42px;
-        background: rgba(255, 255, 255, .98);
-        border-radius: 22px;
-        box-shadow: 0 30px 70px rgba(0, 0, 0, .25);
+    .sidebar-brand span,
+    .nav-item span:not(.nav-icon),
+    .nav-section {
+        display: none;
     }
 
-    .brand {
+    .nav-item {
         text-align: center;
-        margin-bottom: 32px;
+        padding: 12px 5px;
     }
 
-    .brand-logo {
-        width: 58px;
-        height: 58px;
-        margin: 0 auto 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 16px;
-        background: var(--primary);
-        color: white;
-        font-size: 24px;
-        font-weight: 800;
-        box-shadow: 0 10px 25px rgba(37, 99, 235, .28);
+    .nav-icon {
+        width: auto;
     }
 
-    .brand h1 {
-        margin: 0;
-        font-size: 30px;
-        letter-spacing: 2px;
+    .main {
+        margin-left: 65px;
+        width: calc(100% - 65px);
     }
 
-    .brand p {
-        margin: 8px 0 0;
-        color: var(--muted);
-        font-size: 14px;
+    .grid-2,
+    .grid-3 {
+        grid-template-columns: 1fr;
     }
+}
 
-    .form-group {
-        margin-bottom: 18px;
-    }
-
-    .form-label {
-        display: block;
-        margin-bottom: 7px;
-        font-size: 13px;
-        font-weight: 600;
-        color: #374151;
-    }
-
-    .input {
-        width: 100%;
-        height: 48px;
-        padding: 0 14px;
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        outline: none;
-        background: #fff;
-        color: var(--text);
-        transition: .2s ease;
-    }
-
-    .input:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(37, 99, 235, .10);
-    }
-
-    .login-demo {
-        margin-top: 18px;
-        padding: 12px;
-        border-radius: 10px;
-        background: #f8fafc;
-        color: var(--muted);
-        font-size: 12px;
-        text-align: center;
-    }
-
-    /* =========================
-       BUTTONS
-    ========================= */
-
-    .btn {
-        min-height: 42px;
-        padding: 0 16px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        border-radius: 9px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 14px;
-        transition: .2s ease;
-    }
-
-    .btn:hover {
-        transform: translateY(-1px);
-    }
-
-    .btn-primary {
-        background: var(--primary);
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background: var(--primary-dark);
-    }
-
-    .btn-danger {
-        background: var(--danger-light);
-        color: var(--danger);
-    }
-
-    .btn-danger:hover {
-        background: #fee2e2;
-    }
-
-    .btn-secondary {
-        background: #f3f4f6;
-        color: #374151;
-    }
-
-    .btn-secondary:hover {
-        background: #e5e7eb;
-    }
-
-    .btn-full {
-        width: 100%;
-    }
-
-    .btn-small {
-        min-height: 34px;
-        padding: 0 11px;
-        font-size: 12px;
-    }
-
-    /* =========================
-       APP HEADER
-    ========================= */
-
-    .app-shell {
-        min-height: 100vh;
+@media(max-width:600px) {
+    .content {
+        padding: 15px;
     }
 
     .topbar {
-        height: 72px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 32px;
-        background: white;
-        border-bottom: 1px solid var(--border);
-    }
-
-    .topbar-brand {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-size: 19px;
-        font-weight: 800;
-        letter-spacing: 1.5px;
-    }
-
-    .mini-logo {
-        width: 36px;
-        height: 36px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 10px;
-        background: var(--primary);
-        color: white;
-        font-size: 14px;
-        font-weight: 800;
-    }
-
-    .topbar-right {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-    }
-
-    .user-badge {
-        display: flex;
-        align-items: center;
-        gap: 9px;
-        color: #374151;
-        font-size: 14px;
-        font-weight: 600;
-    }
-
-    .avatar {
-        width: 34px;
-        height: 34px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        background: var(--primary-light);
-        color: var(--primary);
-        font-size: 13px;
-        font-weight: 800;
-    }
-
-    /* =========================
-       DASHBOARD
-    ========================= */
-
-    .dashboard {
-        max-width: 1250px;
-        margin: 0 auto;
-        padding: 32px;
-    }
-
-    .page-heading {
-        margin-bottom: 26px;
-    }
-
-    .page-heading h1 {
-        margin: 0;
-        font-size: 28px;
-        letter-spacing: -.5px;
-    }
-
-    .page-heading p {
-        margin: 7px 0 0;
-        color: var(--muted);
-        font-size: 14px;
+        padding: 0 15px;
     }
 
     .stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 18px;
-        margin-bottom: 24px;
+        grid-template-columns: 1fr;
     }
 
-    .stat-card {
-        padding: 20px;
-        background: white;
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        box-shadow: var(--shadow-sm);
+    .form-grid {
+        grid-template-columns: 1fr;
     }
 
-    .stat-label {
-        color: var(--muted);
-        font-size: 13px;
-        font-weight: 600;
+    .full {
+        grid-column: auto;
     }
 
-    .stat-number {
-        margin-top: 7px;
-        font-size: 28px;
-        font-weight: 800;
+    .topbar-user-name {
+        display: none;
+    }
+}
+
+/* PRINT */
+
+@media print {
+    .sidebar,
+    .topbar,
+    .no-print,
+    .btn,
+    .filters {
+        display: none !important;
     }
 
-    .workspace {
-        display: grid;
-        grid-template-columns: 330px 1fr;
-        gap: 22px;
+    .main {
+        margin: 0;
+        width: 100%;
+    }
+
+    .content {
+        padding: 0;
+        max-width: none;
     }
 
     .card {
+        border: 0;
+        box-shadow: none;
+    }
+
+    body {
         background: white;
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        box-shadow: var(--shadow-sm);
-        overflow: hidden;
     }
 
-    .card-header {
-        padding: 20px;
-        border-bottom: 1px solid var(--border);
+    .print-title {
+        display: block !important;
     }
+}
 
-    .card-header-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-    }
-
-    .card-title {
-        margin: 0;
-        font-size: 16px;
-        font-weight: 750;
-    }
-
-    .card-subtitle {
-        margin: 5px 0 0;
-        color: var(--muted);
-        font-size: 12px;
-    }
-
-    .card-body {
-        padding: 16px;
-    }
-
-    /* =========================
-       COMPANY LIST
-    ========================= */
-
-    .company-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .company-item {
-        width: 100%;
-        padding: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        border: 1px solid transparent;
-        border-radius: 10px;
-        background: #f8fafc;
-        cursor: pointer;
-        transition: .2s ease;
-    }
-
-    .company-item:hover {
-        background: #f1f5f9;
-    }
-
-    .company-item.selected {
-        background: var(--primary-light);
-        border-color: #bfdbfe;
-    }
-
-    .company-name {
-        min-width: 0;
-        font-size: 14px;
-        font-weight: 650;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .company-count {
-        color: var(--muted);
-        font-size: 11px;
-        margin-top: 3px;
-    }
-
-    .company-actions {
-        display: flex;
-        gap: 5px;
-        flex-shrink: 0;
-    }
-
-    /* =========================
-       EMPLOYEES
-    ========================= */
-
-    .employee-list {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .employee-item {
-        padding: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 15px;
-        background: #f8fafc;
-        border: 1px solid #eef0f3;
-        border-radius: 11px;
-    }
-
-    .employee-main {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        min-width: 0;
-    }
-
-    .employee-avatar {
-        width: 42px;
-        height: 42px;
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 12px;
-        background: #dbeafe;
-        color: var(--primary);
-        font-weight: 800;
-    }
-
-    .employee-name {
-        font-size: 14px;
-        font-weight: 700;
-    }
-
-    .employee-meta {
-        margin-top: 4px;
-        color: var(--muted);
-        font-size: 12px;
-    }
-
-    .empty-state {
-        padding: 45px 20px;
-        text-align: center;
-        color: var(--muted);
-    }
-
-    .empty-icon {
-        width: 50px;
-        height: 50px;
-        margin: 0 auto 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        background: #f3f4f6;
-        font-size: 20px;
-    }
-
-    .empty-state strong {
-        display: block;
-        color: #374151;
-        margin-bottom: 5px;
-    }
-
-    /* =========================
-       EMPLOYEE PROFILE
-    ========================= */
-
-    .profile-wrapper {
-        max-width: 760px;
-        margin: 50px auto;
-        padding: 0 24px;
-    }
-
-    .profile-card {
-        background: white;
-        border: 1px solid var(--border);
-        border-radius: 18px;
-        overflow: hidden;
-        box-shadow: var(--shadow-md);
-    }
-
-    .profile-header {
-        padding: 34px;
-        text-align: center;
-        background: linear-gradient(135deg, #eff6ff, #ffffff);
-        border-bottom: 1px solid var(--border);
-    }
-
-    .profile-avatar {
-        width: 76px;
-        height: 76px;
-        margin: 0 auto 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 22px;
-        background: var(--primary);
-        color: white;
-        font-size: 27px;
-        font-weight: 800;
-    }
-
-    .profile-header h1 {
-        margin: 0;
-        font-size: 25px;
-    }
-
-    .profile-header p {
-        margin: 7px 0 0;
-        color: var(--muted);
-        font-size: 13px;
-    }
-
-    .profile-details {
-        padding: 24px;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-    }
-
-    .detail {
-        padding: 16px;
-        border-radius: 11px;
-        background: #f8fafc;
-    }
-
-    .detail-label {
-        color: var(--muted);
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: .5px;
-    }
-
-    .detail-value {
-        margin-top: 6px;
-        font-size: 14px;
-        font-weight: 700;
-        word-break: break-word;
-    }
-
-    .profile-footer {
-        padding: 0 24px 24px;
-    }
-
-    /* =========================
-       RESPONSIVE
-    ========================= */
-
-    @media (max-width: 850px) {
-        .workspace {
-            grid-template-columns: 1fr;
-        }
-
-        .stats {
-            grid-template-columns: 1fr;
-        }
-
-        .dashboard {
-            padding: 22px;
-        }
-
-        .topbar {
-            padding: 0 20px;
-        }
-    }
-
-    @media (max-width: 600px) {
-        .login-card {
-            padding: 30px 22px;
-        }
-
-        .topbar-brand span {
-            display: none;
-        }
-
-        .user-badge {
-            display: none;
-        }
-
-        .dashboard {
-            padding: 18px;
-        }
-
-        .page-heading h1 {
-            font-size: 23px;
-        }
-
-        .profile-details {
-            grid-template-columns: 1fr;
-        }
-
-        .employee-item {
-            align-items: flex-start;
-        }
-    }
+.print-title {
+    display: none;
+}
 </style>
-```
-
 </head>
 
 <body>
@@ -642,571 +807,1110 @@
 <div id="app"></div>
 
 <script>
-    "use strict";
+"use strict";
 
-    /* =========================================
-       APPLICATION STATE
-    ========================================= */
+/* ============================================================
+   LEVORO DATABASE
+============================================================ */
 
-    const STORAGE_KEY = "levoro";
+const STORAGE_KEY = "LEVORO_ENTERPRISE_V1";
 
-    let db = {
-        companies: [],
-        employees: []
+let db = {
+    companies: [],
+    users: [],
+    timesheets: [],
+    paystubs: [],
+    activity: []
+};
+
+let currentUser = null;
+let currentPage = "dashboard";
+let selectedCompanyId = null;
+
+/* ============================================================
+   STORAGE
+============================================================ */
+
+function saveDB() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+}
+
+function loadDB() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+
+    if (saved) {
+        try {
+            db = JSON.parse(saved);
+        } catch {
+            createDemoData();
+        }
+    } else {
+        createDemoData();
+    }
+}
+
+/* ============================================================
+   DEMO DATA
+============================================================ */
+
+function createDemoData() {
+
+    const company1 = {
+        id: 1001,
+        name: "Milano Pizza",
+        createdAt: new Date().toISOString()
     };
 
-    let currentUser = null;
-    let selectedCompanyId = null;
+    const company2 = {
+        id: 1002,
+        name: "Ottawa Catering",
+        createdAt: new Date().toISOString()
+    };
 
-    /* =========================================
-       STORAGE
-    ========================================= */
+    db.companies = [company1, company2];
 
-    function loadDB() {
-        try {
-            const saved = localStorage.getItem(STORAGE_KEY);
-
-            if (saved) {
-                const parsed = JSON.parse(saved);
-
-                db = {
-                    companies: Array.isArray(parsed.companies)
-                        ? parsed.companies
-                        : [],
-                    employees: Array.isArray(parsed.employees)
-                        ? parsed.employees
-                        : []
-                };
-            }
-        } catch (error) {
-            console.error("Could not load database:", error);
-            db = {
-                companies: [],
-                employees: []
-            };
+    db.users = [
+        {
+            id: 1,
+            name: "Admin",
+            username: "admin",
+            password: "admin123",
+            email: "admin@levoro.com",
+            phone: "",
+            address: "",
+            role: "ADMIN",
+            companyId: null,
+            hourlyRate: 0
+        },
+        {
+            id: 2,
+            name: "John Manager",
+            username: "manager",
+            password: "manager123",
+            email: "manager@milano.com",
+            phone: "613-555-1111",
+            address: "Ottawa, ON",
+            role: "MANAGER",
+            companyId: 1001,
+            hourlyRate: 0
+        },
+        {
+            id: 3,
+            name: "John Smith",
+            username: "employee",
+            password: "employee123",
+            email: "john@email.com",
+            phone: "613-555-2222",
+            address: "Ottawa, ON",
+            role: "EMPLOYEE",
+            companyId: 1001,
+            hourlyRate: 18.50
+        },
+        {
+            id: 4,
+            name: "Sarah Brown",
+            username: "sarah",
+            password: "sarah123",
+            email: "sarah@email.com",
+            phone: "613-555-3333",
+            address: "Ottawa, ON",
+            role: "EMPLOYEE",
+            companyId: 1001,
+            hourlyRate: 20
+        },
+        {
+            id: 5,
+            name: "Michael Lee",
+            username: "michael",
+            password: "michael123",
+            email: "michael@email.com",
+            phone: "613-555-4444",
+            address: "Ottawa, ON",
+            role: "EMPLOYEE",
+            companyId: 1002,
+            hourlyRate: 17.50
         }
-    }
+    ];
 
-    function saveDB() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-    }
+    db.timesheets = [];
 
-    /* =========================================
-       HELPERS
-    ========================================= */
+    db.paystubs = [];
 
-    function escapeHTML(value) {
-        return String(value ?? "")
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
+    db.activity = [];
 
-    function getInitials(name) {
-        const words = String(name || "User")
-            .trim()
-            .split(/\s+/)
-            .filter(Boolean);
+    saveDB();
+}
 
-        if (words.length === 1) {
-            return words[0].substring(0, 2).toUpperCase();
-        }
+/* ============================================================
+   HELPERS
+============================================================ */
 
-        return (
-            words[0][0] +
-            words[words.length - 1][0]
-        ).toUpperCase();
-    }
+function uid() {
+    return Date.now() + Math.floor(Math.random() * 10000);
+}
 
-    function getCompany(id) {
-        return db.companies.find(company => company.id === id);
-    }
+function escapeHTML(value) {
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
 
-    function getCompanyEmployees(id) {
-        return db.employees.filter(employee => employee.c === id);
-    }
+function initials(name) {
+    const parts = String(name || "User").trim().split(/\s+/);
 
-    /* =========================================
-       AUTHENTICATION
-    ========================================= */
+    if (parts.length === 1)
+        return parts[0].substring(0,2).toUpperCase();
 
-    function login() {
-        const username = document.getElementById("username").value.trim();
-        const password = document.getElementById("password").value;
+    return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+}
 
-        if (!username || !password) {
-            alert("Please enter your username and password.");
-            return;
-        }
+function money(value) {
+    return "$" + Number(value || 0).toFixed(2);
+}
 
-        if (username === "admin" && password === "admin123") {
-            currentUser = {
-                role: "admin",
-                name: "Administrator"
-            };
+function companyName(id) {
+    const c = db.companies.find(x => x.id == id);
+    return c ? c.name : "—";
+}
 
-            selectedCompanyId = null;
-            render();
-            return;
-        }
+function userName(id) {
+    const u = db.users.find(x => x.id == id);
+    return u ? u.name : "System";
+}
 
-        const employee = db.employees.find(
-            employee =>
-                employee.u === username &&
-                employee.p === password
-        );
+function formatDate(date) {
+    return new Date(date).toLocaleDateString("en-CA", {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+    });
+}
 
-        if (employee) {
-            currentUser = {
-                ...employee,
-                role: "employee"
-            };
+function formatDateTime(date) {
+    return new Date(date).toLocaleString("en-CA", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit"
+    });
+}
 
-            selectedCompanyId = employee.c;
-            render();
-            return;
-        }
+function todayISO() {
+    return new Date().toISOString().split("T")[0];
+}
 
+function statusBadge(status) {
+
+    const cls = {
+        PENDING: "badge-pending",
+        APPROVED: "badge-approved",
+        REJECTED: "badge-rejected"
+    }[status] || "badge-pending";
+
+    return `<span class="badge ${cls}">${escapeHTML(status)}</span>`;
+}
+
+function roleBadge(role) {
+
+    const cls = {
+        ADMIN: "badge-admin",
+        MANAGER: "badge-manager",
+        EMPLOYEE: "badge-employee"
+    }[role] || "badge-employee";
+
+    return `<span class="badge ${cls}">${escapeHTML(role)}</span>`;
+}
+
+/* ============================================================
+   ACTIVITY LOG
+============================================================ */
+
+function logActivity(action, description) {
+
+    db.activity.unshift({
+        id: uid(),
+        action,
+        description,
+        userId: currentUser ? currentUser.id : null,
+        userName: currentUser ? currentUser.name : "System",
+        userRole: currentUser ? currentUser.role : "SYSTEM",
+        companyId: currentUser ? currentUser.companyId : null,
+        companyName: currentUser
+            ? companyName(currentUser.companyId)
+            : "",
+        timestamp: new Date().toISOString()
+    });
+
+    saveDB();
+}
+
+/* ============================================================
+   AUTH
+============================================================ */
+
+function login() {
+
+    const username = document.getElementById("loginUsername").value.trim();
+    const password = document.getElementById("loginPassword").value;
+
+    const user = db.users.find(
+        u => u.username.toLowerCase() === username.toLowerCase()
+        && u.password === password
+    );
+
+    if (!user) {
         alert("Incorrect username or password.");
+        return;
     }
 
-    function logout() {
-        currentUser = null;
-        selectedCompanyId = null;
-        render();
+    currentUser = user;
+
+    if (user.role === "ADMIN") {
+        currentPage = "dashboard";
+    } else if (user.role === "MANAGER") {
+        currentPage = "dashboard";
+        selectedCompanyId = user.companyId;
+    } else {
+        currentPage = "dashboard";
     }
 
-    /* =========================================
-       COMPANY MANAGEMENT
-    ========================================= */
+    logActivity(
+        "LOGIN",
+        `${user.name} logged into the system`
+    );
 
-    function addCompany() {
-        const name = prompt("Enter company name:");
+    render();
+}
 
-        if (!name || !name.trim()) {
-            return;
-        }
+function logout() {
 
-        db.companies.push({
-            id: Date.now(),
-            name: name.trim()
-        });
-
-        saveDB();
-        render();
+    if (currentUser) {
+        logActivity(
+            "LOGOUT",
+            `${currentUser.name} logged out of the system`
+        );
     }
 
-    function selectCompany(id) {
-        selectedCompanyId = id;
-        render();
-    }
+    currentUser = null;
+    selectedCompanyId = null;
+    currentPage = "dashboard";
 
-    function deleteCompany(id) {
-        const company = getCompany(id);
+    render();
+}
 
-        if (!company) return;
+/* ============================================================
+   LOGIN SCREEN
+============================================================ */
 
-        const employeeCount = getCompanyEmployees(id).length;
+function renderLogin() {
 
-        const message = employeeCount
-            ? `Delete "${company.name}" and its ${employeeCount} employee(s)?`
-            : `Delete "${company.name}"?`;
+    return `
+        <div class="login-screen">
 
-        if (!confirm(message)) {
-            return;
-        }
+            <div class="login-card">
 
-        db.companies = db.companies.filter(
-            company => company.id !== id
-        );
-
-        db.employees = db.employees.filter(
-            employee => employee.c !== id
-        );
-
-        if (selectedCompanyId === id) {
-            selectedCompanyId = null;
-        }
-
-        saveDB();
-        render();
-    }
-
-    /* =========================================
-       EMPLOYEE MANAGEMENT
-    ========================================= */
-
-    function addEmployee() {
-        if (!selectedCompanyId) {
-            alert("Please select a company first.");
-            return;
-        }
-
-        const name = prompt("Employee name:");
-        if (!name || !name.trim()) return;
-
-        const username = prompt("Username:");
-        if (!username || !username.trim()) return;
-
-        const existingUsername = db.employees.some(
-            employee =>
-                employee.u.toLowerCase() === username.trim().toLowerCase()
-        );
-
-        if (existingUsername) {
-            alert("That username is already in use.");
-            return;
-        }
-
-        const password = prompt("Password:");
-        if (!password) return;
-
-        const email = prompt("Email address:") || "";
-
-        const rateInput = prompt(
-            "Hourly rate:",
-            "15.00"
-        );
-
-        const rate = parseFloat(rateInput);
-
-        if (isNaN(rate) || rate < 0) {
-            alert("Please enter a valid hourly rate.");
-            return;
-        }
-
-        db.employees.push({
-            id: Date.now(),
-            name: name.trim(),
-            u: username.trim(),
-            p: password,
-            email: email.trim(),
-            rate,
-            c: selectedCompanyId,
-            role: "employee"
-        });
-
-        saveDB();
-
-        alert(
-            `Employee created successfully.\n\n` +
-            `Username: ${username.trim()}\n` +
-            `Password: ${password}`
-        );
-
-        render();
-    }
-
-    function deleteEmployee(id) {
-        const employee = db.employees.find(
-            employee => employee.id === id
-        );
-
-        if (!employee) return;
-
-        if (!confirm(`Delete ${employee.name}?`)) {
-            return;
-        }
-
-        db.employees = db.employees.filter(
-            employee => employee.id !== id
-        );
-
-        saveDB();
-        render();
-    }
-
-    /* =========================================
-       LOGIN VIEW
-    ========================================= */
-
-    function renderLogin() {
-        return `
-            <div class="login-page">
-                <div class="login-card">
-
-                    <div class="brand">
-                        <div class="brand-logo">L</div>
-                        <h1>LEVORO</h1>
-                        <p>Business Management Portal</p>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="username">
-                            Username
-                        </label>
-
-                        <input
-                            class="input"
-                            id="username"
-                            type="text"
-                            placeholder="Enter username"
-                            autocomplete="username"
-                            onkeydown="if(event.key === 'Enter') login()"
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="password">
-                            Password
-                        </label>
-
-                        <input
-                            class="input"
-                            id="password"
-                            type="password"
-                            placeholder="Enter password"
-                            autocomplete="current-password"
-                            onkeydown="if(event.key === 'Enter') login()"
-                        >
-                    </div>
-
-                    <button
-                        class="btn btn-primary btn-full"
-                        onclick="login()"
-                    >
-                        Sign In
-                    </button>
-
-                    <div class="login-demo">
-                        Demo access: <strong>admin</strong> / <strong>admin123</strong>
-                    </div>
-
+                <div class="logo">
+                    <div class="logo-mark">L</div>
+                    <h1>LEVORO</h1>
+                    <p>Payroll & Time Tracking</p>
                 </div>
+
+                <div class="form-group">
+                    <label>Username</label>
+                    <input
+                        id="loginUsername"
+                        class="input"
+                        placeholder="Enter username"
+                        autocomplete="username"
+                        onkeydown="if(event.key==='Enter') login()"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input
+                        id="loginPassword"
+                        class="input"
+                        type="password"
+                        placeholder="Enter password"
+                        autocomplete="current-password"
+                        onkeydown="if(event.key==='Enter') login()"
+                    >
+                </div>
+
+                <button
+                    class="btn btn-primary btn-block"
+                    onclick="login()"
+                >
+                    Sign In
+                </button>
+
+                <div class="demo-box">
+                    <strong>Demo Accounts</strong><br>
+                    Admin: admin / admin123<br>
+                    Manager: manager / manager123<br>
+                    Employee: employee / employee123
+                </div>
+
             </div>
+
+        </div>
+    `;
+}
+
+/* ============================================================
+   SIDEBAR
+============================================================ */
+
+function navigation() {
+
+    if (currentUser.role === "ADMIN") {
+
+        return `
+            <div class="nav-section">Management</div>
+
+            ${nav("dashboard","▦","Dashboard")}
+            ${nav("companies","▣","Companies")}
+            ${nav("employees","♙","Employees")}
+            ${nav("managers","♟","Managers")}
+
+            <div class="nav-section">Payroll</div>
+
+            ${nav("timesheets","◷","Timesheets")}
+            ${nav("payroll","$","Payroll")}
+            ${nav("reports","▤","Reports")}
+
+            <div class="nav-section">System</div>
+
+            ${nav("activity","◉","Activity Log")}
+        `;
+
+    }
+
+    if (currentUser.role === "MANAGER") {
+
+        return `
+            <div class="nav-section">Management</div>
+
+            ${nav("dashboard","▦","Dashboard")}
+            ${nav("employees","♙","Employees")}
+            ${nav("timesheets","◷","Timesheets")}
+
+            <div class="nav-section">Payroll</div>
+
+            ${nav("payroll","$","Payroll")}
+            ${nav("reports","▤","Reports")}
         `;
     }
 
-    /* =========================================
-       TOP BAR
-    ========================================= */
+    return `
+        <div class="nav-section">My Workspace</div>
 
-    function renderTopbar(title = "Management Portal") {
-        return `
-            <header class="topbar">
+        ${nav("dashboard","▦","Dashboard")}
+        ${nav("clock","◷","Time Clock")}
+        ${nav("timesheets","▤","My Timesheets")}
+        ${nav("profile","♙","My Profile")}
+    `;
+}
 
-                <div class="topbar-brand">
-                    <div class="mini-logo">L</div>
+function nav(page, icon, text) {
+
+    return `
+        <button
+            class="nav-item ${currentPage === page ? "active" : ""}"
+            onclick="go('${page}')"
+        >
+            <span class="nav-icon">${icon}</span>
+            <span>${text}</span>
+        </button>
+    `;
+}
+
+function go(page) {
+    currentPage = page;
+    render();
+}
+
+/* ============================================================
+   APP SHELL
+============================================================ */
+
+function renderApp(content, title) {
+
+    return `
+        <div class="app">
+
+            <aside class="sidebar">
+
+                <div class="sidebar-brand">
+                    <div class="sidebar-brand-mark">L</div>
                     <span>LEVORO</span>
                 </div>
 
-                <div class="topbar-right">
+                <nav class="nav">
+                    ${navigation()}
+                </nav>
 
-                    <div class="user-badge">
+            </aside>
+
+            <main class="main">
+
+                <header class="topbar">
+
+                    <div class="topbar-title">
+                        ${escapeHTML(title)}
+                    </div>
+
+                    <div class="topbar-user">
+
                         <div class="avatar">
-                            ${escapeHTML(getInitials(currentUser.name))}
+                            ${escapeHTML(initials(currentUser.name))}
                         </div>
 
-                        ${escapeHTML(currentUser.name)}
+                        <div class="topbar-user-name">
+                            <strong>${escapeHTML(currentUser.name)}</strong>
+                            <div style="font-size:10px;color:#6b7280;">
+                                ${currentUser.role}
+                            </div>
+                        </div>
+
+                        <button
+                            class="btn btn-secondary btn-sm"
+                            onclick="logout()"
+                        >
+                            Logout
+                        </button>
+
+                    </div>
+
+                </header>
+
+                <div class="content">
+                    ${content}
+                </div>
+
+            </main>
+
+        </div>
+    `;
+}
+
+/* ============================================================
+   ADMIN DASHBOARD
+============================================================ */
+
+function adminDashboard() {
+
+    const employees = db.users.filter(u => u.role === "EMPLOYEE");
+    const managers = db.users.filter(u => u.role === "MANAGER");
+    const pending = db.timesheets.filter(t => t.status === "PENDING");
+
+    return `
+        <div class="stats">
+
+            <div class="stat">
+                <div class="stat-label">Companies</div>
+                <div class="stat-value">${db.companies.length}</div>
+                <div class="stat-note">Total companies</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">Employees</div>
+                <div class="stat-value">${employees.length}</div>
+                <div class="stat-note">Active employees</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">Managers</div>
+                <div class="stat-value">${managers.length}</div>
+                <div class="stat-note">Company managers</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">Pending Timesheets</div>
+                <div class="stat-value">${pending.length}</div>
+                <div class="stat-note">Awaiting approval</div>
+            </div>
+
+        </div>
+
+        <div class="grid-2">
+
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Companies</div>
+                        <div class="card-subtitle">
+                            Company overview
+                        </div>
                     </div>
 
                     <button
-                        class="btn btn-secondary btn-small"
-                        onclick="logout()"
+                        class="btn btn-primary btn-sm"
+                        onclick="openCompanyModal()"
                     >
-                        Sign Out
+                        + Add Company
+                    </button>
+                </div>
+
+                <div class="card-body">
+
+                    ${db.companies.map(c => {
+
+                        const employees =
+                            db.users.filter(
+                                u => u.companyId === c.id
+                                && u.role === "EMPLOYEE"
+                            ).length;
+
+                        return `
+                            <div class="company-item">
+
+                                <div>
+                                    <div class="company-name">
+                                        ${escapeHTML(c.name)}
+                                    </div>
+
+                                    <div class="company-meta">
+                                        ${employees} employees
+                                    </div>
+                                </div>
+
+                                <button
+                                    class="btn btn-secondary btn-sm"
+                                    onclick="selectCompany(${c.id})"
+                                >
+                                    View
+                                </button>
+
+                            </div>
+                        `;
+
+                    }).join("")}
+
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">
+                            Recent Activity
+                        </div>
+                        <div class="card-subtitle">
+                            Latest system events
+                        </div>
+                    </div>
+
+                    <button
+                        class="btn btn-secondary btn-sm"
+                        onclick="go('activity')"
+                    >
+                        View All
+                    </button>
+                </div>
+
+                <div class="card-body">
+
+                    ${db.activity.slice(0,6).map(a => `
+                        <div style="
+                            padding:10px 0;
+                            border-bottom:1px solid #f0f1f3;
+                        ">
+
+                            <div style="font-size:11px;font-weight:700;">
+                                ${escapeHTML(a.action)}
+                            </div>
+
+                            <div style="
+                                color:#6b7280;
+                                font-size:11px;
+                                margin-top:3px;
+                            ">
+                                ${escapeHTML(a.description)}
+                            </div>
+
+                            <div style="
+                                color:#9ca3af;
+                                font-size:10px;
+                                margin-top:4px;
+                            ">
+                                ${formatDateTime(a.timestamp)}
+                            </div>
+
+                        </div>
+                    `).join("") || `
+                        <div class="empty">
+                            No activity yet.
+                        </div>
+                    `}
+
+                </div>
+            </div>
+
+        </div>
+    `;
+}
+
+/* ============================================================
+   MANAGER DASHBOARD
+============================================================ */
+
+function managerDashboard() {
+
+    const companyId = currentUser.companyId;
+
+    const employees =
+        db.users.filter(
+            u => u.companyId === companyId
+            && u.role === "EMPLOYEE"
+        );
+
+    const pending =
+        db.timesheets.filter(
+            t => t.companyId === companyId
+            && t.status === "PENDING"
+        );
+
+    const approved =
+        db.timesheets.filter(
+            t => t.companyId === companyId
+            && t.status === "APPROVED"
+        );
+
+    let totalHours =
+        approved.reduce(
+            (sum,t) => sum + Number(t.totalHours || 0),
+            0
+        );
+
+    let payroll =
+        approved.reduce((sum,t) => {
+
+            const employee =
+                db.users.find(u => u.id === t.employeeId);
+
+            return sum +
+                (Number(t.totalHours || 0) *
+                 Number(employee?.hourlyRate || 0));
+
+        },0);
+
+    return `
+        <div class="stats">
+
+            <div class="stat">
+                <div class="stat-label">Company Employees</div>
+                <div class="stat-value">${employees.length}</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">Pending Timesheets</div>
+                <div class="stat-value">${pending.length}</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">Approved Hours</div>
+                <div class="stat-value">${totalHours.toFixed(2)}</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">Approved Gross Pay</div>
+                <div class="stat-value">${money(payroll)}</div>
+            </div>
+
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">
+                        ${escapeHTML(companyName(companyId))}
+                    </div>
+                    <div class="card-subtitle">
+                        Company management overview
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+
+                <div class="grid-3">
+
+                    <button
+                        class="btn btn-primary"
+                        onclick="go('timesheets')"
+                    >
+                        Review Timesheets
+                    </button>
+
+                    <button
+                        class="btn btn-secondary"
+                        onclick="go('payroll')"
+                    >
+                        View Payroll
+                    </button>
+
+                    <button
+                        class="btn btn-secondary"
+                        onclick="go('employees')"
+                    >
+                        View Employees
                     </button>
 
                 </div>
-            </header>
-        `;
+
+            </div>
+        </div>
+    `;
+}
+
+/* ============================================================
+   EMPLOYEE DASHBOARD
+============================================================ */
+
+function employeeDashboard() {
+
+    const today = todayISO();
+
+    const todaySessions =
+        db.timesheets.filter(
+            t => t.employeeId === currentUser.id
+            && t.workDate === today
+        );
+
+    const totalToday =
+        todaySessions.reduce(
+            (sum,t) => sum + Number(t.totalHours || 0),
+            0
+        );
+
+    const openShift =
+        todaySessions.find(t => t.startTime && !t.endTime);
+
+    return `
+        <div class="stats">
+
+            <div class="stat">
+                <div class="stat-label">Hourly Rate</div>
+                <div class="stat-value">
+                    ${money(currentUser.hourlyRate)}
+                </div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">Today's Hours</div>
+                <div class="stat-value">
+                    ${totalToday.toFixed(2)}
+                </div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">Company</div>
+                <div class="stat-value" style="font-size:18px;">
+                    ${escapeHTML(companyName(currentUser.companyId))}
+                </div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">Status</div>
+                <div class="stat-value" style="font-size:18px;">
+                    ${openShift ? "Working" : "Off Duty"}
+                </div>
+            </div>
+
+        </div>
+
+        ${clockCard()}
+
+        <div class="card">
+
+            <div class="card-header">
+                <div>
+                    <div class="card-title">
+                        Recent Timesheets
+                    </div>
+                </div>
+
+                <button
+                    class="btn btn-secondary btn-sm"
+                    onclick="go('timesheets')"
+                >
+                    View All
+                </button>
+            </div>
+
+            <div class="card-body">
+
+                ${renderEmployeeTimesheetTable(
+                    db.timesheets
+                    .filter(t => t.employeeId === currentUser.id)
+                    .slice(-5)
+                    .reverse()
+                )}
+
+            </div>
+
+        </div>
+    `;
+}
+
+/* ============================================================
+   CLOCK
+============================================================ */
+
+function clockCard() {
+
+    const today = todayISO();
+
+    const openShift =
+        db.timesheets.find(
+            t => t.employeeId === currentUser.id
+            && t.workDate === today
+            && t.startTime
+            && !t.endTime
+        );
+
+    return `
+        <div class="card clock-card">
+
+            <div style="font-size:12px;color:#6b7280;">
+                ${formatDate(new Date())}
+            </div>
+
+            <div
+                id="liveClock"
+                class="current-time"
+            >
+                ${new Date().toLocaleTimeString([], {
+                    hour:"numeric",
+                    minute:"2-digit",
+                    second:"2-digit"
+                })}
+            </div>
+
+            <div class="clock-status">
+
+                ${
+                    openShift
+                    ? `
+                        <strong style="color:#16a34a;">
+                            ● Currently Working
+                        </strong>
+
+                        <div style="margin-top:5px;">
+                            Started at
+                            ${new Date(openShift.startTime)
+                                .toLocaleTimeString([],{
+                                    hour:"numeric",
+                                    minute:"2-digit"
+                                })}
+                        </div>
+                    `
+                    : `
+                        You are currently off duty.
+                    `
+                }
+
+            </div>
+
+            ${
+                openShift
+                ? `
+                    <button
+                        class="btn btn-danger"
+                        onclick="clockOut()"
+                    >
+                        End Work
+                    </button>
+                `
+                : `
+                    <button
+                        class="btn btn-primary"
+                        onclick="clockIn()"
+                    >
+                        Start Work
+                    </button>
+                `
+            }
+
+        </div>
+    `;
+}
+
+function clockIn() {
+
+    const now = new Date();
+
+    db.timesheets.push({
+        id: uid(),
+        employeeId: currentUser.id,
+        companyId: currentUser.companyId,
+        workDate: todayISO(),
+        startTime: now.toISOString(),
+        endTime: null,
+        totalHours: 0,
+        status: "PENDING",
+        approvedBy: null,
+        approvedAt: null
+    });
+
+    logActivity(
+        "CLOCK_IN",
+        `${currentUser.name} started work`
+    );
+
+    render();
+}
+
+function clockOut() {
+
+    const now = new Date();
+
+    const shift =
+        db.timesheets.find(
+            t => t.employeeId === currentUser.id
+            && t.workDate === todayISO()
+            && t.startTime
+            && !t.endTime
+        );
+
+    if (!shift) return;
+
+    shift.endTime = now.toISOString();
+
+    const start = new Date(shift.startTime);
+    const end = new Date(shift.endTime);
+
+    shift.totalHours =
+        Math.max(
+            0,
+            (end - start) / 3600000
+        );
+
+    saveDB();
+
+    logActivity(
+        "CLOCK_OUT",
+        `${currentUser.name} ended work (${shift.totalHours.toFixed(2)} hours)`
+    );
+
+    render();
+}
+
+/* ============================================================
+   EMPLOYEES
+============================================================ */
+
+function employeesPage() {
+
+    let employees;
+
+    if (currentUser.role === "ADMIN") {
+        employees = db.users.filter(u => u.role === "EMPLOYEE");
+    } else {
+        employees = db.users.filter(
+            u => u.role === "EMPLOYEE"
+            && u.companyId === currentUser.companyId
+        );
     }
 
-    /* =========================================
-       ADMIN VIEW
-    ========================================= */
+    return `
+        <div class="card">
 
-    function renderAdmin() {
-        const company = getCompany(selectedCompanyId);
-        const employees = selectedCompanyId
-            ? getCompanyEmployees(selectedCompanyId)
-            : [];
+            <div class="card-header">
 
-        return `
-            <div class="app-shell">
-
-                ${renderTopbar()}
-
-                <main class="dashboard">
-
-                    <div class="page-heading">
-                        <h1>Dashboard</h1>
-                        <p>
-                            Manage your companies and employees from one place.
-                        </p>
+                <div>
+                    <div class="card-title">
+                        Employees
                     </div>
 
-                    <section class="stats">
+                    <div class="card-subtitle">
+                        ${employees.length} employee(s)
+                    </div>
+                </div>
 
-                        <div class="stat-card">
-                            <div class="stat-label">
-                                Total Companies
-                            </div>
+                ${
+                    currentUser.role === "ADMIN"
+                    ? `
+                        <button
+                            class="btn btn-primary btn-sm"
+                            onclick="openUserModal('EMPLOYEE')"
+                        >
+                            + Add Employee
+                        </button>
+                    `
+                    : ""
+                }
 
-                            <div class="stat-number">
-                                ${db.companies.length}
-                            </div>
-                        </div>
+            </div>
 
-                        <div class="stat-card">
-                            <div class="stat-label">
-                                Total Employees
-                            </div>
+            <div class="table-wrap">
 
-                            <div class="stat-number">
-                                ${db.employees.length}
-                            </div>
-                        </div>
+                <table>
 
-                        <div class="stat-card">
-                            <div class="stat-label">
-                                Selected Company
-                            </div>
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Company</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Rate</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
 
-                            <div
-                                class="stat-number"
-                                style="font-size:18px;"
-                            >
-                                ${company
-                                    ? escapeHTML(company.name)
-                                    : "None"
-                                }
-                            </div>
-                        </div>
+                    <tbody>
 
-                    </section>
+                    ${employees.map(e => `
+                        <tr>
 
-                    <section class="workspace">
+                            <td>
+                                <strong>${escapeHTML(e.name)}</strong>
+                                <div style="font-size:10px;color:#6b7280;">
+                                    @${escapeHTML(e.username)}
+                                </div>
+                            </td>
 
-                        <!-- Companies -->
+                            <td>
+                                ${escapeHTML(companyName(e.companyId))}
+                            </td>
 
-                        <div class="card">
+                            <td>
+                                ${escapeHTML(e.email || "—")}
+                            </td>
 
-                            <div class="card-header">
-                                <div class="card-header-row">
+                            <td>
+                                ${escapeHTML(e.phone || "—")}
+                            </td>
 
-                                    <div>
-                                        <h2 class="card-title">
-                                            Companies
-                                        </h2>
+                            <td>
+                                <strong>${money(e.hourlyRate)}</strong>
+                            </td>
 
-                                        <p class="card-subtitle">
-                                            Select a company to manage employees.
-                                        </p>
-                                    </div>
+                            <td>
+
+                                <div class="actions">
 
                                     <button
-                                        class="btn btn-primary btn-small"
-                                        onclick="addCompany()"
+                                        class="btn btn-secondary btn-sm"
+                                        onclick="openUserModal('EMPLOYEE',${e.id})"
                                     >
-                                        + Add
+                                        Edit
                                     </button>
 
-                                </div>
-                            </div>
-
-                            <div class="card-body">
-
-                                ${
-                                    db.companies.length === 0
-                                    ? `
-                                        <div class="empty-state">
-                                            <div class="empty-icon">+</div>
-                                            <strong>No companies yet</strong>
-                                            <span>Add your first company to get started.</span>
-                                        </div>
-                                    `
-                                    : `
-                                        <div class="company-list">
-
-                                            ${db.companies.map(company => {
-
-                                                const count =
-                                                    getCompanyEmployees(company.id).length;
-
-                                                return `
-                                                    <div
-                                                        class="company-item ${
-                                                            selectedCompanyId === company.id
-                                                                ? "selected"
-                                                                : ""
-                                                        }"
-                                                        onclick="selectCompany(${company.id})"
-                                                    >
-
-                                                        <div style="min-width:0;">
-                                                            <div class="company-name">
-                                                                ${escapeHTML(company.name)}
-                                                            </div>
-
-                                                            <div class="company-count">
-                                                                ${count}
-                                                                employee${count === 1 ? "" : "s"}
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="company-actions">
-
-                                                            <button
-                                                                class="btn btn-danger btn-small"
-                                                                onclick="
-                                                                    event.stopPropagation();
-                                                                    deleteCompany(${company.id});
-                                                                "
-                                                                title="Delete company"
-                                                            >
-                                                                Delete
-                                                            </button>
-
-                                                        </div>
-
-                                                    </div>
-                                                `;
-                                            }).join("")}
-
-                                        </div>
-                                    `
-                                }
-
-                            </div>
-                        </div>
-
-                        <!-- Employees -->
-
-                        <div class="card">
-
-                            <div class="card-header">
-
-                                <div class="card-header-row">
-
-                                    <div>
-                                        <h2 class="card-title">
-                                            ${
-                                                company
-                                                    ? escapeHTML(company.name)
-                                                    : "Employee Management"
-                                            }
-                                        </h2>
-
-                                        <p class="card-subtitle">
-                                            ${
-                                                company
-                                                    ? "Manage employees assigned to this company."
-                                                    : "Select a company to view employees."
-                                            }
-                                        </p>
-                                    </div>
-
                                     ${
-                                        company
+                                        currentUser.role === "ADMIN"
                                         ? `
                                             <button
-                                                class="btn btn-primary btn-small"
-                                                onclick="addEmployee()"
+                                                class="btn btn-danger btn-sm"
+                                                onclick="deleteUser(${e.id})"
                                             >
-                                                + Add Employee
+                                                Delete
                                             </button>
                                         `
                                         : ""
@@ -1214,229 +1918,1884 @@
 
                                 </div>
 
-                            </div>
+                            </td>
 
-                            <div class="card-body">
+                        </tr>
+                    `).join("") || `
+                        <tr>
+                            <td colspan="6">
+                                <div class="empty">
+                                    <strong>No employees found.</strong>
+                                </div>
+                            </td>
+                        </tr>
+                    `}
 
-                                ${
-                                    !company
-                                    ? `
-                                        <div class="empty-state">
-                                            <div class="empty-icon">⌂</div>
-                                            <strong>Select a company</strong>
-                                            <span>
-                                                Choose a company from the left to manage employees.
-                                            </span>
-                                        </div>
-                                    `
-                                    : employees.length === 0
-                                    ? `
-                                        <div class="empty-state">
-                                            <div class="empty-icon">+</div>
-                                            <strong>No employees</strong>
-                                            <span>
-                                                Add an employee to this company to get started.
-                                            </span>
-                                        </div>
-                                    `
-                                    : `
-                                        <div class="employee-list">
+                    </tbody>
 
-                                            ${employees.map(employee => `
-                                                <div class="employee-item">
+                </table>
 
-                                                    <div class="employee-main">
-
-                                                        <div class="employee-avatar">
-                                                            ${escapeHTML(
-                                                                getInitials(employee.name)
-                                                            )}
-                                                        </div>
-
-                                                        <div>
-                                                            <div class="employee-name">
-                                                                ${escapeHTML(employee.name)}
-                                                            </div>
-
-                                                            <div class="employee-meta">
-                                                                @${escapeHTML(employee.u)}
-                                                                &nbsp;•&nbsp;
-                                                                $${Number(employee.rate).toFixed(2)}/hr
-                                                                ${
-                                                                    employee.email
-                                                                        ? `&nbsp;•&nbsp; ${escapeHTML(employee.email)}`
-                                                                        : ""
-                                                                }
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-
-                                                    <button
-                                                        class="btn btn-danger btn-small"
-                                                        onclick="deleteEmployee(${employee.id})"
-                                                    >
-                                                        Delete
-                                                    </button>
-
-                                                </div>
-                                            `).join("")}
-
-                                        </div>
-                                    `
-                                }
-
-                            </div>
-                        </div>
-
-                    </section>
-
-                </main>
             </div>
-        `;
+
+        </div>
+    `;
+}
+
+/* ============================================================
+   MANAGERS
+============================================================ */
+
+function managersPage() {
+
+    const managers =
+        db.users.filter(u => u.role === "MANAGER");
+
+    return `
+        <div class="card">
+
+            <div class="card-header">
+
+                <div>
+                    <div class="card-title">
+                        Managers
+                    </div>
+
+                    <div class="card-subtitle">
+                        Manage company managers
+                    </div>
+                </div>
+
+                <button
+                    class="btn btn-primary btn-sm"
+                    onclick="openUserModal('MANAGER')"
+                >
+                    + Add Manager
+                </button>
+
+            </div>
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Manager</th>
+                            <th>Company</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    ${managers.map(m => `
+                        <tr>
+
+                            <td>
+                                <strong>${escapeHTML(m.name)}</strong>
+                                <div style="font-size:10px;color:#6b7280;">
+                                    @${escapeHTML(m.username)}
+                                </div>
+                            </td>
+
+                            <td>
+                                ${escapeHTML(companyName(m.companyId))}
+                            </td>
+
+                            <td>${escapeHTML(m.email || "—")}</td>
+                            <td>${escapeHTML(m.phone || "—")}</td>
+
+                            <td>
+                                <div class="actions">
+
+                                    <button
+                                        class="btn btn-secondary btn-sm"
+                                        onclick="openUserModal('MANAGER',${m.id})"
+                                    >
+                                        Edit
+                                    </button>
+
+                                    <button
+                                        class="btn btn-danger btn-sm"
+                                        onclick="deleteUser(${m.id})"
+                                    >
+                                        Delete
+                                    </button>
+
+                                </div>
+                            </td>
+
+                        </tr>
+                    `).join("")}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    `;
+}
+
+/* ============================================================
+   TIMESHEETS
+============================================================ */
+
+function timesheetsPage() {
+
+    let records;
+
+    if (currentUser.role === "ADMIN") {
+        records = [...db.timesheets];
+    } else if (currentUser.role === "MANAGER") {
+        records = db.timesheets.filter(
+            t => t.companyId === currentUser.companyId
+        );
+    } else {
+        records = db.timesheets.filter(
+            t => t.employeeId === currentUser.id
+        );
     }
 
-    /* =========================================
-       EMPLOYEE VIEW
-    ========================================= */
+    records.sort((a,b) =>
+        new Date(b.startTime) - new Date(a.startTime)
+    );
 
-    function renderEmployee() {
-        const company = getCompany(currentUser.c);
+    return `
+        <div class="card">
 
-        return `
-            <div class="app-shell">
+            <div class="card-header">
 
-                ${renderTopbar()}
+                <div>
+                    <div class="card-title">
+                        ${currentUser.role === "EMPLOYEE"
+                            ? "My Timesheets"
+                            : "Timesheet Approval"}
+                    </div>
 
-                <main class="profile-wrapper">
+                    <div class="card-subtitle">
+                        Review recorded work hours
+                    </div>
+                </div>
 
-                    <div class="profile-card">
+            </div>
 
-                        <div class="profile-header">
+            <div class="card-body">
 
-                            <div class="profile-avatar">
-                                ${escapeHTML(getInitials(currentUser.name))}
+                ${
+                    currentUser.role !== "EMPLOYEE"
+                    ? `
+                        <div class="filters no-print" style="margin-bottom:15px;">
+
+                            <div class="filter-item">
+                                <label>From Date</label>
+                                <input
+                                    id="tsFrom"
+                                    type="date"
+                                    value="${todayISO()}"
+                                >
                             </div>
 
-                            <h1>
-                                Welcome, ${escapeHTML(currentUser.name)}
-                            </h1>
-
-                            <p>
-                                ${company
-                                    ? escapeHTML(company.name)
-                                    : "Employee Profile"
-                                }
-                            </p>
-
-                        </div>
-
-                        <div class="profile-details">
-
-                            <div class="detail">
-                                <div class="detail-label">
-                                    Username
-                                </div>
-
-                                <div class="detail-value">
-                                    @${escapeHTML(currentUser.u)}
-                                </div>
+                            <div class="filter-item">
+                                <label>To Date</label>
+                                <input
+                                    id="tsTo"
+                                    type="date"
+                                    value="${todayISO()}"
+                                >
                             </div>
-
-                            <div class="detail">
-                                <div class="detail-label">
-                                    Email
-                                </div>
-
-                                <div class="detail-value">
-                                    ${currentUser.email
-                                        ? escapeHTML(currentUser.email)
-                                        : "Not provided"
-                                    }
-                                </div>
-                            </div>
-
-                            <div class="detail">
-                                <div class="detail-label">
-                                    Hourly Rate
-                                </div>
-
-                                <div class="detail-value">
-                                    $${Number(currentUser.rate).toFixed(2)} / hour
-                                </div>
-                            </div>
-
-                            <div class="detail">
-                                <div class="detail-label">
-                                    Company
-                                </div>
-
-                                <div class="detail-value">
-                                    ${company
-                                        ? escapeHTML(company.name)
-                                        : "Not assigned"
-                                    }
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="profile-footer">
 
                             <button
-                                class="btn btn-secondary btn-full"
-                                onclick="logout()"
+                                class="btn btn-primary"
+                                onclick="filterTimesheets()"
                             >
-                                Sign Out
+                                Filter
                             </button>
 
                         </div>
+                    `
+                    : ""
+                }
 
-                    </div>
-
-                </main>
+                <div id="timesheetTable">
+                    ${renderTimesheetTable(records)}
+                </div>
 
             </div>
-        `;
-    }
 
-    /* =========================================
-       RENDER APPLICATION
-    ========================================= */
+        </div>
+    `;
+}
 
-    function render() {
-        const app = document.getElementById("app");
+function renderTimesheetTable(records) {
 
-        if (!currentUser) {
-            app.innerHTML = renderLogin();
+    return `
+        <div class="table-wrap">
 
-            setTimeout(() => {
-                document.getElementById("username")?.focus();
-            }, 0);
+            <table>
 
-            return;
-        }
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Date</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Hours</th>
+                        <th>Status</th>
+                        <th class="no-print">Actions</th>
+                    </tr>
+                </thead>
 
-        if (currentUser.role === "admin") {
-            app.innerHTML = renderAdmin();
-            return;
-        }
+                <tbody>
 
-        if (currentUser.role === "employee") {
-            app.innerHTML = renderEmployee();
-            return;
-        }
+                ${records.map(t => {
 
-        currentUser = null;
-        app.innerHTML = renderLogin();
-    }
+                    const employee =
+                        db.users.find(
+                            u => u.id === t.employeeId
+                        );
 
-    /* =========================================
-       START APPLICATION
-    ========================================= */
+                    return `
+                        <tr>
 
-    loadDB();
+                            <td>
+                                <strong>
+                                    ${escapeHTML(
+                                        employee?.name || "Unknown"
+                                    )}
+                                </strong>
+                            </td>
+
+                            <td>
+                                ${formatDate(t.workDate)}
+                            </td>
+
+                            <td>
+                                ${t.startTime
+                                    ? new Date(t.startTime)
+                                        .toLocaleTimeString([],{
+                                            hour:"numeric",
+                                            minute:"2-digit"
+                                        })
+                                    : "—"}
+                            </td>
+
+                            <td>
+                                ${t.endTime
+                                    ? new Date(t.endTime)
+                                        .toLocaleTimeString([],{
+                                            hour:"numeric",
+                                            minute:"2-digit"
+                                        })
+                                    : "Working"}
+                            </td>
+
+                            <td>
+                                <strong>
+                                    ${Number(t.totalHours || 0).toFixed(2)}
+                                </strong>
+                            </td>
+
+                            <td>
+                                ${statusBadge(t.status)}
+                            </td>
+
+                            <td class="no-print">
+
+                                ${
+                                    currentUser.role !== "EMPLOYEE"
+                                    && t.status === "PENDING"
+                                    && t.endTime
+                                    ? `
+                                        <div class="actions">
+
+                                            <button
+                                                class="btn btn-success btn-sm"
+                                                onclick="approveTimesheet(${t.id})"
+                                            >
+                                                Approve
+                                            </button>
+
+                                            <button
+                                                class="btn btn-danger btn-sm"
+                                                onclick="rejectTimesheet(${t.id})"
+                                            >
+                                                Reject
+                                            </button>
+
+                                        </div>
+                                    `
+                                    : ""
+                                }
+
+                            </td>
+
+                        </tr>
+                    `;
+
+                }).join("") || `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty">
+                                <strong>No timesheets found.</strong>
+                                No work hours have been recorded.
+                            </div>
+                        </td>
+                    </tr>
+                `}
+
+                </tbody>
+
+            </table>
+
+        </div>
+    `;
+}
+
+function renderEmployeeTimesheetTable(records) {
+    return renderTimesheetTable(records);
+}
+
+function filterTimesheets() {
+
+    const from = document.getElementById("tsFrom").value;
+    const to = document.getElementById("tsTo").value;
+
+    let records = db.timesheets.filter(t => {
+
+        if (
+            currentUser.role !== "ADMIN"
+            && t.companyId !== currentUser.companyId
+        ) return false;
+
+        if (from && t.workDate < from) return false;
+        if (to && t.workDate > to) return false;
+
+        return true;
+    });
+
+    document.getElementById("timesheetTable").innerHTML =
+        renderTimesheetTable(records);
+}
+
+function approveTimesheet(id) {
+
+    const t = db.timesheets.find(x => x.id === id);
+
+    if (!t) return;
+
+    t.status = "APPROVED";
+    t.approvedBy = currentUser.id;
+    t.approvedAt = new Date().toISOString();
+
+    saveDB();
+
+    const employee = db.users.find(
+        u => u.id === t.employeeId
+    );
+
+    logActivity(
+        "APPROVE_TIMESHEET",
+        `${currentUser.name} approved ${employee?.name}'s timesheet for ${t.workDate}`
+    );
+
     render();
+}
+
+function rejectTimesheet(id) {
+
+    const t = db.timesheets.find(x => x.id === id);
+
+    if (!t) return;
+
+    t.status = "REJECTED";
+
+    saveDB();
+
+    const employee = db.users.find(
+        u => u.id === t.employeeId
+    );
+
+    logActivity(
+        "REJECT_TIMESHEET",
+        `${currentUser.name} rejected ${employee?.name}'s timesheet for ${t.workDate}`
+    );
+
+    render();
+}
+
+/* ============================================================
+   PAYROLL
+============================================================ */
+
+function payrollPage() {
+
+    let records = db.timesheets.filter(
+        t => t.status === "APPROVED"
+    );
+
+    if (currentUser.role !== "ADMIN") {
+        records = records.filter(
+            t => t.companyId === currentUser.companyId
+        );
+    }
+
+    const grouped = {};
+
+    records.forEach(t => {
+
+        if (!grouped[t.employeeId]) {
+            grouped[t.employeeId] = {
+                employeeId: t.employeeId,
+                hours: 0
+            };
+        }
+
+        grouped[t.employeeId].hours +=
+            Number(t.totalHours || 0);
+    });
+
+    const rows = Object.values(grouped);
+
+    const totalHours =
+        rows.reduce((sum,r) => sum + r.hours,0);
+
+    const totalPay =
+        rows.reduce((sum,r) => {
+
+            const employee =
+                db.users.find(u => u.id === r.employeeId);
+
+            return sum +
+                r.hours *
+                Number(employee?.hourlyRate || 0);
+
+        },0);
+
+    return `
+        <div class="stats">
+
+            <div class="stat">
+                <div class="stat-label">Employees</div>
+                <div class="stat-value">${rows.length}</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">Approved Hours</div>
+                <div class="stat-value">
+                    ${totalHours.toFixed(2)}
+                </div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">Gross Payroll</div>
+                <div class="stat-value">
+                    ${money(totalPay)}
+                </div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">Status</div>
+                <div class="stat-value" style="font-size:18px;">
+                    Approved
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <div>
+                    <div class="card-title">
+                        Payroll
+                    </div>
+
+                    <div class="card-subtitle">
+                        Based on approved timesheets
+                    </div>
+                </div>
+
+                <button
+                    class="btn btn-primary btn-sm"
+                    onclick="exportPayrollCSV()"
+                >
+                    Export CSV
+                </button>
+
+            </div>
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Company</th>
+                            <th>Hours</th>
+                            <th>Hourly Rate</th>
+                            <th>Gross Pay</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    ${rows.map(row => {
+
+                        const employee =
+                            db.users.find(
+                                u => u.id === row.employeeId
+                            );
+
+                        const gross =
+                            row.hours *
+                            Number(employee?.hourlyRate || 0);
+
+                        const existing =
+                            db.paystubs.find(
+                                p =>
+                                p.employeeId === row.employeeId
+                                && p.status === "APPROVED"
+                            );
+
+                        return `
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        ${escapeHTML(
+                                            employee?.name || ""
+                                        )}
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    ${escapeHTML(
+                                        companyName(employee?.companyId)
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${row.hours.toFixed(2)}
+                                </td>
+
+                                <td>
+                                    ${money(employee?.hourlyRate)}
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        ${money(gross)}
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    ${existing
+                                        ? statusBadge("APPROVED")
+                                        : statusBadge("PENDING")}
+                                </td>
+
+                                <td>
+
+                                    ${
+                                        currentUser.role !== "EMPLOYEE"
+                                        && !existing
+                                        ? `
+                                            <button
+                                                class="btn btn-success btn-sm"
+                                                onclick="approvePaystub(
+                                                    ${employee.id},
+                                                    ${row.hours},
+                                                    ${gross}
+                                                )"
+                                            >
+                                                Approve Paystub
+                                            </button>
+                                        `
+                                        : ""
+                                    }
+
+                                </td>
+
+                            </tr>
+                        `;
+
+                    }).join("") || `
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty">
+                                    <strong>No approved payroll.</strong>
+                                    Approve timesheets first.
+                                </div>
+                            </td>
+                        </tr>
+                    `}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    `;
+}
+
+function approvePaystub(employeeId,hours,grossPay) {
+
+    const employee =
+        db.users.find(u => u.id === employeeId);
+
+    if (!employee) return;
+
+    db.paystubs.push({
+        id: uid(),
+        employeeId,
+        companyId: employee.companyId,
+        payPeriodStart: todayISO(),
+        payPeriodEnd: todayISO(),
+        totalHours: hours,
+        hourlyRate: employee.hourlyRate,
+        grossPay,
+        status: "APPROVED",
+        approvedBy: currentUser.id,
+        approvedAt: new Date().toISOString()
+    });
+
+    saveDB();
+
+    logActivity(
+        "APPROVE_PAYSTUB",
+        `${currentUser.name} approved paystub for ${employee.name} (${money(grossPay)})`
+    );
+
+    render();
+}
+
+function exportPayrollCSV() {
+
+    let records = db.timesheets.filter(
+        t => t.status === "APPROVED"
+    );
+
+    if (currentUser.role !== "ADMIN") {
+        records = records.filter(
+            t => t.companyId === currentUser.companyId
+        );
+    }
+
+    const rows = [[
+        "Employee Name",
+        "Username",
+        "Company",
+        "Date",
+        "Hours",
+        "Hourly Rate",
+        "Gross Pay",
+        "Status"
+    ]];
+
+    records.forEach(t => {
+
+        const employee =
+            db.users.find(
+                u => u.id === t.employeeId
+            );
+
+        const gross =
+            Number(t.totalHours || 0) *
+            Number(employee?.hourlyRate || 0);
+
+        rows.push([
+            employee?.name || "",
+            employee?.username || "",
+            companyName(t.companyId),
+            t.workDate,
+            Number(t.totalHours || 0).toFixed(2),
+            Number(employee?.hourlyRate || 0).toFixed(2),
+            gross.toFixed(2),
+            "APPROVED"
+        ]);
+    });
+
+    const csv = rows
+        .map(row =>
+            row.map(value =>
+                `"${String(value).replace(/"/g,'""')}"`
+            ).join(",")
+        )
+        .join("\n");
+
+    const blob =
+        new Blob([csv],{type:"text/csv;charset=utf-8;"});
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download =
+        `LEVORO_Payroll_${todayISO()}.csv`;
+
+    link.click();
+
+    URL.revokeObjectURL(url);
+
+    logActivity(
+        "EXPORT_PAYROLL",
+        `${currentUser.name} exported payroll CSV`
+    );
+}
+
+/* ============================================================
+   ACTIVITY LOG
+============================================================ */
+
+function activityPage() {
+
+    const today = todayISO();
+
+    return `
+        <div class="card">
+
+            <div class="card-header">
+
+                <div>
+                    <div class="card-title">
+                        System Activity Log
+                    </div>
+
+                    <div class="card-subtitle">
+                        Track all important LEVORO activity
+                    </div>
+                </div>
+
+                <button
+                    class="btn btn-secondary btn-sm no-print"
+                    onclick="printActivity()"
+                >
+                    Print Log
+                </button>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="filters no-print">
+
+                    <div class="filter-item">
+                        <label>From Date</label>
+                        <input
+                            id="activityFrom"
+                            type="date"
+                            value="${today}"
+                        >
+                    </div>
+
+                    <div class="filter-item">
+                        <label>To Date</label>
+                        <input
+                            id="activityTo"
+                            type="date"
+                            value="${today}"
+                        >
+                    </div>
+
+                    <button
+                        class="btn btn-primary"
+                        onclick="filterActivity()"
+                    >
+                        Apply Filter
+                    </button>
+
+                    <button
+                        class="btn btn-secondary"
+                        onclick="clearActivityFilter()"
+                    >
+                        Clear
+                    </button>
+
+                </div>
+
+                <div class="print-title">
+
+                    <h1>LEVORO</h1>
+
+                    <h2>System Activity Report</h2>
+
+                    <p>
+                        Generated:
+                        ${formatDateTime(new Date())}
+                    </p>
+
+                </div>
+
+                <div id="activityTable"
+                     style="margin-top:20px;">
+
+                    ${renderActivityTable(
+                        db.activity.filter(
+                            a => a.timestamp.startsWith(today)
+                        )
+                    )}
+
+                </div>
+
+            </div>
+
+        </div>
+    `;
+}
+
+function renderActivityTable(records) {
+
+    return `
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Description</th>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th>Company</th>
+                        <th>Date / Time</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                ${records.map(a => `
+                    <tr>
+
+                        <td>
+                            <strong>
+                                ${escapeHTML(a.action)}
+                            </strong>
+                        </td>
+
+                        <td>
+                            ${escapeHTML(a.description)}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(a.userName)}
+                        </td>
+
+                        <td>
+                            ${roleBadge(a.userRole)}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(a.companyName || "System")}
+                        </td>
+
+                        <td>
+                            ${formatDateTime(a.timestamp)}
+                        </td>
+
+                    </tr>
+                `).join("") || `
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty">
+                                <strong>No activity found.</strong>
+                                Try another date range.
+                            </div>
+                        </td>
+                    </tr>
+                `}
+
+                </tbody>
+
+            </table>
+
+        </div>
+    `;
+}
+
+function filterActivity() {
+
+    const from =
+        document.getElementById("activityFrom").value;
+
+    const to =
+        document.getElementById("activityTo").value;
+
+    let records = db.activity.filter(a => {
+
+        const date =
+            new Date(a.timestamp)
+                .toISOString()
+                .split("T")[0];
+
+        if (from && date < from) return false;
+        if (to && date > to) return false;
+
+        return true;
+    });
+
+    document.getElementById("activityTable").innerHTML =
+        renderActivityTable(records);
+}
+
+function clearActivityFilter() {
+
+    document.getElementById("activityFrom").value = "";
+    document.getElementById("activityTo").value = "";
+
+    document.getElementById("activityTable").innerHTML =
+        renderActivityTable(db.activity);
+}
+
+function printActivity() {
+
+    logActivity(
+        "PRINT_ACTIVITY_LOG",
+        `${currentUser.name} printed the activity log`
+    );
+
+    window.print();
+}
+
+/* ============================================================
+   PROFILE
+============================================================ */
+
+function profilePage() {
+
+    return `
+        <div class="card">
+
+            <div class="card-body">
+
+                <div class="profile-header">
+
+                    <div class="profile-avatar">
+                        ${escapeHTML(initials(currentUser.name))}
+                    </div>
+
+                    <div>
+                        <div class="profile-name">
+                            ${escapeHTML(currentUser.name)}
+                        </div>
+
+                        <div class="profile-company">
+                            ${escapeHTML(
+                                companyName(currentUser.companyId)
+                            )}
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input
+                            id="profileName"
+                            class="input"
+                            value="${escapeHTML(currentUser.name)}"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input
+                            class="input"
+                            value="${escapeHTML(currentUser.username)}"
+                            disabled
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input
+                            id="profileEmail"
+                            class="input"
+                            value="${escapeHTML(currentUser.email || "")}"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input
+                            id="profilePhone"
+                            class="input"
+                            value="${escapeHTML(currentUser.phone || "")}"
+                        >
+                    </div>
+
+                    <div class="form-group full">
+                        <label>Address</label>
+                        <textarea
+                            id="profileAddress"
+                        >${escapeHTML(currentUser.address || "")}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hourly Rate</label>
+                        <input
+                            class="input"
+                            value="${money(currentUser.hourlyRate)}"
+                            disabled
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Role</label>
+                        <input
+                            class="input"
+                            value="${currentUser.role}"
+                            disabled
+                        >
+                    </div>
+
+                </div>
+
+                <button
+                    class="btn btn-primary"
+                    onclick="saveProfile()"
+                >
+                    Save Changes
+                </button>
+
+            </div>
+
+        </div>
+    `;
+}
+
+function saveProfile() {
+
+    const user =
+        db.users.find(u => u.id === currentUser.id);
+
+    if (!user) return;
+
+    user.name =
+        document.getElementById("profileName").value.trim();
+
+    user.email =
+        document.getElementById("profileEmail").value.trim();
+
+    user.phone =
+        document.getElementById("profilePhone").value.trim();
+
+    user.address =
+        document.getElementById("profileAddress").value.trim();
+
+    currentUser = user;
+
+    saveDB();
+
+    logActivity(
+        "UPDATE_PROFILE",
+        `${currentUser.name} updated their profile`
+    );
+
+    alert("Profile updated successfully.");
+
+    render();
+}
+
+/* ============================================================
+   COMPANY MODAL
+============================================================ */
+
+function openCompanyModal() {
+
+    showModal(`
+        <div class="modal-header">
+            <strong>Add Company</strong>
+            <button class="btn btn-secondary btn-sm"
+                onclick="closeModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+
+            <div class="form-group">
+                <label>Company Name *</label>
+                <input
+                    id="companyName"
+                    class="input"
+                    placeholder="Company name"
+                >
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+
+            <button
+                class="btn btn-secondary"
+                onclick="closeModal()"
+            >
+                Cancel
+            </button>
+
+            <button
+                class="btn btn-primary"
+                onclick="saveCompany()"
+            >
+                Save Company
+            </button>
+
+        </div>
+    `);
+}
+
+function saveCompany() {
+
+    const name =
+        document.getElementById("companyName").value.trim();
+
+    if (!name) {
+        alert("Company name is required.");
+        return;
+    }
+
+    const company = {
+        id: uid(),
+        name,
+        createdAt: new Date().toISOString()
+    };
+
+    db.companies.push(company);
+
+    saveDB();
+
+    logActivity(
+        "CREATE_COMPANY",
+        `${currentUser.name} created company "${name}"`
+    );
+
+    closeModal();
+    render();
+}
+
+function selectCompany(id) {
+
+    selectedCompanyId = id;
+
+    if (currentUser.role === "ADMIN") {
+        currentPage = "employees";
+    }
+
+    render();
+}
+
+/* ============================================================
+   USER MODAL
+============================================================ */
+
+function openUserModal(role,id=null) {
+
+    const user =
+        id
+        ? db.users.find(u => u.id === id)
+        : null;
+
+    const isEdit = !!user;
+
+    showModal(`
+
+        <div class="modal-header">
+
+            <strong>
+                ${isEdit ? "Edit" : "Add"}
+                ${role === "MANAGER" ? "Manager" : "Employee"}
+            </strong>
+
+            <button
+                class="btn btn-secondary btn-sm"
+                onclick="closeModal()"
+            >
+                ✕
+            </button>
+
+        </div>
+
+        <div class="modal-body">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Name *</label>
+                    <input
+                        id="userName"
+                        class="input"
+                        value="${escapeHTML(user?.name || "")}"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>Username *</label>
+                    <input
+                        id="userUsername"
+                        class="input"
+                        value="${escapeHTML(user?.username || "")}"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Password ${isEdit ? "" : "*"}
+                    </label>
+
+                    <input
+                        id="userPassword"
+                        class="input"
+                        type="password"
+                        placeholder="${isEdit ? "Leave blank to keep current" : ""}"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input
+                        id="userEmail"
+                        class="input"
+                        value="${escapeHTML(user?.email || "")}"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input
+                        id="userPhone"
+                        class="input"
+                        value="${escapeHTML(user?.phone || "")}"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>Hourly Rate</label>
+                    <input
+                        id="userRate"
+                        class="input"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value="${user?.hourlyRate || 0}"
+                        ${role === "MANAGER" ? "disabled" : ""}
+                    >
+                </div>
+
+                <div class="form-group full">
+                    <label>Address</label>
+                    <textarea
+                        id="userAddress"
+                    >${escapeHTML(user?.address || "")}</textarea>
+                </div>
+
+                <div class="form-group full">
+
+                    <label>Company *</label>
+
+                    <select id="userCompany">
+
+                        <option value="">
+                            Select company
+                        </option>
+
+                        ${db.companies.map(c => `
+                            <option
+                                value="${c.id}"
+                                ${user?.companyId === c.id ? "selected" : ""}
+                            >
+                                ${escapeHTML(c.name)}
+                            </option>
+                        `).join("")}
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+
+            <button
+                class="btn btn-secondary"
+                onclick="closeModal()"
+            >
+                Cancel
+            </button>
+
+            <button
+                class="btn btn-primary"
+                onclick="saveUser('${role}',${id || "null"})"
+            >
+                ${isEdit ? "Save Changes" : "Create User"}
+            </button>
+
+        </div>
+    `);
+}
+
+function saveUser(role,id) {
+
+    const name =
+        document.getElementById("userName").value.trim();
+
+    const username =
+        document.getElementById("userUsername").value.trim();
+
+    const password =
+        document.getElementById("userPassword").value;
+
+    const email =
+        document.getElementById("userEmail").value.trim();
+
+    const phone =
+        document.getElementById("userPhone").value.trim();
+
+    const address =
+        document.getElementById("userAddress").value.trim();
+
+    const companyId =
+        Number(document.getElementById("userCompany").value);
+
+    const rate =
+        Number(document.getElementById("userRate").value || 0);
+
+    if (!name || !username || !companyId) {
+        alert("Please complete all required fields.");
+        return;
+    }
+
+    if (!id && !password) {
+        alert("Password is required.");
+        return;
+    }
+
+    const duplicate =
+        db.users.find(
+            u =>
+            u.username.toLowerCase() === username.toLowerCase()
+            && u.id !== id
+        );
+
+    if (duplicate) {
+        alert("That username is already in use.");
+        return;
+    }
+
+    if (id) {
+
+        const user =
+            db.users.find(u => u.id === id);
+
+        if (!user) return;
+
+        user.name = name;
+        user.username = username;
+        user.email = email;
+        user.phone = phone;
+        user.address = address;
+        user.companyId = companyId;
+
+        if (password)
+            user.password = password;
+
+        if (role === "EMPLOYEE")
+            user.hourlyRate = rate;
+
+        saveDB();
+
+        logActivity(
+            role === "EMPLOYEE"
+                ? "UPDATE_EMPLOYEE"
+                : "UPDATE_MANAGER",
+            `${currentUser.name} updated ${role.toLowerCase()} ${name}`
+        );
+
+    } else {
+
+        const newUser = {
+            id: uid(),
+            name,
+            username,
+            password,
+            email,
+            phone,
+            address,
+            role,
+            companyId,
+            hourlyRate:
+                role === "EMPLOYEE"
+                ? rate
+                : 0
+        };
+
+        db.users.push(newUser);
+
+        saveDB();
+
+        logActivity(
+            role === "EMPLOYEE"
+                ? "CREATE_EMPLOYEE"
+                : "CREATE_MANAGER",
+            `${currentUser.name} created ${role.toLowerCase()} ${name}`
+        );
+    }
+
+    closeModal();
+    render();
+}
+
+function deleteUser(id) {
+
+    const user =
+        db.users.find(u => u.id === id);
+
+    if (!user) return;
+
+    if (
+        !confirm(
+            `Delete ${user.name}?\n\nThis action cannot be undone.`
+        )
+    ) return;
+
+    db.users =
+        db.users.filter(u => u.id !== id);
+
+    saveDB();
+
+    logActivity(
+        user.role === "EMPLOYEE"
+            ? "DELETE_EMPLOYEE"
+            : "DELETE_MANAGER",
+        `${currentUser.name} deleted ${user.role.toLowerCase()} ${user.name}`
+    );
+
+    render();
+}
+
+/* ============================================================
+   MODAL
+============================================================ */
+
+function showModal(content) {
+
+    let modal =
+        document.getElementById("modalRoot");
+
+    if (!modal) {
+
+        modal = document.createElement("div");
+
+        modal.id = "modalRoot";
+
+        document.body.appendChild(modal);
+    }
+
+    modal.className = "modal-backdrop";
+
+    modal.innerHTML =
+        `<div class="modal">${content}</div>`;
+}
+
+function closeModal() {
+
+    const modal =
+        document.getElementById("modalRoot");
+
+    if (modal)
+        modal.remove();
+}
+
+/* ============================================================
+   COMPANIES PAGE
+============================================================ */
+
+function companiesPage() {
+
+    return `
+        <div class="card">
+
+            <div class="card-header">
+
+                <div>
+                    <div class="card-title">
+                        Companies
+                    </div>
+
+                    <div class="card-subtitle">
+                        Manage all LEVORO companies
+                    </div>
+                </div>
+
+                <button
+                    class="btn btn-primary btn-sm"
+                    onclick="openCompanyModal()"
+                >
+                    + Add Company
+                </button>
+
+            </div>
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Employees</th>
+                            <th>Managers</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    ${db.companies.map(c => {
+
+                        const employees =
+                            db.users.filter(
+                                u => u.companyId === c.id
+                                && u.role === "EMPLOYEE"
+                            ).length;
+
+                        const managers =
+                            db.users.filter(
+                                u => u.companyId === c.id
+                                && u.role === "MANAGER"
+                            ).length;
+
+                        return `
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        ${escapeHTML(c.name)}
+                                    </strong>
+                                </td>
+
+                                <td>${employees}</td>
+                                <td>${managers}</td>
+
+                                <td>
+                                    ${formatDate(c.createdAt)}
+                                </td>
+
+                                <td>
+
+                                    <button
+                                        class="btn btn-danger btn-sm"
+                                        onclick="deleteCompany(${c.id})"
+                                    >
+                                        Delete
+                                    </button>
+
+                                </td>
+
+                            </tr>
+                        `;
+
+                    }).join("")}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    `;
+}
+
+function deleteCompany(id) {
+
+    const company =
+        db.companies.find(c => c.id === id);
+
+    if (!company) return;
+
+    const users =
+        db.users.filter(
+            u => u.companyId === id
+        );
+
+    if (
+        !confirm(
+            `Delete "${company.name}"?\n\n` +
+            `This will remove ${users.length} employee/manager record(s).`
+        )
+    ) return;
+
+    db.companies =
+        db.companies.filter(c => c.id !== id);
+
+    db.users =
+        db.users.filter(u => u.companyId !== id);
+
+    db.timesheets =
+        db.timesheets.filter(t => t.companyId !== id);
+
+    db.paystubs =
+        db.paystubs.filter(p => p.companyId !== id);
+
+    saveDB();
+
+    logActivity(
+        "DELETE_COMPANY",
+        `${currentUser.name} deleted company "${company.name}"`
+    );
+
+    render();
+}
+
+/* ============================================================
+   REPORTS
+============================================================ */
+
+function reportsPage() {
+
+    return `
+        <div class="grid-2">
+
+            <div class="card">
+
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">
+                            Payroll Report
+                        </div>
+
+                        <div class="card-subtitle">
+                            Export approved payroll
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body">
+
+                    <p style="color:#6b7280;font-size:12px;">
+                        Export approved employee hours,
+                        hourly rates and gross pay for accounting.
+                    </p>
+
+                    <button
+                        class="btn btn-primary"
+                        onclick="exportPayrollCSV()"
+                    >
+                        Export Payroll CSV
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">
+                            Activity Report
+                        </div>
+
+                        <div class="card-subtitle">
+                            Print filtered system activity
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body">
+
+                    <p style="color:#6b7280;font-size:12px;">
+                        Use the Activity Log to select a date range
+                        and print the report.
+                    </p>
+
+                    <button
+                        class="btn btn-secondary"
+                        onclick="go('activity')"
+                    >
+                        Open Activity Log
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+    `;
+}
+
+/* ============================================================
+   MAIN RENDER
+============================================================ */
+
+function render() {
+
+    const app =
+        document.getElementById("app");
+
+    if (!currentUser) {
+        app.innerHTML = renderLogin();
+        return;
+    }
+
+    let content = "";
+    let title = "Dashboard";
+
+    if (currentUser.role === "ADMIN") {
+
+        switch(currentPage) {
+
+            case "companies":
+                title = "Companies";
+                content = companiesPage();
+                break;
+
+            case "employees":
+                title = "Employees";
+                content = employeesPage();
+                break;
+
+            case "managers":
+                title = "Managers";
+                content = managersPage();
+                break;
+
+            case "timesheets":
+                title = "Timesheets";
+                content = timesheetsPage();
+                break;
+
+            case "payroll":
+                title = "Payroll";
+                content = payrollPage();
+                break;
+
+            case "reports":
+                title = "Reports";
+                content = reportsPage();
+                break;
+
+            case "activity":
+                title = "Activity Log";
+                content = activityPage();
+                break;
+
+            default:
+                title = "Admin Dashboard";
+                content = adminDashboard();
+        }
+
+    } else if (currentUser.role === "MANAGER") {
+
+        switch(currentPage) {
+
+            case "employees":
+                title = "Employees";
+                content = employeesPage();
+                break;
+
+            case "timesheets":
+                title = "Timesheet Approval";
+                content = timesheetsPage();
+                break;
+
+            case "payroll":
+                title = "Payroll";
+                content = payrollPage();
+                break;
+
+            case "reports":
+                title = "Reports";
+                content = reportsPage();
+                break;
+
+            default:
+                title = "Manager Dashboard";
+                content = managerDashboard();
+        }
+
+    } else {
+
+        switch(currentPage) {
+
+            case "clock":
+                title = "Time Clock";
+                content = clockCard();
+                break;
+
+            case "timesheets":
+                title = "My Timesheets";
+                content = timesheetsPage();
+                break;
+
+            case "profile":
+                title = "My Profile";
+                content = profilePage();
+                break;
+
+            default:
+                title = "Employee Dashboard";
+                content = employeeDashboard();
+        }
+    }
+
+    app.innerHTML =
+        renderApp(content,title);
+
+    startClock();
+}
+
+/* ============================================================
+   LIVE CLOCK
+============================================================ */
+
+let clockInterval = null;
+
+function startClock() {
+
+    if (clockInterval)
+        clearInterval(clockInterval);
+
+    clockInterval =
+        setInterval(() => {
+
+            const clock =
+                document.getElementById("liveClock");
+
+            if (clock) {
+
+                clock.textContent =
+                    new Date().toLocaleTimeString([],{
+                        hour:"numeric",
+                        minute:"2-digit",
+                        second:"2-digit"
+                    });
+            }
+
+        },1000);
+}
+
+/* ============================================================
+   START
+============================================================ */
+
+loadDB();
+render();
+
 </script>
 
 </body>
