@@ -84,6 +84,13 @@ button {
     margin-bottom: 30px;
 }
 
+.login-hint {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 18px;
+}
+
 .form-group {
     margin-bottom: 16px;
 }
@@ -146,6 +153,11 @@ button {
     background: var(--primary-dark);
 }
 
+.btn-primary:disabled {
+    background: #a9b7e8;
+    cursor: not-allowed;
+}
+
 .btn-secondary {
     background: #eef1f7;
     color: #344054;
@@ -185,6 +197,16 @@ button {
     font-size: 13px;
 }
 
+.field-error {
+    color: var(--danger);
+    background: #fff0f1;
+    border: 1px solid #ffd2d6;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 13px;
+}
+
 /* APP */
 
 .app-shell {
@@ -202,6 +224,7 @@ button {
     left: 0;
     padding: 24px 16px;
     z-index: 10;
+    overflow-y: auto;
 }
 
 .sidebar-logo {
@@ -257,6 +280,9 @@ button {
     align-items: center;
     justify-content: space-between;
     padding: 0 30px;
+    position: sticky;
+    top: 0;
+    z-index: 5;
 }
 
 .page-title {
@@ -268,6 +294,25 @@ button {
     padding: 30px;
     max-width: 1500px;
     margin: auto;
+}
+
+.toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #172033;
+    color: white;
+    padding: 13px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: var(--shadow);
+    z-index: 500;
+    max-width: 320px;
+}
+
+.toast.error {
+    background: var(--danger);
 }
 
 /* CARDS */
@@ -315,6 +360,7 @@ button {
     justify-content: space-between;
     gap: 15px;
     margin-bottom: 18px;
+    flex-wrap: wrap;
 }
 
 .card-title {
@@ -637,6 +683,11 @@ function loadDB() {
     if (saved) {
         try {
             db = JSON.parse(saved);
+            db.companies = db.companies || [];
+            db.users = db.users || [];
+            db.timeEntries = db.timeEntries || [];
+            db.paystubs = db.paystubs || [];
+            db.activity = db.activity || [];
         } catch {
             db = {
                 companies: [],
@@ -697,6 +748,10 @@ function formatDateTime(date) {
     );
 }
 
+function toISODate(date) {
+    return date.toISOString().split("T")[0];
+}
+
 function today() {
     return new Date().toISOString().split("T")[0];
 }
@@ -704,35 +759,77 @@ function today() {
 function addDays(dateString, days) {
     const date = new Date(dateString + "T00:00:00");
     date.setDate(date.getDate() + days);
-    return date.toISOString().split("T")[0];
+    return toISODate(date);
 }
 
 function daysInMonth(year, month) {
     return new Date(year, month + 1, 0).getDate();
 }
 
-function calculatePeriod(start, frequency) {
-    let end;
-
-    if (frequency === "weekly") {
-        end = addDays(start, 6);
-    }
-
-    if (frequency === "biweekly") {
-        end = addDays(start, 13);
-    }
+/**
+ * Finds the pay period that contains `targetDate`, based on the
+ * company's original anchor start date and frequency. Periods are
+ * calculated forward (or backward) from the anchor so that the
+ * "current" period always advances as real time passes, instead of
+ * being pinned forever to the first period.
+ */
+function calculatePeriod(anchorStart, frequency, targetDate) {
+    targetDate = targetDate || today();
 
     if (frequency === "monthly") {
-        const d = new Date(start + "T00:00:00");
-        const last = daysInMonth(
-            d.getFullYear(),
-            d.getMonth()
-        );
+        const anchor = new Date(anchorStart + "T00:00:00");
+        const target = new Date(targetDate + "T00:00:00");
 
-        end = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${last}`;
+        let monthsDiff =
+            (target.getFullYear() - anchor.getFullYear()) * 12 +
+            (target.getMonth() - anchor.getMonth());
+
+        // If the target falls before the anchor's day-of-month in the
+        // very first month, it still belongs to period 0 (the anchor
+        // month), since the first period always runs anchor -> month end.
+        if (monthsDiff < 0) monthsDiff = 0;
+
+        if (monthsDiff === 0) {
+            const lastDay = daysInMonth(
+                anchor.getFullYear(),
+                anchor.getMonth()
+            );
+
+            const end = `${anchor.getFullYear()}-${String(anchor.getMonth() + 1).padStart(2, "0")}-${String(lastDay).padStart(2, "0")}`;
+
+            return { start: anchorStart, end };
+        }
+
+        const periodMonth = anchor.getMonth() + monthsDiff;
+        const periodDate = new Date(anchor.getFullYear(), periodMonth, 1);
+        const y = periodDate.getFullYear();
+        const m = periodDate.getMonth();
+        const lastDay = daysInMonth(y, m);
+
+        const start = `${y}-${String(m + 1).padStart(2, "0")}-01`;
+        const end = `${y}-${String(m + 1).padStart(2, "0")}-${String(lastDay).padStart(2, "0")}`;
+
+        return { start, end };
     }
 
-    return { start, end };
+    const length = frequency === "weekly" ? 7 : 14;
+
+    const anchor = new Date(anchorStart + "T00:00:00");
+    const target = new Date(targetDate + "T00:00:00");
+
+    const diffDays = Math.round((target - anchor) / 86400000);
+    const periodIndex = Math.floor(diffDays / length);
+
+    const periodStartDate = new Date(anchor);
+    periodStartDate.setDate(anchor.getDate() + periodIndex * length);
+
+    const periodEndDate = new Date(periodStartDate);
+    periodEndDate.setDate(periodStartDate.getDate() + length - 1);
+
+    return {
+        start: toISODate(periodStartDate),
+        end: toISODate(periodEndDate)
+    };
 }
 
 function getCompany(id) {
@@ -751,11 +848,18 @@ function currentCompany() {
     );
 }
 
-function companyPeriod(company) {
+// Returns the pay period that contains `targetDate` (defaults to today)
+// for the given company. This is the single source of truth for "what
+// period are we currently in" — always call this instead of caching a
+// period, so it stays correct as time passes.
+function companyPeriod(company, targetDate) {
     if (!company) return null;
 
-    const start = company.payPeriodStart;
-    return calculatePeriod(start, company.payFrequency);
+    return calculatePeriod(
+        company.payPeriodStart,
+        company.payFrequency,
+        targetDate
+    );
 }
 
 function addActivity(action, description) {
@@ -771,6 +875,18 @@ function addActivity(action, description) {
     saveDB();
 }
 
+function toast(message, isError) {
+    const existing = document.querySelector(".toast");
+    if (existing) existing.remove();
+
+    const el = document.createElement("div");
+    el.className = "toast" + (isError ? " error" : "");
+    el.textContent = message;
+    document.body.appendChild(el);
+
+    setTimeout(() => el.remove(), 3200);
+}
+
 /* =========================================================
    AUTH
 ========================================================= */
@@ -779,6 +895,14 @@ function login() {
     const username = document.getElementById("loginUsername").value.trim();
     const password = document.getElementById("loginPassword").value;
 
+    const error = document.getElementById("loginError");
+
+    if (!username || !password) {
+        error.textContent = "Please enter a username and password.";
+        error.classList.remove("hidden");
+        return;
+    }
+
     const user = db.users.find(
         u =>
             u.username.toLowerCase() === username.toLowerCase() &&
@@ -786,10 +910,14 @@ function login() {
             u.active !== false
     );
 
-    const error = document.getElementById("loginError");
-
     if (!user) {
         error.textContent = "Invalid username or password.";
+        error.classList.remove("hidden");
+        return;
+    }
+
+    if ((user.role === "employee" || user.role === "manager") && !getCompany(user.companyId)) {
+        error.textContent = "Your account is not assigned to an active company. Contact your administrator.";
         error.classList.remove("hidden");
         return;
     }
@@ -861,14 +989,14 @@ function openCompanyModal(companyId = null) {
 
                     <div class="form-group">
                         <label>Pay Frequency *</label>
-                        <select id="payFrequency" class="form-control">
+                        <select id="payFrequency" class="form-control" ${company ? "disabled" : ""}>
                             <option value="weekly"
                                 ${company?.payFrequency === "weekly" ? "selected" : ""}>
                                 Weekly
                             </option>
 
                             <option value="biweekly"
-                                ${company?.payFrequency === "biweekly" ? "selected" : ""}>
+                                ${!company || company?.payFrequency === "biweekly" ? "selected" : ""}>
                                 Bi-Weekly
                             </option>
 
@@ -877,6 +1005,7 @@ function openCompanyModal(companyId = null) {
                                 Monthly
                             </option>
                         </select>
+                        ${company ? '<div style="font-size:12px;color:var(--muted);margin-top:5px;">Frequency can\'t be changed once time entries exist, to avoid breaking existing pay periods.</div>' : ""}
                     </div>
 
                     <div class="form-group">
@@ -886,13 +1015,14 @@ function openCompanyModal(companyId = null) {
                             type="date"
                             class="form-control"
                             value="${company?.payPeriodStart || today()}"
+                            ${company ? "disabled" : ""}
                         >
                     </div>
 
                 </div>
 
                 <div class="card" style="background:#f7f9fc;margin-top:10px;">
-                    <strong>Pay Period Preview</strong>
+                    <strong>Current Pay Period Preview</strong>
                     <div id="periodPreview" style="margin-top:8px;color:#697386;">
                         Select a date and frequency.
                     </div>
@@ -929,7 +1059,9 @@ function updatePeriodPreview() {
 
     if (!start || !frequency || !preview) return;
 
-    const period = calculatePeriod(start, frequency);
+    // Preview shows the period that contains *today*, so admins can see
+    // what the "live" current period would look like right now.
+    const period = calculatePeriod(start, frequency, today());
 
     preview.innerHTML =
         `<strong>${formatDate(period.start)}</strong>
@@ -942,7 +1074,12 @@ function saveCompany(companyId) {
     const start = document.getElementById("payPeriodStart").value;
 
     if (!name || !start) {
-        alert("Please complete all required fields.");
+        toast("Please complete all required fields.", true);
+        return;
+    }
+
+    if (db.companies.some(c => c.id !== companyId && c.name.toLowerCase() === name.toLowerCase())) {
+        toast("A company with that name already exists.", true);
         return;
     }
 
@@ -950,8 +1087,9 @@ function saveCompany(companyId) {
         const company = getCompany(companyId);
 
         company.name = name;
-        company.payFrequency = frequency;
-        company.payPeriodStart = start;
+        // frequency & start are locked once a company exists (inputs are
+        // disabled), so we don't overwrite them here — changing them
+        // after time entries exist would silently corrupt pay periods.
 
         addActivity(
             "UPDATE_COMPANY",
@@ -979,6 +1117,7 @@ function saveCompany(companyId) {
     saveDB();
     closeModal();
     render();
+    toast(companyId ? "Company updated." : "Company created.");
 }
 
 function deleteCompany(companyId) {
@@ -1014,6 +1153,7 @@ function deleteCompany(companyId) {
 
     saveDB();
     render();
+    toast("Company deleted.");
 }
 
 /* =========================================================
@@ -1075,7 +1215,7 @@ function openUserModal(type, userId = null) {
 
                     <div class="form-group">
                         <label>Hourly Rate</label>
-                        <input id="userRate" type="number" step="0.01"
+                        <input id="userRate" type="number" step="0.01" min="0"
                             class="form-control"
                             value="${existing?.rate ?? ""}">
                     </div>
@@ -1117,9 +1257,20 @@ function saveUser(type, userId) {
     const username = document.getElementById("userUsername").value.trim();
     const password = document.getElementById("userPassword").value;
     const companyId = Number(document.getElementById("userCompany").value);
+    const rateInput = document.getElementById("userRate").value;
 
     if (!name || !username || !companyId) {
-        alert("Name, username and company are required.");
+        toast("Name, username and company are required.", true);
+        return;
+    }
+
+    if (/\s/.test(username)) {
+        toast("Username cannot contain spaces.", true);
+        return;
+    }
+
+    if (rateInput !== "" && Number(rateInput) < 0) {
+        toast("Hourly rate can't be negative.", true);
         return;
     }
 
@@ -1130,7 +1281,7 @@ function saveUser(type, userId) {
     );
 
     if (duplicate) {
-        alert("That username is already in use.");
+        toast("That username is already in use.", true);
         return;
     }
 
@@ -1142,7 +1293,7 @@ function saveUser(type, userId) {
         user.email = document.getElementById("userEmail").value.trim();
         user.phone = document.getElementById("userPhone").value.trim();
         user.address = document.getElementById("userAddress").value.trim();
-        user.rate = Number(document.getElementById("userRate").value || 0);
+        user.rate = Number(rateInput || 0);
         user.companyId = companyId;
 
         if (password) {
@@ -1156,7 +1307,7 @@ function saveUser(type, userId) {
 
     } else {
         if (!password) {
-            alert("Password is required.");
+            toast("Password is required.", true);
             return;
         }
 
@@ -1169,7 +1320,7 @@ function saveUser(type, userId) {
             email: document.getElementById("userEmail").value.trim(),
             phone: document.getElementById("userPhone").value.trim(),
             address: document.getElementById("userAddress").value.trim(),
-            rate: Number(document.getElementById("userRate").value || 0),
+            rate: Number(rateInput || 0),
             companyId,
             active: true
         };
@@ -1187,6 +1338,7 @@ function saveUser(type, userId) {
     saveDB();
     closeModal();
     render();
+    toast(userId ? "User updated." : "User created.");
 }
 
 function deleteUser(userId) {
@@ -1194,7 +1346,7 @@ function deleteUser(userId) {
 
     if (!user) return;
 
-    if (!confirm(`Delete ${user.name}?`)) return;
+    if (!confirm(`Delete ${user.name}? Their time entries and paystubs will be kept for records, but they will no longer be able to log in.`)) return;
 
     db.users = db.users.filter(u => u.id !== userId);
 
@@ -1205,6 +1357,7 @@ function deleteUser(userId) {
 
     saveDB();
     render();
+    toast("User deleted.");
 }
 
 /* =========================================================
@@ -1230,7 +1383,7 @@ function employeeClockIn() {
     );
 
     if (existing) {
-        alert("You are already clocked in.");
+        toast("You are already clocked in.", true);
         return;
     }
 
@@ -1247,6 +1400,8 @@ function employeeClockIn() {
         periodEnd: period.end
     });
 
+    addActivity("CLOCK_IN", `${currentUser.name} clocked in.`);
+
     saveDB();
     render();
 }
@@ -1260,7 +1415,7 @@ function employeeClockOut() {
     );
 
     if (!entry) {
-        alert("You are not currently clocked in.");
+        toast("You are not currently clocked in.", true);
         return;
     }
 
@@ -1272,6 +1427,8 @@ function employeeClockOut() {
     entry.hours = Number(
         ((end - start) / 3600000).toFixed(2)
     );
+
+    addActivity("CLOCK_OUT", `${currentUser.name} clocked out (${entry.hours.toFixed(2)} hrs).`);
 
     saveDB();
     render();
@@ -1289,23 +1446,29 @@ function submitTimesheet() {
     );
 
     if (!entries.length) {
-        alert("There are no hours to submit.");
+        toast("There are no hours to submit.", true);
         return;
     }
 
     if (entries.some(e => !e.endTime)) {
-        alert("Please clock out before submitting.");
+        toast("Please clock out before submitting.", true);
         return;
     }
 
     entries.forEach(e => {
-        if (e.status !== "approved") {
+        if (e.status !== "approved" && e.status !== "issued") {
             e.status = "submitted";
         }
     });
 
+    addActivity(
+        "SUBMIT_TIMESHEET",
+        `${currentUser.name} submitted timesheet for ${formatDate(period.start)} - ${formatDate(period.end)}.`
+    );
+
     saveDB();
     render();
+    toast("Timesheet submitted for approval.");
 }
 
 /* =========================================================
@@ -1337,12 +1500,16 @@ function approveEmployeeTimesheet(employeeId, periodStart, periodEnd) {
 
     saveDB();
     render();
+    toast(`Approved ${employee.name}'s hours.`);
 }
 
 /* =========================================================
    PAYROLL
 ========================================================= */
 
+// Counts hours that are either approved (ready for payroll) or already
+// issued (so a finalized paystub still shows its hours after the
+// underlying time entries flip to "issued" status).
 function getEmployeeHours(employeeId, start, end) {
     return db.timeEntries
         .filter(
@@ -1350,7 +1517,7 @@ function getEmployeeHours(employeeId, start, end) {
                 t.employeeId === employeeId &&
                 t.periodStart === start &&
                 t.periodEnd === end &&
-                t.status === "approved"
+                (t.status === "approved" || t.status === "issued")
         )
         .reduce(
             (sum, t) => sum + Number(t.hours || 0),
@@ -1370,7 +1537,7 @@ function issuePaystub(employeeId, start, end) {
     );
 
     if (existing) {
-        alert("A paystub has already been issued for this period.");
+        toast("A paystub has already been issued for this period.", true);
         return;
     }
 
@@ -1381,7 +1548,7 @@ function issuePaystub(employeeId, start, end) {
     );
 
     if (hours <= 0) {
-        alert("No approved hours found.");
+        toast("No approved hours found.", true);
         return;
     }
 
@@ -1429,7 +1596,7 @@ function exportPayrollCSV() {
     const company = currentCompany();
 
     if (!company) {
-        alert("Please select a company.");
+        toast("Please select a company.", true);
         return;
     }
 
@@ -1460,15 +1627,17 @@ function exportPayrollCSV() {
         });
 
     if (!rows.length) {
-        alert("No payroll records found.");
+        toast("No payroll records found.", true);
         return;
     }
+
+    const escapeCsv = v => `"${String(v).replaceAll('"', '""')}"`;
 
     let csv =
         "Employee,Username,Period Start,Period End,Hours,Hourly Rate,Gross Pay\n";
 
     rows.forEach(row => {
-        csv += row.join(",") + "\n";
+        csv += row.map(escapeCsv).join(",") + "\n";
     });
 
     const blob = new Blob([csv], {
@@ -1480,11 +1649,13 @@ function exportPayrollCSV() {
 
     a.href = url;
     a.download =
-        `${company.name.replace(/\s+/g, "_")}_Payroll.csv`;
+        `${company.name.replace(/\s+/g, "_")}_Payroll_${period.start}.csv`;
 
     a.click();
 
     URL.revokeObjectURL(url);
+
+    addActivity("EXPORT_PAYROLL", `Exported payroll CSV for ${company.name}.`);
 }
 
 /* =========================================================
@@ -1524,7 +1695,7 @@ function openPaystub(paystubId) {
                             </div>
 
                             <div>
-                                ${escapeHTML(company.name)}
+                                ${escapeHTML(company?.name || "Unknown company")}
                             </div>
                         </div>
 
@@ -1541,9 +1712,9 @@ function openPaystub(paystubId) {
 
                         <div>
                             <strong>Employee</strong><br>
-                            ${escapeHTML(employee.name)}<br>
-                            ${escapeHTML(employee.email || "")}<br>
-                            ${escapeHTML(employee.address || "")}
+                            ${escapeHTML(employee?.name || "Unknown employee")}<br>
+                            ${escapeHTML(employee?.email || "")}<br>
+                            ${escapeHTML(employee?.address || "")}
                         </div>
 
                         <div>
@@ -1717,9 +1888,15 @@ function render() {
 
         <div id="modalContainer"></div>
     `;
+
+    if (currentPage === "activity") {
+        renderActivity();
+    }
 }
 
 function renderLogin() {
+    const hasAnyAdmin = db.users.some(u => u.role === "admin");
+
     document.getElementById("app").innerHTML = `
         <div class="login-page">
 
@@ -1776,6 +1953,13 @@ function renderLogin() {
                     onclick="login()">
                     Sign In
                 </button>
+
+                ${!hasAnyAdmin ? `
+                    <div class="login-hint">
+                        No admin account exists yet. Open the browser console and run
+                        <code>createInitialAdmin()</code> once to create one.
+                    </div>
+                ` : ""}
 
             </div>
 
@@ -1859,6 +2043,23 @@ function pageTitle() {
 }
 
 function renderPage() {
+    // Employees/managers without an assigned (or since-deleted) company
+    // would crash every page below trying to read company fields, so
+    // guard here with a clear message instead.
+    if (
+        (currentUser.role === "employee" || currentUser.role === "manager") &&
+        !currentCompany()
+    ) {
+        return `
+            <div class="card">
+                <div class="empty">
+                    <h3>No company assigned</h3>
+                    <p>Your account isn't linked to an active company. Contact your administrator.</p>
+                </div>
+            </div>
+        `;
+    }
+
     if (currentPage === "dashboard")
         return renderDashboard();
 
@@ -2130,7 +2331,7 @@ function renderCompanyDetails(company) {
             <strong>Pay Period Configuration</strong>
 
             <p>
-                First period starts:
+                First period started:
                 <strong>${formatDate(company.payPeriodStart)}</strong>
             </p>
 
@@ -2145,7 +2346,7 @@ function renderCompanyDetails(company) {
             </p>
 
             <p>
-                Current period:
+                Current period (today):
                 <strong>
                     ${formatDate(period.start)}
                     -
@@ -2189,7 +2390,8 @@ function renderEmployees() {
 
                 <button
                     class="btn btn-primary"
-                    onclick="openUserModal('employee')">
+                    onclick="openUserModal('employee')"
+                    ${db.companies.length ? "" : "disabled title=\"Create a company first\""}>
                     + Add Employee
                 </button>
 
@@ -2305,7 +2507,8 @@ function renderManagers() {
 
                 <button
                     class="btn btn-primary"
-                    onclick="openUserModal('manager')">
+                    onclick="openUserModal('manager')"
+                    ${db.companies.length ? "" : "disabled title=\"Create a company first\""}>
                     + Add Manager
                 </button>
 
@@ -2404,17 +2607,22 @@ function renderEmployeeTime() {
             !e.endTime
     );
 
-    const entries = db.timeEntries.filter(
-        e =>
-            e.employeeId === currentUser.id &&
-            e.periodStart === period.start &&
-            e.periodEnd === period.end
-    );
+    const entries = db.timeEntries
+        .filter(
+            e =>
+                e.employeeId === currentUser.id &&
+                e.periodStart === period.start &&
+                e.periodEnd === period.end
+        )
+        .sort((a, b) => a.date.localeCompare(b.date));
 
     const total = entries.reduce(
         (sum,e) => sum + Number(e.hours || 0),
         0
     );
+
+    const canSubmit = entries.length > 0 && entries.every(e => e.endTime) &&
+        entries.some(e => e.status === "open");
 
     return `
         <div class="card">
@@ -2497,7 +2705,8 @@ function renderEmployeeTime() {
 
                 <button
                     class="btn btn-primary"
-                    onclick="submitTimesheet()">
+                    onclick="submitTimesheet()"
+                    ${canSubmit ? "" : "disabled"}>
                     Submit Timesheet
                 </button>
 
@@ -2886,6 +3095,15 @@ function renderPayroll() {
                                 </tr>
                             `;
                         }).join("")
+                        ||
+                        `
+                            <tr>
+                                <td colspan="6"
+                                    class="empty">
+                                    No employees found.
+                                </td>
+                            </tr>
+                        `
                     }
 
                     </tbody>
@@ -2967,8 +3185,14 @@ function renderProfile() {
 }
 
 function saveProfile() {
-    currentUser.name =
-        document.getElementById("profileName").value.trim();
+    const name = document.getElementById("profileName").value.trim();
+
+    if (!name) {
+        toast("Name can't be empty.", true);
+        return;
+    }
+
+    currentUser.name = name;
 
     currentUser.email =
         document.getElementById("profileEmail").value.trim();
@@ -2991,7 +3215,7 @@ function saveProfile() {
     saveDB();
     render();
 
-    alert("Profile updated.");
+    toast("Profile updated.");
 }
 
 /* =========================================================
@@ -3326,7 +3550,7 @@ setInterval(() => {
     For your real system, users should be created by Admin.
 
     To make the first login possible while testing,
-    use the browser console ONCE and run:
+    open the browser console ONCE and run:
 
     createInitialAdmin()
 
@@ -3344,7 +3568,7 @@ function createInitialAdmin() {
         role: "admin",
         name: "System Administrator",
         username: "admin",
-        password: "admin122",
+        password: "admin123",
         email: "",
         phone: "",
         address: "",
@@ -3358,6 +3582,8 @@ function createInitialAdmin() {
     alert(
         "Admin created.\n\nUsername: admin\nPassword: admin123"
     );
+
+    render();
 }
 
 /* =========================================================
