@@ -3,296 +3,538 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEVORO Payroll</title>
+    <title>LEVORO - Enterprise Payroll</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
-            background: #f0f4f8; 
-            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: linear-gradient(135deg, #4c63d2 0%, #3b5bdb 100%);
+            min-height: 100vh;
         }
-        .container { max-width: 1000px; margin: 0 auto; }
-        .card { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin: 10px 0; }
-        .btn { 
-            padding: 10px 16px; 
-            background: #3b5bdb; 
-            color: white; 
-            border: none; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            margin: 5px;
-            font-size: 14px;
-        }
-        .btn-danger { background: #dc3545; }
-        input, select { 
-            padding: 8px; 
-            border: 1px solid #ddd; 
-            border-radius: 4px; 
-            margin: 5px 0; 
-            width: 100%;
-            font-size: 14px;
-        }
-        input[type="password"] { border-color: #e74c3c; border-width: 2px; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin: 20px 0; }
-        h1 { font-size: 28px; }
-        h3 { margin: 10px 0; }
-        .grid { display: grid; gridTemplateColumns: 300px 1fr; gap: 20px; }
-        .item { 
-            padding: 10px; 
-            background: #f9f9f9; 
-            margin: 8px 0; 
-            border-radius: 4px; 
-            display: flex; 
-            justify-content: space-between;
-            align-items: center;
-        }
-        .item.selected { background: #e3f2fd; }
-        .item.clickable { cursor: pointer; }
-        .form { background: #f9f9f9; padding: 15px; border-radius: 4px; margin: 10px 0; }
-        .hidden { display: none; }
+        @media print { body { background: white; } .no-print { display: none !important; } }
     </style>
 </head>
 <body>
-    <div id="app"></div>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const LEVOROPayroll = () => {
+          const [currentUser, setCurrentUser] = useState(null);
+          const [userRole, setUserRole] = useState(null);
+          const [selectedCompany, setSelectedCompany] = useState(null);
+          const [loginUsername, setLoginUsername] = useState('');
+          const [loginPassword, setLoginPassword] = useState('');
+          const [loginError, setLoginError] = useState('');
+          const [companies, setCompanies] = useState([]);
+          const [employees, setEmployees] = useState([]);
+          const [timesheets, setTimesheets] = useState([]);
+          const [paystubs, setPaystubs] = useState([]);
+          const [activityLog, setActivityLog] = useState([]);
+          const [logFilterStart, setLogFilterStart] = useState('');
+          const [logFilterEnd, setLogFilterEnd] = useState('');
+          const [showAddCompany, setShowAddCompany] = useState(false);
+          const [showAddEmployee, setShowAddEmployee] = useState(false);
+          const [editingEmp, setEditingEmp] = useState(null);
+          const [showChangePassword, setShowChangePassword] = useState(false);
+          const [oldPassword, setOldPassword] = useState('');
+          const [newPassword, setNewPassword] = useState('');
+          const [confirmPassword, setConfirmPassword] = useState('');
+          const [newCompanyName, setNewCompanyName] = useState('');
+          const [newPayrollType, setNewPayrollType] = useState('weekly');
+          const [newPayrollStartDate, setNewPayrollStartDate] = useState('2026-01-01');
+          const [newManagerName, setNewManagerName] = useState('');
+          const [newManagerUsername, setNewManagerUsername] = useState('');
+          const [newManagerPassword, setNewManagerPassword] = useState('');
+          const [newEmployeeName, setNewEmployeeName] = useState('');
+          const [newEmployeeUsername, setNewEmployeeUsername] = useState('');
+          const [newEmployeePassword, setNewEmployeePassword] = useState('');
+          const [newEmployeeEmail, setNewEmployeeEmail] = useState('');
+          const [newEmployeePhone, setNewEmployeePhone] = useState('');
+          const [newEmployeeAddress, setNewEmployeeAddress] = useState('');
+          const [newEmployeeRate, setNewEmployeeRate] = useState('15.00');
+          const [editingProfile, setEditingProfile] = useState(false);
+          const [profileData, setProfileData] = useState({});
 
-    <script>
-        const app = document.getElementById('app');
-        let state = {
-            user: null,
-            companies: [],
-            employees: [],
-            selectedCo: null
+          useEffect(() => {
+            const compData = localStorage.getItem('levoro_companies');
+            const empData = localStorage.getItem('levoro_employees');
+            const tsData = localStorage.getItem('levoro_timesheets');
+            const psData = localStorage.getItem('levoro_paystubs');
+            const logData = localStorage.getItem('levoro_activity_log');
+            if (compData) setCompanies(JSON.parse(compData));
+            if (empData) setEmployees(JSON.parse(empData));
+            if (tsData) setTimesheets(JSON.parse(tsData));
+            if (psData) setPaystubs(JSON.parse(psData));
+            if (logData) setActivityLog(JSON.parse(logData));
+          }, []);
+
+          useEffect(() => {
+            localStorage.setItem('levoro_companies', JSON.stringify(companies));
+            localStorage.setItem('levoro_employees', JSON.stringify(employees));
+            localStorage.setItem('levoro_timesheets', JSON.stringify(timesheets));
+            localStorage.setItem('levoro_paystubs', JSON.stringify(paystubs));
+            localStorage.setItem('levoro_activity_log', JSON.stringify(activityLog));
+          }, [companies, employees, timesheets, paystubs, activityLog]);
+
+          const addLog = (action, description) => {
+            setActivityLog([...activityLog, { id: Date.now(), action, description, userId: currentUser?.id, userName: currentUser?.name, timestamp: new Date().toISOString() }]);
+          };
+
+          const handleLogin = (e) => {
+            e.preventDefault();
+            setLoginError('');
+            if (loginUsername === 'admin' && loginPassword === 'admin123') {
+              setCurrentUser({ id: 'admin', username: 'admin', name: 'Administrator', role: 'admin' });
+              setUserRole('admin');
+              addLog('LOGIN', 'Admin logged in');
+              setLoginUsername('');
+              setLoginPassword('');
+            } else {
+              const user = employees.find(emp => emp.username === loginUsername && emp.password === loginPassword);
+              if (user) {
+                setCurrentUser(user);
+                setSelectedCompany(user.companyId);
+                setProfileData(user);
+                setUserRole(user.role);
+                addLog('LOGIN', `${user.name} logged in`);
+                setLoginUsername('');
+                setLoginPassword('');
+              } else {
+                setLoginError('Invalid username or password');
+              }
+            }
+          };
+
+          const handleChangePassword = (e) => {
+            e.preventDefault();
+            if (!oldPassword || !newPassword || !confirmPassword) { alert('Please fill all fields'); return; }
+            if (currentUser.password !== oldPassword) { alert('Old password is incorrect'); return; }
+            if (newPassword !== confirmPassword) { alert('Passwords do not match'); return; }
+            setEmployees(employees.map(emp => emp.id === currentUser.id ? { ...emp, password: newPassword } : emp));
+            setCurrentUser({ ...currentUser, password: newPassword });
+            addLog('CHANGE_PASSWORD', `${currentUser.name} changed password`);
+            setOldPassword('');
+            setNewPassword('');
+            setConfirmPassword('');
+            setShowChangePassword(false);
+            alert('Password changed!');
+          };
+
+          const handleAddCompany = (e) => {
+            e.preventDefault();
+            if (!newCompanyName.trim()) { alert('Enter company name'); return; }
+            const newComp = { id: Date.now(), name: newCompanyName, payrollType: newPayrollType, payrollStartDate: newPayrollStartDate, createdAt: new Date().toISOString() };
+            setCompanies([...companies, newComp]);
+            addLog('CREATE_COMPANY', `Company "${newCompanyName}" created`);
+            if (newManagerName && newManagerUsername && newManagerPassword) {
+              const manager = { id: Date.now() + 1, name: newManagerName, username: newManagerUsername, password: newManagerPassword, email: `${newManagerUsername}@company.com`, hourlyRate: 0, companyId: newComp.id, role: 'manager', address: '', phone: '', createdAt: new Date().toISOString() };
+              setEmployees([...employees, manager]);
+              addLog('CREATE_MANAGER', `Manager "${newManagerName}" created`);
+            }
+            setNewCompanyName('');
+            setNewManagerName('');
+            setNewManagerUsername('');
+            setNewManagerPassword('');
+            setShowAddCompany(false);
+          };
+
+          const handleAddEmployee = (e) => {
+            e.preventDefault();
+            if (!newEmployeeName.trim() || !newEmployeeUsername.trim() || !newEmployeePassword.trim()) { alert('Name, Username, and Password are required!'); return; }
+            const newEmp = { id: Date.now(), name: newEmployeeName, username: newEmployeeUsername, password: newEmployeePassword, email: newEmployeeEmail, phone: newEmployeePhone, address: newEmployeeAddress, hourlyRate: parseFloat(newEmployeeRate), companyId: selectedCompany, role: 'employee', createdAt: new Date().toISOString() };
+            setEmployees([...employees, newEmp]);
+            addLog('CREATE_EMPLOYEE', `Employee "${newEmployeeName}" created`);
+            setNewEmployeeName('');
+            setNewEmployeeUsername('');
+            setNewEmployeePassword('');
+            setNewEmployeeEmail('');
+            setNewEmployeePhone('');
+            setNewEmployeeAddress('');
+            setNewEmployeeRate('15.00');
+            setShowAddEmployee(false);
+          };
+
+          const updateEmployee = (e) => {
+            e.preventDefault();
+            setEmployees(employees.map(emp => emp.id === editingEmp.id ? { ...emp, ...editingEmp } : emp));
+            addLog('UPDATE_EMPLOYEE', `${editingEmp.name} updated`);
+            setEditingEmp(null);
+          };
+
+          const updateEmployeeProfile = (e) => {
+            e.preventDefault();
+            setEmployees(employees.map(emp => emp.id === currentUser.id ? { ...emp, ...profileData } : emp));
+            setCurrentUser({ ...currentUser, ...profileData });
+            addLog('UPDATE_PROFILE', `${profileData.name} updated profile`);
+            setEditingProfile(false);
+          };
+
+          const addTimeEntry = (e, date, startTime, endTime) => {
+            e.preventDefault();
+            if (!startTime || !endTime) { alert('Enter start and end time'); return; }
+            const [sh, sm] = startTime.split(':').map(Number);
+            const [eh, em] = endTime.split(':').map(Number);
+            const hours = Math.max(0, (eh * 60 + em - sh * 60 - sm) / 60).toFixed(2);
+            const newEntry = { id: Date.now(), employeeId: currentUser.id, date, startTime, endTime, hours, status: 'pending', submittedAt: new Date().toISOString() };
+            setTimesheets([...timesheets, newEntry]);
+            addLog('ADD_TIMESHEET', `Logged ${hours} hours`);
+          };
+
+          const approvePaystub = (employeeId, periodStart) => {
+            const employee = employees.find(e => e.id === employeeId);
+            const periodEnd = new Date(new Date(periodStart).getTime() + 6 * 24 * 60 * 60 * 1000);
+            const periodTimesheets = timesheets.filter(ts => { const tsDate = new Date(ts.date); return ts.employeeId === employeeId && tsDate >= new Date(periodStart) && tsDate <= periodEnd; });
+            const totalHours = periodTimesheets.reduce((sum, ts) => sum + parseFloat(ts.hours), 0);
+            const grossPay = (totalHours * employee.hourlyRate).toFixed(2);
+            const paystubId = `${employeeId}-${periodStart}`;
+            setPaystubs([...paystubs.filter(p => p.id !== paystubId), { id: paystubId, employeeId, periodStart, status: 'approved', totalHours, hourlyRate: employee.hourlyRate, grossPay, approvedBy: currentUser.name, approvedAt: new Date().toISOString() }]);
+            addLog('APPROVE_PAYSTUB', `${employee.name} paystub approved`);
+          };
+
+          const exportPayroll = () => {
+            const companyName = companies.find(c => c.id === selectedCompany)?.name || 'LEVORO';
+            let csv = 'Company,Employee,Period,Total Hours,Rate,Gross Pay,Status,Approved By,Date\n';
+            const companyEmployees = employees.filter(e => e.companyId === selectedCompany && e.role === 'employee');
+            companyEmployees.forEach(emp => {
+              const approvedPaystubs = paystubs.filter(p => p.employeeId === emp.id && p.status === 'approved');
+              approvedPaystubs.forEach(ps => {
+                csv += `${companyName},${emp.name},${ps.periodStart},${ps.totalHours.toFixed(2)},${ps.hourlyRate.toFixed(2)},$${ps.grossPay},Approved,${ps.approvedBy},${new Date(ps.approvedAt).toLocaleDateString()}\n`;
+              });
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${companyName}_Payroll.csv`;
+            a.click();
+          };
+
+          const getFilteredLogs = () => {
+            let filtered = activityLog;
+            if (logFilterStart) {
+              const startDate = new Date(logFilterStart);
+              filtered = filtered.filter(log => new Date(log.timestamp) >= startDate);
+            }
+            if (logFilterEnd) {
+              const endDate = new Date(logFilterEnd);
+              endDate.setHours(23, 59, 59);
+              filtered = filtered.filter(log => new Date(log.timestamp) <= endDate);
+            }
+            return filtered.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+          };
+
+          const handleLogout = () => {
+            addLog('LOGOUT', `${currentUser.name} logged out`);
+            setCurrentUser(null);
+            setUserRole(null);
+            setSelectedCompany(null);
+          };
+
+          // LOGIN
+          if (!currentUser) {
+            return (
+              <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+                <div style={{ width: '100%', maxWidth: '420px' }}>
+                  <div style={{ background: 'white', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)', overflow: 'hidden' }}>
+                    <div style={{ background: 'linear-gradient(135deg, #4c63d2 0%, #3b5bdb 100%)', padding: '50px 30px', textAlign: 'center' }}>
+                      <h1 style={{ color: 'white', margin: '0 0 8px 0', fontSize: '36px', fontWeight: 700 }}>LEVORO</h1>
+                      <p style={{ color: 'rgba(255,255,255,0.95)', margin: 0, fontSize: '14px' }}>Payroll Time Tracking & Approval</p>
+                    </div>
+                    <div style={{ padding: '40px 30px' }}>
+                      <form onSubmit={handleLogin}>
+                        <div style={{ marginBottom: '20px' }}>
+                          <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '8px', color: '#333' }}>Username</label>
+                          <input type="text" value={loginUsername} onChange={(e) => { setLoginUsername(e.target.value); setLoginError(''); }} placeholder="Enter your username" style={{ width: '100%', padding: '12px', fontSize: '14px', border: '1px solid #ddd', borderRadius: '8px' }} />
+                        </div>
+                        <div style={{ marginBottom: '20px' }}>
+                          <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '8px', color: '#333' }}>Password</label>
+                          <input type="password" value={loginPassword} onChange={(e) => { setLoginPassword(e.target.value); setLoginError(''); }} placeholder="Enter your password" style={{ width: '100%', padding: '12px', fontSize: '14px', border: '1px solid #ddd', borderRadius: '8px' }} />
+                        </div>
+                        {loginError && <div style={{ background: '#fee', border: '1px solid #fcc', borderRadius: '8px', padding: '12px', marginBottom: '20px', color: '#c33', fontSize: '13px' }}>⚠️ {loginError}</div>}
+                        <button type="submit" style={{ width: '100%', padding: '12px', fontSize: '14px', fontWeight: 600, background: 'linear-gradient(135deg, #4c63d2 0%, #3b5bdb 100%)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Login</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          // ADMIN
+          if (userRole === 'admin') {
+            const selectedComp = companies.find(c => c.id === selectedCompany);
+            const companyEmps = selectedCompany ? employees.filter(e => e.companyId === selectedCompany) : [];
+            return (
+              <div style={{ minHeight: '100vh', background: '#f8f9fa', padding: '20px' }}>
+                <div style={{ maxWidth: '1600px', margin: '0 auto' }} className="no-print">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+                    <h1 style={{ margin: 0, fontSize: '28px', fontWeight: 700, color: '#333' }}>LEVORO - Admin</h1>
+                    <button onClick={handleLogout} style={{ padding: '10px 20px', fontSize: '14px', background: '#f0f0f0', border: '1px solid #ddd', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>Logout</button>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '24px', marginBottom: '24px' }}>
+                    <div style={{ background: 'white', border: '1px solid #e0e0e0', borderRadius: '12px', padding: '24px' }}>
+                      <h2 style={{ margin: '0 0 16px 0', fontSize: '16px', fontWeight: 600 }}>Companies (0)</h2>
+                      <div style={{ maxHeight: '500px', overflowY: 'auto', marginBottom: '16px', minHeight: '50px' }}>
+                        {companies.length === 0 ? <p style={{ color: '#999', fontSize: '13px', margin: 0 }}>No companies yet</p> : companies.map(comp => (
+                          <div key={comp.id} onClick={() => setSelectedCompany(comp.id)} style={{ background: selectedCompany === comp.id ? '#f0f4ff' : '#fafafa', border: `2px solid ${selectedCompany === comp.id ? '#3b5bdb' : '#e0e0e0'}`, borderRadius: '8px', padding: '12px', marginBottom: '8px', cursor: 'pointer' }}>
+                            <p style={{ margin: '0 0 4px 0', fontSize: '13px', fontWeight: 600 }}>{comp.name}</p>
+                            <p style={{ margin: '0', fontSize: '11px', color: '#666' }}>{comp.payrollType} • {employees.filter(e => e.companyId === comp.id).length} users</p>
+                            <button onClick={(e) => { e.stopPropagation(); setCompanies(companies.filter(c => c.id !== comp.id)); }} style={{ marginTop: '8px', width: '100%', padding: '6px', fontSize: '11px', background: '#ffe0e0', color: '#c33', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Delete</button>
+                          </div>
+                        ))}
+                      </div>
+                      <button onClick={() => setShowAddCompany(!showAddCompany)} style={{ width: '100%', padding: '10px', fontSize: '13px', background: '#3b5bdb', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>+ Add Company</button>
+                      {showAddCompany && (
+                        <form onSubmit={handleAddCompany} style={{ background: '#f8f9fa', borderRadius: '8px', padding: '16px', marginTop: '16px' }}>
+                          <input type="text" value={newCompanyName} onChange={(e) => setNewCompanyName(e.target.value)} placeholder="Company Name" style={{ width: '100%', padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '8px' }} />
+                          <select value={newPayrollType} onChange={(e) => setNewPayrollType(e.target.value)} style={{ width: '100%', padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '8px' }}>
+                            <option value="weekly">Weekly</option>
+                            <option value="biweekly">Bi-Weekly</option>
+                          </select>
+                          <input type="date" value={newPayrollStartDate} onChange={(e) => setNewPayrollStartDate(e.target.value)} style={{ width: '100%', padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '8px' }} />
+                          <input type="text" value={newManagerName} onChange={(e) => setNewManagerName(e.target.value)} placeholder="Manager Name" style={{ width: '100%', padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '8px' }} />
+                          <input type="text" value={newManagerUsername} onChange={(e) => setNewManagerUsername(e.target.value)} placeholder="Manager Username" style={{ width: '100%', padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '8px' }} />
+                          <input type="password" value={newManagerPassword} onChange={(e) => setNewManagerPassword(e.target.value)} placeholder="Manager Password" style={{ width: '100%', padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '8px' }} />
+                          <button type="submit" style={{ width: '100%', padding: '8px', fontSize: '12px', background: '#3b5bdb', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Create</button>
+                        </form>
+                      )}
+                    </div>
+
+                    <div style={{ background: 'white', border: '1px solid #e0e0e0', borderRadius: '12px', padding: '24px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                        <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 600 }}>Activity Log</h2>
+                        <button onClick={() => window.print()} style={{ padding: '6px 12px', fontSize: '12px', background: '#3b5bdb', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>🖨️ Print</button>
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
+                        <input type="date" value={logFilterStart} onChange={(e) => setLogFilterStart(e.target.value)} placeholder="From Date" style={{ padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                        <input type="date" value={logFilterEnd} onChange={(e) => setLogFilterEnd(e.target.value)} placeholder="To Date" style={{ padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                      </div>
+                      <div style={{ background: '#fafafa', borderRadius: '8px', padding: '12px', maxHeight: '500px', overflowY: 'auto', fontSize: '12px' }}>
+                        {getFilteredLogs().length === 0 ? <p style={{ margin: 0, color: '#999' }}>No logs in date range</p> : getFilteredLogs().map(log => (
+                          <div key={log.id} style={{ borderBottom: '1px solid #e0e0e0', paddingBottom: '8px', marginBottom: '8px', paddingLeft: '8px', borderLeft: '3px solid #3b5bdb' }}>
+                            <p style={{ margin: '0 0 2px 0', fontWeight: 600, color: '#333' }}>{log.action}</p>
+                            <p style={{ margin: '0 0 2px 0', color: '#666', fontSize: '11px' }}>{log.description}</p>
+                            <p style={{ margin: 0, color: '#999', fontSize: '10px' }}>{new Date(log.timestamp).toLocaleString()}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {selectedCompany && selectedComp && (
+                    <div style={{ background: 'white', border: '1px solid #e0e0e0', borderRadius: '12px', padding: '24px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                        <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 600 }}>Manage {selectedComp.name}</h2>
+                        <button onClick={() => setShowAddEmployee(!showAddEmployee)} style={{ padding: '8px 16px', fontSize: '13px', background: '#3b5bdb', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>+ Add Employee</button>
+                      </div>
+                      {showAddEmployee && (
+                        <form onSubmit={handleAddEmployee} style={{ background: '#f8f9fa', borderRadius: '8px', padding: '16px', marginBottom: '16px' }}>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px' }}>
+                            <input type="text" placeholder="Name *" value={newEmployeeName} onChange={(e) => setNewEmployeeName(e.target.value)} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <input type="text" placeholder="Username *" value={newEmployeeUsername} onChange={(e) => setNewEmployeeUsername(e.target.value)} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <input type="password" placeholder="Password *" value={newEmployeePassword} onChange={(e) => setNewEmployeePassword(e.target.value)} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <input type="email" placeholder="Email" value={newEmployeeEmail} onChange={(e) => setNewEmployeeEmail(e.target.value)} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <input type="text" placeholder="Phone" value={newEmployeePhone} onChange={(e) => setNewEmployeePhone(e.target.value)} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <input type="text" placeholder="Address" value={newEmployeeAddress} onChange={(e) => setNewEmployeeAddress(e.target.value)} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <input type="number" placeholder="Hourly Rate" step="0.01" value={newEmployeeRate} onChange={(e) => setNewEmployeeRate(e.target.value)} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <button type="submit" style={{ padding: '8px', fontSize: '12px', background: '#3b5bdb', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Add</button>
+                          </div>
+                        </form>
+                      )}
+                      <div style={{ display: 'grid', gap: '8px' }}>
+                        {companyEmps.map(emp => (
+                          <div key={emp.id} style={{ background: '#f8f9fa', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '12px' }}>
+                            {editingEmp?.id === emp.id ? (
+                              <form onSubmit={updateEmployee} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: '8px' }}>
+                                <input type="text" value={editingEmp.name} onChange={(e) => setEditingEmp({...editingEmp, name: e.target.value})} style={{ padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                                <input type="email" value={editingEmp.email} onChange={(e) => setEditingEmp({...editingEmp, email: e.target.value})} style={{ padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                                <input type="text" value={editingEmp.phone} onChange={(e) => setEditingEmp({...editingEmp, phone: e.target.value})} style={{ padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                                <input type="text" value={editingEmp.address} onChange={(e) => setEditingEmp({...editingEmp, address: e.target.value})} style={{ padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                                <input type="number" value={editingEmp.hourlyRate} onChange={(e) => setEditingEmp({...editingEmp, hourlyRate: parseFloat(e.target.value)})} style={{ padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                                <button type="submit" style={{ padding: '6px', fontSize: '12px', background: '#27ae60', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Save</button>
+                                <button type="button" onClick={() => setEditingEmp(null)} style={{ padding: '6px', fontSize: '12px', background: '#ddd', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Cancel</button>
+                              </form>
+                            ) : (
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '12px', alignItems: 'center' }}>
+                                <div>
+                                  <p style={{ margin: '0 0 2px 0', fontSize: '13px', fontWeight: 600 }}>{emp.name} <span style={{ fontSize: '11px', background: '#e8e8e8', padding: '2px 6px', borderRadius: '4px', marginLeft: '6px' }}>{emp.role}</span></p>
+                                  <p style={{ margin: 0, fontSize: '11px', color: '#666' }}>@{emp.username} • {emp.email} • ${emp.hourlyRate}</p>
+                                </div>
+                                <div style={{ display: 'flex', gap: '4px' }}>
+                                  <button onClick={() => setEditingEmp(emp)} style={{ padding: '4px 8px', fontSize: '11px', background: '#3b5bdb', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Edit</button>
+                                  <button onClick={() => setEmployees(employees.filter(e => e.id !== emp.id))} style={{ padding: '4px 8px', fontSize: '11px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Delete</button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          }
+
+          // EMPLOYEE
+          if (userRole === 'employee' && currentUser) {
+            const company = companies.find(c => c.id === selectedCompany);
+            const periodStart = new Date(company.payrollStartDate);
+            const periodEnd = new Date(periodStart);
+            periodEnd.setDate(periodEnd.getDate() + 6);
+            const weekDays = [];
+            for (let i = 0; i < 7; i++) {
+              const d = new Date(periodStart);
+              d.setDate(d.getDate() + i);
+              weekDays.push(d);
+            }
+            const companyName = company?.name || 'LEVORO';
+            return (
+              <div style={{ minHeight: '100vh', background: '#f8f9fa', padding: '20px' }}>
+                <div style={{ maxWidth: '900px', margin: '0 auto' }} className="no-print">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+                    <h1 style={{ margin: 0, fontSize: '28px', fontWeight: 700, color: '#333' }}>{companyName}</h1>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button onClick={() => setShowChangePassword(!showChangePassword)} style={{ padding: '6px 12px', fontSize: '12px', background: '#f39c12', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>🔑 Password</button>
+                      <button onClick={handleLogout} style={{ padding: '10px 20px', fontSize: '14px', background: '#f0f0f0', border: '1px solid #ddd', borderRadius: '8px', cursor: 'pointer' }}>Logout</button>
+                    </div>
+                  </div>
+                  {showChangePassword && (
+                    <form onSubmit={handleChangePassword} style={{ background: 'white', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '16px', marginBottom: '16px' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
+                        <input type="password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} placeholder="Old Password" style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                        <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="New Password" style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                        <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm" style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                      </div>
+                      <button type="submit" style={{ width: '100%', marginTop: '8px', padding: '8px', fontSize: '12px', background: '#f39c12', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Change Password</button>
+                    </form>
+                  )}
+                  <div style={{ background: 'white', border: '1px solid #e0e0e0', borderRadius: '12px', padding: '24px', marginBottom: '24px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                      <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 600 }}>My Profile</h2>
+                      <button onClick={() => setEditingProfile(!editingProfile)} style={{ padding: '6px 12px', fontSize: '12px', background: '#3b5bdb', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>{editingProfile ? 'Cancel' : 'Edit'}</button>
+                    </div>
+                    {editingProfile ? (
+                      <form onSubmit={updateEmployeeProfile}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                          <input type="text" value={profileData.name || ''} onChange={(e) => setProfileData({...profileData, name: e.target.value})} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                          <input type="email" value={profileData.email || ''} onChange={(e) => setProfileData({...profileData, email: e.target.value})} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                          <input type="text" value={profileData.phone || ''} onChange={(e) => setProfileData({...profileData, phone: e.target.value})} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                          <input type="text" value={profileData.address || ''} onChange={(e) => setProfileData({...profileData, address: e.target.value})} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                        </div>
+                        <button type="submit" style={{ width: '100%', marginTop: '8px', padding: '8px', fontSize: '12px', background: '#3b5bdb', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Save</button>
+                      </form>
+                    ) : (
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '12px' }}>
+                        <p style={{ margin: 0 }}><strong>Name:</strong> {currentUser.name}</p>
+                        <p style={{ margin: 0 }}><strong>Email:</strong> {currentUser.email}</p>
+                        <p style={{ margin: 0 }}><strong>Phone:</strong> {currentUser.phone || '-'}</p>
+                        <p style={{ margin: 0 }}><strong>Address:</strong> {currentUser.address || '-'}</p>
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ background: 'white', border: '1px solid #e0e0e0', borderRadius: '12px', padding: '24px' }}>
+                    <h2 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 600 }}>Log Your Hours</h2>
+                    <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#666' }}>Week of {periodStart.toLocaleDateString()} - {periodEnd.toLocaleDateString()}</p>
+                    <div style={{ display: 'grid', gap: '8px' }}>
+                      {weekDays.map((day, idx) => {
+                        const dateStr = day.toISOString().split('T')[0];
+                        const entry = timesheets.find(ts => ts.date === dateStr && ts.employeeId === currentUser.id);
+                        const [start, setStart] = useState('');
+                        const [end, setEnd] = useState('');
+                        return (
+                          <div key={idx} style={{ background: '#f8f9fa', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '12px' }}>
+                            <p style={{ margin: '0 0 8px 0', fontSize: '12px', fontWeight: 600 }}>{day.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</p>
+                            {entry ? (
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '8px', alignItems: 'center' }}>
+                                <p style={{ margin: 0, fontSize: '12px', color: '#666' }}>{entry.startTime} - {entry.endTime} ({entry.hours}h)</p>
+                                <button onClick={() => setTimesheets(timesheets.filter(ts => ts.id !== entry.id))} style={{ padding: '4px 8px', fontSize: '11px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Delete</button>
+                              </div>
+                            ) : (
+                              <form onSubmit={(e) => addTimeEntry(e, dateStr, start, end)} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
+                                <input type="time" value={start} onChange={(e) => setStart(e.target.value)} style={{ padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                                <input type="time" value={end} onChange={(e) => setEnd(e.target.value)} style={{ padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                                <button type="submit" style={{ padding: '6px', fontSize: '11px', background: '#3b5bdb', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>+ Add</button>
+                              </form>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          // MANAGER
+          if (userRole === 'manager' && currentUser && selectedCompany) {
+            const company = companies.find(c => c.id === selectedCompany);
+            const companyName = company?.name || 'LEVORO';
+            const companyEmployees = employees.filter(e => e.companyId === selectedCompany && e.role === 'employee');
+            return (
+              <div style={{ minHeight: '100vh', background: '#f8f9fa', padding: '20px' }}>
+                <div style={{ maxWidth: '1000px', margin: '0 auto' }} className="no-print">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+                    <h1 style={{ margin: 0, fontSize: '28px', fontWeight: 700, color: '#333' }}>{companyName} - Manager</h1>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button onClick={() => setShowChangePassword(!showChangePassword)} style={{ padding: '6px 12px', fontSize: '12px', background: '#f39c12', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>🔑 Password</button>
+                      <button onClick={handleLogout} style={{ padding: '10px 20px', fontSize: '14px', background: '#f0f0f0', border: '1px solid #ddd', borderRadius: '8px', cursor: 'pointer' }}>Logout</button>
+                    </div>
+                  </div>
+                  {showChangePassword && (
+                    <form onSubmit={handleChangePassword} style={{ background: 'white', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '16px', marginBottom: '16px' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
+                        <input type="password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} placeholder="Old Password" style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                        <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="New Password" style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                        <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm" style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                      </div>
+                      <button type="submit" style={{ width: '100%', marginTop: '8px', padding: '8px', fontSize: '12px', background: '#f39c12', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Change Password</button>
+                    </form>
+                  )}
+                  <div style={{ background: 'white', border: '1px solid #e0e0e0', borderRadius: '12px', padding: '24px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                      <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 600 }}>Team Approvals</h2>
+                      <button onClick={exportPayroll} style={{ padding: '8px 16px', fontSize: '12px', background: '#3b5bdb', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>📥 Export Payroll</button>
+                    </div>
+                    {companyEmployees.length === 0 ? <p style={{ color: '#999', fontSize: '13px', margin: 0 }}>No employees</p> : (
+                      <div style={{ display: 'grid', gap: '8px' }}>
+                        {companyEmployees.map(emp => {
+                          const periodStart = new Date(company.payrollStartDate);
+                          const periodTimesheets = timesheets.filter(ts => ts.employeeId === emp.id);
+                          const totalHours = periodTimesheets.reduce((sum, ts) => sum + parseFloat(ts.hours), 0);
+                          const grossPay = (totalHours * emp.hourlyRate).toFixed(2);
+                          const paystub = paystubs.find(p => p.employeeId === emp.id && p.periodStart === periodStart.toISOString().split('T')[0]);
+                          return (
+                            <div key={emp.id} style={{ background: '#f8f9fa', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '12px' }}>
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '12px', alignItems: 'center' }}>
+                                <div>
+                                  <p style={{ margin: '0 0 4px 0', fontSize: '13px', fontWeight: 600 }}>{emp.name}</p>
+                                  <p style={{ margin: 0, fontSize: '12px', color: '#666' }}>{totalHours.toFixed(2)}h × ${emp.hourlyRate}/hr = <strong>${grossPay}</strong></p>
+                                </div>
+                                {paystub && paystub.status === 'approved' ? (
+                                  <div style={{ fontSize: '12px', color: '#27ae60', fontWeight: 600 }}>✓ Approved</div>
+                                ) : (
+                                  <button onClick={() => approvePaystub(emp.id, periodStart.toISOString().split('T')[0])} style={{ padding: '6px 12px', fontSize: '12px', background: '#27ae60', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Approve</button>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          }
         };
-
-        function load() {
-            const saved = localStorage.getItem('levoro_data');
-            if (saved) {
-                const data = JSON.parse(saved);
-                state.companies = data.companies || [];
-                state.employees = data.employees || [];
-            }
-        }
-
-        function save() {
-            localStorage.setItem('levoro_data', JSON.stringify({
-                companies: state.companies,
-                employees: state.employees
-            }));
-        }
-
-        function handleLogin(e) {
-            e.preventDefault();
-            const username = document.getElementById('loginUser').value;
-            const password = document.getElementById('loginPass').value;
-
-            if (username === 'admin' && password === 'admin123') {
-                state.user = { id: 'admin', name: 'Admin', role: 'admin' };
-                render();
-                return;
-            }
-
-            const emp = state.employees.find(e => e.username === username && e.password === password);
-            if (emp) {
-                state.user = emp;
-                state.selectedCo = emp.companyId;
-                render();
-                return;
-            }
-
-            alert('Invalid username or password');
-        }
-
-        function handleAddCompany(e) {
-            e.preventDefault();
-            const name = document.getElementById('coName').value;
-            if (!name) return;
-
-            state.companies.push({
-                id: Date.now(),
-                name: name
-            });
-            save();
-            document.getElementById('coName').value = '';
-            document.getElementById('addCoForm').classList.add('hidden');
-            render();
-        }
-
-        function handleAddEmployee(e) {
-            e.preventDefault();
-            const name = document.getElementById('empName').value;
-            const username = document.getElementById('empUser').value;
-            const password = document.getElementById('empPass').value;
-            const email = document.getElementById('empEmail').value;
-            const rate = document.getElementById('empRate').value;
-
-            if (!name || !username || !password) {
-                alert('Name, Username, Password are required!');
-                return;
-            }
-
-            if (!state.selectedCo) {
-                alert('Select a company first');
-                return;
-            }
-
-            state.employees.push({
-                id: Date.now(),
-                name: name,
-                username: username,
-                password: password,
-                email: email,
-                hourlyRate: parseFloat(rate),
-                companyId: state.selectedCo,
-                role: 'employee'
-            });
-
-            console.log('✓ Employee created:', username);
-            save();
-            alert('Employee created! Username: ' + username);
-            
-            document.getElementById('empName').value = '';
-            document.getElementById('empUser').value = '';
-            document.getElementById('empPass').value = '';
-            document.getElementById('empEmail').value = '';
-            document.getElementById('empRate').value = '15';
-            document.getElementById('addEmpForm').classList.add('hidden');
-            render();
-        }
-
-        function logout() {
-            state.user = null;
-            state.selectedCo = null;
-            render();
-        }
-
-        function deleteCo(id) {
-            state.companies = state.companies.filter(c => c.id !== id);
-            state.employees = state.employees.filter(e => e.companyId !== id);
-            if (state.selectedCo === id) state.selectedCo = null;
-            save();
-            render();
-        }
-
-        function deleteEmp(id) {
-            state.employees = state.employees.filter(e => e.id !== id);
-            save();
-            render();
-        }
-
-        function selectCo(id) {
-            state.selectedCo = id;
-            render();
-        }
-
-        function render() {
-            if (!state.user) {
-                app.innerHTML = `
-                    <div class="container" style="max-width: 400px; margin-top: 100px;">
-                        <div class="card">
-                            <h1 style="text-align: center; margin-bottom: 30px;">LEVORO</h1>
-                            <form onsubmit="handleLogin(event)">
-                                <label>Username</label>
-                                <input type="text" id="loginUser" placeholder="Enter username" required>
-                                
-                                <label style="margin-top: 15px;">Password</label>
-                                <input type="password" id="loginPass" placeholder="Enter password" required>
-                                
-                                <button type="submit" class="btn" style="width: 100%; margin-top: 15px;">Login</button>
-                            </form>
-                            <p style="text-align: center; margin-top: 20px; font-size: 12px; color: #666;">
-                                Demo: admin / admin123
-                            </p>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-
-            if (state.user.role === 'admin') {
-                const coEmps = state.selectedCo 
-                    ? state.employees.filter(e => e.companyId === state.selectedCo)
-                    : [];
-                const selectedCo = state.companies.find(c => c.id === state.selectedCo);
-
-                app.innerHTML = `
-                    <div class="container">
-                        <div class="header">
-                            <h1>LEVORO Admin</h1>
-                            <button class="btn" onclick="logout()">Logout</button>
-                        </div>
-
-                        <div class="grid">
-                            <div class="card">
-                                <h3>Companies (${state.companies.length})</h3>
-                                ${state.companies.map(co => `
-                                    <div class="item clickable ${state.selectedCo === co.id ? 'selected' : ''}" onclick="selectCo(${co.id})">
-                                        <span><strong>${co.name}</strong><br><small>${state.employees.filter(e => e.companyId === co.id).length} employees</small></span>
-                                        <button class="btn btn-danger" onclick="deleteCo(${co.id}); event.stopPropagation();">Delete</button>
-                                    </div>
-                                `).join('')}
-
-                                <button class="btn" style="width: 100%;" onclick="document.getElementById('addCoForm').classList.toggle('hidden');">+ Add Company</button>
-                                
-                                <form id="addCoForm" class="form hidden" onsubmit="handleAddCompany(event)">
-                                    <input type="text" id="coName" placeholder="Company name" required>
-                                    <button type="submit" class="btn" style="width: 100%;">Add</button>
-                                </form>
-                            </div>
-
-                            <div class="card">
-                                <h3>${selectedCo ? selectedCo.name + ' - Employees' : 'Select a company'}</h3>
-                                ${state.selectedCo ? `
-                                    <button class="btn" style="width: 100%; margin-bottom: 10px;" onclick="document.getElementById('addEmpForm').classList.toggle('hidden');">+ Add Employee</button>
-                                    
-                                    <form id="addEmpForm" class="form hidden" onsubmit="handleAddEmployee(event)">
-                                        <input type="text" id="empName" placeholder="Name *" required>
-                                        <input type="text" id="empUser" placeholder="Username *" required>
-                                        <input type="password" id="empPass" placeholder="Password *" required>
-                                        <input type="email" id="empEmail" placeholder="Email">
-                                        <input type="number" id="empRate" placeholder="Hourly Rate" step="0.01" value="15">
-                                        <button type="submit" class="btn" style="width: 100%;">Add Employee</button>
-                                    </form>
-
-                                    <div>
-                                        ${coEmps.map(emp => `
-                                            <div class="item">
-                                                <div>
-                                                    <strong>${emp.name}</strong><br>
-                                                    <small>@${emp.username} • $${emp.hourlyRate}/hr</small>
-                                                </div>
-                                                <button class="btn btn-danger" onclick="deleteEmp(${emp.id})">Delete</button>
-                                            </div>
-                                        `).join('')}
-                                        ${coEmps.length === 0 ? '<p style="color: #999;">No employees yet</p>' : ''}
-                                    </div>
-                                ` : '<p style="color: #999;">Select a company to manage employees</p>'}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-
-            if (state.user.role === 'employee') {
-                app.innerHTML = `
-                    <div class="container">
-                        <div class="header">
-                            <h1>Welcome, ${state.user.name}</h1>
-                            <button class="btn" onclick="logout()">Logout</button>
-                        </div>
-                        <div class="card">
-                            <p><strong>Username:</strong> ${state.user.username}</p>
-                            <p><strong>Email:</strong> ${state.user.email || 'N/A'}</p>
-                            <p><strong>Hourly Rate:</strong> $${state.user.hourlyRate}</p>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-        }
-
-        load();
-        render();
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<LEVOROPayroll />);
     </script>
 </body>
 </html>
