@@ -10,13 +10,13 @@
         button { width: 100%; padding: 12px; background: #3b5bdb; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; margin-top: 10px; }
         button:hover { background: #2c4ab0; }
         p { text-align: center; font-size: 12px; color: #666; margin-top: 15px; }
-        .admin { max-width: 1000px; margin: 0 auto; }
-        .admin h1 { color: white; margin: 20px 0; }
-        .admin-content { display: grid; grid-template-columns: 300px 1fr; gap: 20px; }
-        .panel { background: white; padding: 20px; border-radius: 8px; }
-        .item { background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
-        .item-selected { background: #e3f2fd; }
-        .emp-form { background: #f9f9f9; padding: 15px; border-radius: 4px; margin: 15px 0; }
+        .panel { background: white; padding: 20px; border-radius: 8px; margin: 20px auto; max-width: 1000px; }
+        .item { background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .item:hover { background: #e8e8e8; }
+        .item-selected { background: #e3f2fd !important; }
+        h2 { color: white; text-align: center; margin: 20px 0; }
+        .grid { display: grid; grid-template-columns: 300px 1fr; gap: 20px; max-width: 1000px; margin: 0 auto; }
+        .emp-info { background: white; padding: 20px; border-radius: 8px; margin: 20px auto; max-width: 1000px; text-align: center; }
     </style>
 </head>
 <body>
@@ -46,7 +46,7 @@
             const p = document.getElementById('p').value;
             
             if (u === 'admin' && p === 'admin123') {
-                user = { role: 'admin' };
+                user = { role: 'admin', name: 'Admin' };
                 show();
                 return;
             }
@@ -54,17 +54,20 @@
             const emp = db.employees.find(e => e.u === u && e.p === p);
             if (emp) {
                 user = emp;
+                user.role = 'employee';
                 selectedCo = emp.c;
                 show();
                 return;
             }
             
-            alert('Wrong!');
+            alert('Wrong username or password!');
         }
 
         function logout() {
             user = null;
             selectedCo = null;
+            document.getElementById('u').value = 'admin';
+            document.getElementById('p').value = 'admin123';
             show();
         }
 
@@ -99,10 +102,11 @@
                 p: p,
                 email: e,
                 rate: parseFloat(r),
-                c: selectedCo
+                c: selectedCo,
+                role: 'employee'
             });
             saveDB();
-            alert('Employee added: ' + u);
+            alert('Employee added!\nUsername: ' + u + '\nPassword: ' + p);
             show();
         }
 
@@ -123,6 +127,7 @@
         function show() {
             const app = document.getElementById('app');
             
+            // LOGIN PAGE
             if (!user) {
                 app.innerHTML = `
                     <div class="box">
@@ -130,55 +135,61 @@
                         <input type="text" id="u" placeholder="Username" value="admin">
                         <input type="password" id="p" placeholder="Password" value="admin123">
                         <button onclick="login()">Login</button>
-                        <p>Default: admin / admin123</p>
+                        <p>Demo: admin / admin123</p>
                     </div>
                 `;
                 return;
             }
 
+            // ADMIN PAGE
             if (user.role === 'admin') {
                 const co = db.companies.find(c => c.id === selectedCo);
                 const emps = selectedCo ? db.employees.filter(e => e.c === selectedCo) : [];
                 
                 app.innerHTML = `
-                    <h1 style="color: white; margin: 20px 0;">LEVORO Admin <button class="btn" onclick="logout()" style="width: auto; padding: 8px 16px;">Logout</button></h1>
-                    <div class="admin-content">
+                    <h2>LEVORO Admin <button style="width: auto; padding: 8px 16px; margin: 0;" onclick="logout()">Logout</button></h2>
+                    <div class="grid">
                         <div class="panel">
-                            <h3>Companies (${db.companies.length})</h3>
+                            <h3 style="margin-top: 0; color: #3b5bdb;">Companies (${db.companies.length})</h3>
                             ${db.companies.map(c => `
                                 <div class="item ${selectedCo === c.id ? 'item-selected' : ''}" onclick="selectCo(${c.id})">
                                     <span><strong>${c.name}</strong></span>
-                                    <button onclick="delCo(${c.id}); event.stopPropagation();" style="width: auto; padding: 4px 8px; font-size: 12px; background: #dc3545;">X</button>
+                                    <button onclick="delCo(${c.id}); event.stopPropagation();" style="width: auto; padding: 4px 8px; font-size: 12px; background: #dc3545;">Delete</button>
                                 </div>
                             `).join('')}
-                            <button onclick="addCo()">+ Add Company</button>
+                            <button onclick="addCo()" style="margin-top: 15px;">+ Add Company</button>
                         </div>
 
                         <div class="panel">
-                            <h3>${co ? co.name + ' Employees' : 'Select company'}</h3>
+                            <h3 style="margin-top: 0; color: #3b5bdb;">${co ? co.name : 'Select company'}</h3>
                             ${selectedCo ? `
-                                <button onclick="addEmp()">+ Add Employee</button>
+                                <button onclick="addEmp()" style="margin-bottom: 15px;">+ Add Employee</button>
+                                ${emps.length === 0 ? '<p style="color: #999;">No employees</p>' : ''}
                                 ${emps.map(e => `
                                     <div class="item">
-                                        <div><strong>${e.name}</strong><br><small>@${e.u} • $${e.rate}</small></div>
-                                        <button onclick="delEmp(${e.id})" style="width: auto; padding: 4px 8px; font-size: 12px; background: #dc3545;">X</button>
+                                        <div><strong>${e.name}</strong><br><small>@${e.u} • $${e.rate}/hr</small></div>
+                                        <button onclick="delEmp(${e.id})" style="width: auto; padding: 4px 8px; font-size: 12px; background: #dc3545;">Delete</button>
                                     </div>
                                 `).join('')}
-                            ` : '<p>Select a company</p>'}
+                            ` : '<p style="color: #999;">Select a company to add employees</p>'}
                         </div>
                     </div>
                 `;
                 return;
             }
 
+            // EMPLOYEE PAGE
             if (user.role === 'employee') {
                 app.innerHTML = `
-                    <div class="admin" style="background: white; padding: 30px; border-radius: 8px; margin-top: 50px;">
-                        <h1 style="color: #3b5bdb;">Welcome ${user.name} <button class="btn" onclick="logout()" style="width: auto; padding: 8px 16px;">Logout</button></h1>
+                    <div class="emp-info">
+                        <h1 style="color: #3b5bdb; margin: 0 0 20px 0;">Welcome ${user.name}</h1>
+                        <p><strong>Username:</strong> ${user.u}</p>
                         <p><strong>Email:</strong> ${user.email}</p>
-                        <p><strong>Rate:</strong> $${user.rate}/hr</p>
+                        <p><strong>Hourly Rate:</strong> $${user.rate}/hr</p>
+                        <button onclick="logout()" style="width: auto; padding: 10px 20px; margin-top: 20px;">Logout</button>
                     </div>
                 `;
+                return;
             }
         }
 
