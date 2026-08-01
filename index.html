@@ -3,29 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LEVORO | Payroll & Time Tracking</title>
+<title>LEVORO — Payroll & Time Tracking</title>
 
 <style>
 :root {
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
-    --primary-light: #eff6ff;
-    --dark: #111827;
-    --text: #1f2937;
-    --muted: #6b7280;
-    --border: #e5e7eb;
-    --bg: #f5f7fb;
-    --white: #fff;
-    --success: #16a34a;
-    --success-bg: #f0fdf4;
-    --danger: #dc2626;
-    --danger-bg: #fef2f2;
-    --warning: #d97706;
-    --warning-bg: #fffbeb;
-    --sidebar: #111827;
-    --sidebar-hover: #1f2937;
-    --radius: 12px;
-    --shadow: 0 4px 18px rgba(15,23,42,.06);
+    --primary: #3157d5;
+    --primary-dark: #2444b5;
+    --bg: #f4f6fa;
+    --card: #ffffff;
+    --text: #172033;
+    --muted: #697386;
+    --border: #e4e8f0;
+    --success: #198754;
+    --warning: #d98c00;
+    --danger: #dc3545;
+    --info: #0d6efd;
+    --shadow: 0 8px 30px rgba(25, 35, 60, .07);
 }
 
 * {
@@ -34,7 +27,7 @@
 
 body {
     margin: 0;
-    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    font-family: Inter, Arial, Helvetica, sans-serif;
     background: var(--bg);
     color: var(--text);
 }
@@ -56,115 +49,92 @@ button {
 
 /* LOGIN */
 
-.login-screen {
+.login-page {
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
     background:
-        radial-gradient(circle at top left, rgba(37,99,235,.22), transparent 35%),
-        linear-gradient(135deg,#0f172a,#172554);
+        radial-gradient(circle at top left, rgba(49,87,213,.22), transparent 35%),
+        linear-gradient(135deg, #101936, #3157d5);
+    padding: 24px;
 }
 
 .login-card {
     width: 100%;
-    max-width: 430px;
+    max-width: 420px;
     background: white;
+    border-radius: 18px;
     padding: 42px;
-    border-radius: 22px;
-    box-shadow: 0 30px 80px rgba(0,0,0,.3);
+    box-shadow: 0 25px 70px rgba(0,0,0,.22);
 }
 
 .logo {
     text-align: center;
-    margin-bottom: 30px;
-}
-
-.logo-mark {
-    width: 58px;
-    height: 58px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: auto auto 14px;
-    border-radius: 16px;
-    background: var(--primary);
-    color: white;
+    font-size: 32px;
     font-weight: 800;
-    font-size: 25px;
-}
-
-.logo h1 {
-    margin: 0;
     letter-spacing: 3px;
-    font-size: 29px;
+    color: var(--primary);
+    margin-bottom: 8px;
 }
 
-.logo p {
+.login-subtitle {
+    text-align: center;
     color: var(--muted);
-    margin: 7px 0 0;
-    font-size: 13px;
+    margin-bottom: 30px;
 }
 
 .form-group {
     margin-bottom: 16px;
 }
 
-label {
+.form-group label {
     display: block;
-    margin-bottom: 7px;
     font-size: 13px;
-    font-weight: 650;
+    font-weight: 700;
+    margin-bottom: 7px;
 }
 
-.input,
-select,
-textarea {
+.form-control {
     width: 100%;
-    padding: 11px 13px;
     border: 1px solid var(--border);
     border-radius: 9px;
+    padding: 12px 13px;
     outline: none;
-    background: white;
-    color: var(--text);
+    background: #fff;
+    transition: .2s;
 }
 
-textarea {
-    resize: vertical;
-    min-height: 80px;
-}
-
-.input:focus,
-select:focus,
-textarea:focus {
+.form-control:focus {
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+    box-shadow: 0 0 0 3px rgba(49,87,213,.1);
 }
 
-.demo-box {
-    margin-top: 18px;
-    padding: 12px;
-    border-radius: 9px;
-    background: #f8fafc;
-    color: var(--muted);
-    font-size: 11px;
-    line-height: 1.6;
+.password-wrap {
+    position: relative;
 }
 
-/* BUTTONS */
+.password-wrap input {
+    padding-right: 80px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 7px;
+    border: 0;
+    background: transparent;
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 700;
+}
 
 .btn {
     border: 0;
-    border-radius: 8px;
-    padding: 10px 15px;
-    font-weight: 650;
-    font-size: 13px;
-    transition: .15s;
-}
-
-.btn:hover {
-    transform: translateY(-1px);
+    border-radius: 9px;
+    padding: 11px 16px;
+    font-weight: 700;
+    transition: .2s;
 }
 
 .btn-primary {
@@ -177,13 +147,8 @@ textarea:focus {
 }
 
 .btn-secondary {
-    background: #f3f4f6;
-    color: #374151;
-}
-
-.btn-danger {
-    background: var(--danger-bg);
-    color: var(--danger);
+    background: #eef1f7;
+    color: #344054;
 }
 
 .btn-success {
@@ -191,104 +156,97 @@ textarea:focus {
     color: white;
 }
 
+.btn-danger {
+    background: var(--danger);
+    color: white;
+}
+
 .btn-warning {
-    background: var(--warning-bg);
-    color: var(--warning);
+    background: #f4b400;
+    color: #1f2937;
 }
 
-.btn-sm {
+.btn-small {
     padding: 7px 10px;
-    font-size: 11px;
+    font-size: 12px;
 }
 
-.btn-block {
+.full {
     width: 100%;
+}
+
+.login-error {
+    color: var(--danger);
+    background: #fff0f1;
+    border: 1px solid #ffd2d6;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 13px;
 }
 
 /* APP */
 
-.app {
+.app-shell {
     min-height: 100vh;
     display: flex;
 }
 
 .sidebar {
-    width: 245px;
-    flex-shrink: 0;
-    background: var(--sidebar);
+    width: 250px;
+    background: #111a35;
     color: white;
-    min-height: 100vh;
     position: fixed;
-    left: 0;
     top: 0;
     bottom: 0;
-    z-index: 20;
+    left: 0;
+    padding: 24px 16px;
+    z-index: 10;
 }
 
-.sidebar-brand {
-    height: 72px;
-    display: flex;
-    align-items: center;
-    gap: 11px;
-    padding: 0 22px;
-    border-bottom: 1px solid rgba(255,255,255,.08);
-}
-
-.sidebar-brand-mark {
-    width: 35px;
-    height: 35px;
-    border-radius: 9px;
-    background: var(--primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.sidebar-logo {
+    font-size: 25px;
     font-weight: 800;
+    letter-spacing: 3px;
+    padding: 0 12px 30px;
 }
 
-.sidebar-brand span {
-    font-weight: 800;
-    letter-spacing: 2px;
+.sidebar-user {
+    background: rgba(255,255,255,.08);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 20px;
 }
 
-.nav {
-    padding: 18px 12px;
+.sidebar-user strong {
+    display: block;
 }
 
-.nav-section {
-    color: #6b7280;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    padding: 10px;
-    font-weight: 700;
+.sidebar-user span {
+    font-size: 12px;
+    color: #aeb8d4;
 }
 
 .nav-item {
     width: 100%;
-    border: 0;
     background: transparent;
-    color: #d1d5db;
-    text-align: left;
-    padding: 11px 12px;
+    border: 0;
+    color: #cbd3e8;
+    padding: 12px;
     border-radius: 8px;
-    margin-bottom: 3px;
-    font-size: 13px;
+    text-align: left;
+    margin-bottom: 4px;
 }
 
 .nav-item:hover,
 .nav-item.active {
-    background: var(--sidebar-hover);
+    background: rgba(255,255,255,.1);
     color: white;
 }
 
-.nav-icon {
-    width: 24px;
-    display: inline-block;
-}
-
 .main {
-    margin-left: 245px;
-    width: calc(100% - 245px);
+    margin-left: 250px;
+    width: calc(100% - 250px);
 }
 
 .topbar {
@@ -299,37 +257,15 @@ textarea:focus {
     align-items: center;
     justify-content: space-between;
     padding: 0 30px;
-    position: sticky;
-    top: 0;
-    z-index: 10;
 }
 
-.topbar-title {
-    font-size: 18px;
-    font-weight: 750;
-}
-
-.topbar-user {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.avatar {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    background: var(--primary-light);
-    color: var(--primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.page-title {
+    font-size: 20px;
     font-weight: 800;
-    font-size: 12px;
 }
 
 .content {
-    padding: 28px;
+    padding: 30px;
     max-width: 1500px;
     margin: auto;
 }
@@ -338,71 +274,53 @@ textarea:focus {
 
 .stats {
     display: grid;
-    grid-template-columns: repeat(4,1fr);
-    gap: 16px;
-    margin-bottom: 22px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
 }
 
-.stat {
+.stat-card {
     background: white;
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: 14px;
     padding: 20px;
     box-shadow: var(--shadow);
 }
 
 .stat-label {
-    color: var(--muted);
     font-size: 12px;
-    font-weight: 600;
+    color: var(--muted);
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
 .stat-value {
-    font-size: 27px;
+    font-size: 28px;
     font-weight: 800;
-    margin-top: 7px;
-}
-
-.stat-note {
-    color: var(--muted);
-    font-size: 11px;
-    margin-top: 4px;
+    margin-top: 8px;
 }
 
 .card {
     background: white;
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: 14px;
+    padding: 22px;
     box-shadow: var(--shadow);
     margin-bottom: 20px;
-    overflow: hidden;
 }
 
 .card-header {
-    padding: 18px 20px;
-    border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 15px;
+    margin-bottom: 18px;
 }
 
 .card-title {
-    font-weight: 750;
-    font-size: 15px;
+    font-size: 17px;
+    font-weight: 800;
 }
-
-.card-subtitle {
-    color: var(--muted);
-    font-size: 11px;
-    margin-top: 4px;
-}
-
-.card-body {
-    padding: 20px;
-}
-
-/* GRID */
 
 .grid-2 {
     display: grid;
@@ -412,54 +330,43 @@ textarea:focus {
 
 .grid-3 {
     display: grid;
-    grid-template-columns: repeat(3,1fr);
-    gap: 15px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
 }
 
-.admin-grid {
+.company-layout {
     display: grid;
-    grid-template-columns: 320px 1fr;
+    grid-template-columns: 310px 1fr;
     gap: 20px;
 }
 
-/* COMPANY LIST */
-
-.company-item {
-    padding: 13px;
-    background: #f8fafc;
-    border: 1px solid transparent;
+.company-list-item {
+    border: 1px solid var(--border);
+    padding: 14px;
     border-radius: 9px;
-    margin-bottom: 7px;
+    margin-bottom: 8px;
     cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
 
-.company-item:hover {
-    background: #f1f5f9;
-}
-
-.company-item.active {
-    background: var(--primary-light);
-    border-color: #bfdbfe;
+.company-list-item:hover,
+.company-list-item.selected {
+    border-color: var(--primary);
+    background: #f4f7ff;
 }
 
 .company-name {
     font-weight: 700;
-    font-size: 13px;
 }
 
 .company-meta {
     color: var(--muted);
-    font-size: 10px;
+    font-size: 12px;
     margin-top: 4px;
 }
 
 /* TABLE */
 
 .table-wrap {
-    width: 100%;
     overflow-x: auto;
 }
 
@@ -469,335 +376,234 @@ table {
 }
 
 th {
-    background: #f8fafc;
-    color: var(--muted);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: .4px;
     text-align: left;
-    padding: 11px 13px;
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    background: #f8f9fc;
+    padding: 12px;
     border-bottom: 1px solid var(--border);
-    white-space: nowrap;
 }
 
 td {
-    padding: 13px;
-    border-bottom: 1px solid #f0f1f3;
-    font-size: 12px;
-    vertical-align: middle;
+    padding: 13px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
 }
 
-tr:hover td {
-    background: #fafafa;
-}
-
-.actions {
-    display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
+tr:last-child td {
+    border-bottom: 0;
 }
 
 /* BADGES */
 
 .badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 4px 8px;
-    border-radius: 99px;
-    font-size: 10px;
-    font-weight: 700;
+    display: inline-block;
+    border-radius: 20px;
+    padding: 5px 9px;
+    font-size: 11px;
+    font-weight: 800;
 }
 
-.badge-pending {
-    background: var(--warning-bg);
-    color: var(--warning);
+.badge-open {
+    background: #e9f2ff;
+    color: #1769aa;
+}
+
+.badge-submitted {
+    background: #fff3cd;
+    color: #8a6500;
 }
 
 .badge-approved {
-    background: var(--success-bg);
-    color: var(--success);
+    background: #dff6e7;
+    color: #14783f;
 }
 
-.badge-rejected {
-    background: var(--danger-bg);
-    color: var(--danger);
+.badge-issued {
+    background: #e8ddff;
+    color: #6338a8;
 }
 
-.badge-admin {
-    background: #ede9fe;
-    color: #7c3aed;
-}
-
-.badge-manager {
-    background: #e0f2fe;
-    color: #0369a1;
-}
-
-.badge-employee {
-    background: #f3f4f6;
+.badge-closed {
+    background: #e8eaee;
     color: #4b5563;
 }
 
-/* FILTERS */
+/* MODAL */
 
-.filters {
-    display: flex;
-    align-items: end;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.filter-item {
-    min-width: 170px;
-}
-
-.filter-item label {
-    font-size: 11px;
-}
-
-.filter-item input,
-.filter-item select {
-    height: 39px;
-}
-
-/* EMPLOYEE PROFILE */
-
-.profile-header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding-bottom: 20px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid var(--border);
-}
-
-.profile-avatar {
-    width: 62px;
-    height: 62px;
-    border-radius: 16px;
-    background: var(--primary);
-    color: white;
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,18,40,.55);
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 20px;
+    z-index: 100;
+}
+
+.modal {
+    background: white;
+    width: 100%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 15px;
+    padding: 25px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-title {
     font-size: 20px;
     font-weight: 800;
 }
 
-.profile-name {
-    font-size: 20px;
-    font-weight: 800;
+.close {
+    border: 0;
+    background: #f0f2f6;
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    font-size: 18px;
 }
 
-.profile-company {
-    color: var(--muted);
-    font-size: 12px;
-    margin-top: 4px;
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
 }
 
 /* CLOCK */
 
 .clock-card {
     text-align: center;
-    padding: 35px 20px;
+    padding: 35px;
 }
 
-.current-time {
-    font-size: 38px;
+.clock-time {
+    font-size: 46px;
     font-weight: 800;
     margin: 10px 0;
 }
 
-.current-date {
+.clock-date {
     color: var(--muted);
-    font-size: 13px;
+    margin-bottom: 25px;
 }
 
-.clock-status {
-    margin: 20px 0;
-    padding: 12px;
-    border-radius: 9px;
-    background: #f8fafc;
-    font-size: 12px;
+.clock-button {
+    min-width: 200px;
+    padding: 15px 25px;
+    font-size: 16px;
+}
+
+/* PAYSTUB */
+
+.paystub {
+    max-width: 800px;
+    margin: auto;
+    border: 1px solid #ddd;
+    padding: 35px;
+    background: white;
+}
+
+.paystub-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px solid #222;
+    padding-bottom: 20px;
+    margin-bottom: 25px;
+}
+
+.paystub-logo {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.paystub-total {
+    font-size: 28px;
+    font-weight: 900;
 }
 
 /* EMPTY */
 
 .empty {
-    padding: 40px 20px;
     text-align: center;
     color: var(--muted);
+    padding: 35px 15px;
 }
 
-.empty strong {
-    display: block;
-    color: var(--text);
-    margin-bottom: 5px;
-}
+/* RESPONSIVE */
 
-/* MODAL */
-
-.modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(15,23,42,.55);
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-.modal {
-    background: white;
-    width: 100%;
-    max-width: 600px;
-    max-height: 90vh;
-    overflow-y: auto;
-    border-radius: 15px;
-    box-shadow: 0 30px 80px rgba(0,0,0,.25);
-}
-
-.modal-header {
-    padding: 18px 20px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-}
-
-.modal-body {
-    padding: 20px;
-}
-
-.modal-footer {
-    padding: 15px 20px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-}
-
-.form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-}
-
-.full {
-    grid-column: 1 / -1;
-}
-
-/* MOBILE */
-
-@media(max-width:1050px) {
+@media (max-width: 1000px) {
     .stats {
-        grid-template-columns: repeat(2,1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
 
-    .admin-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media(max-width:800px) {
-    .sidebar {
-        width: 65px;
-    }
-
-    .sidebar-brand {
-        justify-content: center;
-        padding: 0;
-    }
-
-    .sidebar-brand span,
-    .nav-item span:not(.nav-icon),
-    .nav-section {
-        display: none;
-    }
-
-    .nav-item {
-        text-align: center;
-        padding: 12px 5px;
-    }
-
-    .nav-icon {
-        width: auto;
-    }
-
-    .main {
-        margin-left: 65px;
-        width: calc(100% - 65px);
-    }
-
+    .company-layout,
     .grid-2,
     .grid-3 {
         grid-template-columns: 1fr;
     }
 }
 
-@media(max-width:600px) {
+@media (max-width: 700px) {
+    .sidebar {
+        width: 70px;
+        padding: 15px 8px;
+    }
+
+    .sidebar-logo {
+        font-size: 15px;
+        padding: 10px 3px 20px;
+    }
+
+    .sidebar-user,
+    .nav-item span {
+        display: none;
+    }
+
+    .main {
+        margin-left: 70px;
+        width: calc(100% - 70px);
+    }
+
     .content {
         padding: 15px;
     }
 
-    .topbar {
-        padding: 0 15px;
-    }
-
     .stats {
         grid-template-columns: 1fr;
-    }
-
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .full {
-        grid-column: auto;
-    }
-
-    .topbar-user-name {
-        display: none;
     }
 }
 
 /* PRINT */
 
 @media print {
-    .sidebar,
-    .topbar,
-    .no-print,
-    .btn,
-    .filters {
-        display: none !important;
+    body * {
+        visibility: hidden;
     }
 
-    .main {
-        margin: 0;
+    .print-area,
+    .print-area * {
+        visibility: visible;
+    }
+
+    .print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
         width: 100%;
     }
-
-    .content {
-        padding: 0;
-        max-width: none;
-    }
-
-    .card {
-        border: 0;
-        box-shadow: none;
-    }
-
-    body {
-        background: white;
-    }
-
-    .print-title {
-        display: block !important;
-    }
-}
-
-.print-title {
-    display: none;
 }
 </style>
 </head>
@@ -807,33 +613,23 @@ tr:hover td {
 <div id="app"></div>
 
 <script>
-"use strict";
-
-/* ============================================================
+/* =========================================================
    LEVORO DATABASE
-============================================================ */
+========================================================= */
 
-const STORAGE_KEY = "LEVORO_ENTERPRISE_V1";
+const STORAGE_KEY = "levoro_v2";
 
 let db = {
     companies: [],
     users: [],
-    timesheets: [],
+    timeEntries: [],
     paystubs: [],
     activity: []
 };
 
 let currentUser = null;
-let currentPage = "dashboard";
 let selectedCompanyId = null;
-
-/* ============================================================
-   STORAGE
-============================================================ */
-
-function saveDB() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-}
+let currentPage = "dashboard";
 
 function loadDB() {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -842,319 +638,1144 @@ function loadDB() {
         try {
             db = JSON.parse(saved);
         } catch {
-            createDemoData();
+            db = {
+                companies: [],
+                users: [],
+                timeEntries: [],
+                paystubs: [],
+                activity: []
+            };
         }
-    } else {
-        createDemoData();
     }
 }
 
-/* ============================================================
-   DEMO DATA
-============================================================ */
-
-function createDemoData() {
-
-    const company1 = {
-        id: 1001,
-        name: "Milano Pizza",
-        createdAt: new Date().toISOString()
-    };
-
-    const company2 = {
-        id: 1002,
-        name: "Ottawa Catering",
-        createdAt: new Date().toISOString()
-    };
-
-    db.companies = [company1, company2];
-
-    db.users = [
-        {
-            id: 1,
-            name: "Admin",
-            username: "admin",
-            password: "admin123",
-            email: "admin@levoro.com",
-            phone: "",
-            address: "",
-            role: "ADMIN",
-            companyId: null,
-            hourlyRate: 0
-        },
-        {
-            id: 2,
-            name: "John Manager",
-            username: "manager",
-            password: "manager123",
-            email: "manager@milano.com",
-            phone: "613-555-1111",
-            address: "Ottawa, ON",
-            role: "MANAGER",
-            companyId: 1001,
-            hourlyRate: 0
-        },
-        {
-            id: 3,
-            name: "John Smith",
-            username: "employee",
-            password: "employee123",
-            email: "john@email.com",
-            phone: "613-555-2222",
-            address: "Ottawa, ON",
-            role: "EMPLOYEE",
-            companyId: 1001,
-            hourlyRate: 18.50
-        },
-        {
-            id: 4,
-            name: "Sarah Brown",
-            username: "sarah",
-            password: "sarah123",
-            email: "sarah@email.com",
-            phone: "613-555-3333",
-            address: "Ottawa, ON",
-            role: "EMPLOYEE",
-            companyId: 1001,
-            hourlyRate: 20
-        },
-        {
-            id: 5,
-            name: "Michael Lee",
-            username: "michael",
-            password: "michael123",
-            email: "michael@email.com",
-            phone: "613-555-4444",
-            address: "Ottawa, ON",
-            role: "EMPLOYEE",
-            companyId: 1002,
-            hourlyRate: 17.50
-        }
-    ];
-
-    db.timesheets = [];
-
-    db.paystubs = [];
-
-    db.activity = [];
-
-    saveDB();
+function saveDB() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
 }
 
-/* ============================================================
+/* =========================================================
    HELPERS
-============================================================ */
+========================================================= */
 
-function uid() {
+function id() {
     return Date.now() + Math.floor(Math.random() * 10000);
 }
 
 function escapeHTML(value) {
     return String(value ?? "")
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-}
-
-function initials(name) {
-    const parts = String(name || "User").trim().split(/\s+/);
-
-    if (parts.length === 1)
-        return parts[0].substring(0,2).toUpperCase();
-
-    return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 }
 
 function money(value) {
     return "$" + Number(value || 0).toFixed(2);
 }
 
-function companyName(id) {
-    const c = db.companies.find(x => x.id == id);
-    return c ? c.name : "—";
-}
-
-function userName(id) {
-    const u = db.users.find(x => x.id == id);
-    return u ? u.name : "System";
-}
-
 function formatDate(date) {
-    return new Date(date).toLocaleDateString("en-CA", {
-        year: "numeric",
-        month: "short",
-        day: "numeric"
-    });
+    if (!date) return "-";
+
+    return new Date(date + "T00:00:00").toLocaleDateString(
+        "en-CA",
+        {
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+        }
+    );
 }
 
 function formatDateTime(date) {
-    return new Date(date).toLocaleString("en-CA", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "2-digit"
-    });
+    return new Date(date).toLocaleString(
+        "en-CA",
+        {
+            dateStyle: "medium",
+            timeStyle: "short"
+        }
+    );
 }
 
-function todayISO() {
+function today() {
     return new Date().toISOString().split("T")[0];
 }
 
-function statusBadge(status) {
-
-    const cls = {
-        PENDING: "badge-pending",
-        APPROVED: "badge-approved",
-        REJECTED: "badge-rejected"
-    }[status] || "badge-pending";
-
-    return `<span class="badge ${cls}">${escapeHTML(status)}</span>`;
+function addDays(dateString, days) {
+    const date = new Date(dateString + "T00:00:00");
+    date.setDate(date.getDate() + days);
+    return date.toISOString().split("T")[0];
 }
 
-function roleBadge(role) {
-
-    const cls = {
-        ADMIN: "badge-admin",
-        MANAGER: "badge-manager",
-        EMPLOYEE: "badge-employee"
-    }[role] || "badge-employee";
-
-    return `<span class="badge ${cls}">${escapeHTML(role)}</span>`;
+function daysInMonth(year, month) {
+    return new Date(year, month + 1, 0).getDate();
 }
 
-/* ============================================================
-   ACTIVITY LOG
-============================================================ */
+function calculatePeriod(start, frequency) {
+    let end;
 
-function logActivity(action, description) {
+    if (frequency === "weekly") {
+        end = addDays(start, 6);
+    }
 
-    db.activity.unshift({
-        id: uid(),
+    if (frequency === "biweekly") {
+        end = addDays(start, 13);
+    }
+
+    if (frequency === "monthly") {
+        const d = new Date(start + "T00:00:00");
+        const last = daysInMonth(
+            d.getFullYear(),
+            d.getMonth()
+        );
+
+        end = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${last}`;
+    }
+
+    return { start, end };
+}
+
+function getCompany(id) {
+    return db.companies.find(c => c.id === id);
+}
+
+function getUser(id) {
+    return db.users.find(u => u.id === id);
+}
+
+function currentCompany() {
+    if (!currentUser) return null;
+
+    return getCompany(
+        currentUser.companyId || selectedCompanyId
+    );
+}
+
+function companyPeriod(company) {
+    if (!company) return null;
+
+    const start = company.payPeriodStart;
+    return calculatePeriod(start, company.payFrequency);
+}
+
+function addActivity(action, description) {
+    db.activity.push({
+        id: id(),
         action,
         description,
         userId: currentUser ? currentUser.id : null,
         userName: currentUser ? currentUser.name : "System",
-        userRole: currentUser ? currentUser.role : "SYSTEM",
-        companyId: currentUser ? currentUser.companyId : null,
-        companyName: currentUser
-            ? companyName(currentUser.companyId)
-            : "",
         timestamp: new Date().toISOString()
     });
 
     saveDB();
 }
 
-/* ============================================================
+/* =========================================================
    AUTH
-============================================================ */
+========================================================= */
 
 function login() {
-
     const username = document.getElementById("loginUsername").value.trim();
     const password = document.getElementById("loginPassword").value;
 
     const user = db.users.find(
-        u => u.username.toLowerCase() === username.toLowerCase()
-        && u.password === password
+        u =>
+            u.username.toLowerCase() === username.toLowerCase() &&
+            u.password === password &&
+            u.active !== false
     );
 
+    const error = document.getElementById("loginError");
+
     if (!user) {
-        alert("Incorrect username or password.");
+        error.textContent = "Invalid username or password.";
+        error.classList.remove("hidden");
         return;
     }
 
     currentUser = user;
 
-    if (user.role === "ADMIN") {
-        currentPage = "dashboard";
-    } else if (user.role === "MANAGER") {
-        currentPage = "dashboard";
+    if (user.companyId) {
         selectedCompanyId = user.companyId;
-    } else {
-        currentPage = "dashboard";
     }
 
-    logActivity(
-        "LOGIN",
-        `${user.name} logged into the system`
-    );
+    addActivity("LOGIN", `${user.name} logged in.`);
 
+    currentPage = "dashboard";
     render();
 }
 
 function logout() {
-
     if (currentUser) {
-        logActivity(
-            "LOGOUT",
-            `${currentUser.name} logged out of the system`
-        );
+        addActivity("LOGOUT", `${currentUser.name} logged out.`);
     }
 
     currentUser = null;
     selectedCompanyId = null;
-    currentPage = "dashboard";
-
     render();
 }
 
-/* ============================================================
-   LOGIN SCREEN
-============================================================ */
+function togglePassword() {
+    const input = document.getElementById("loginPassword");
+    const button = document.querySelector(".password-toggle");
+
+    if (input.type === "password") {
+        input.type = "text";
+        button.textContent = "Hide";
+    } else {
+        input.type = "password";
+        button.textContent = "Show";
+    }
+}
+
+/* =========================================================
+   COMPANY MANAGEMENT
+========================================================= */
+
+function openCompanyModal(companyId = null) {
+    const company = companyId ? getCompany(companyId) : null;
+
+    document.getElementById("modalContainer").innerHTML = `
+        <div class="modal-overlay" onclick="closeModal(event)">
+            <div class="modal" onclick="event.stopPropagation()">
+
+                <div class="modal-header">
+                    <div class="modal-title">
+                        ${company ? "Edit Company" : "Add Company"}
+                    </div>
+                    <button class="close" onclick="closeModal()">×</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Company Name *</label>
+                    <input
+                        id="companyName"
+                        class="form-control"
+                        value="${escapeHTML(company?.name || "")}"
+                        placeholder="Company name"
+                    >
+                </div>
+
+                <div class="grid-2">
+
+                    <div class="form-group">
+                        <label>Pay Frequency *</label>
+                        <select id="payFrequency" class="form-control">
+                            <option value="weekly"
+                                ${company?.payFrequency === "weekly" ? "selected" : ""}>
+                                Weekly
+                            </option>
+
+                            <option value="biweekly"
+                                ${company?.payFrequency === "biweekly" ? "selected" : ""}>
+                                Bi-Weekly
+                            </option>
+
+                            <option value="monthly"
+                                ${company?.payFrequency === "monthly" ? "selected" : ""}>
+                                Monthly
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>First Pay Period Start *</label>
+                        <input
+                            id="payPeriodStart"
+                            type="date"
+                            class="form-control"
+                            value="${company?.payPeriodStart || today()}"
+                        >
+                    </div>
+
+                </div>
+
+                <div class="card" style="background:#f7f9fc;margin-top:10px;">
+                    <strong>Pay Period Preview</strong>
+                    <div id="periodPreview" style="margin-top:8px;color:#697386;">
+                        Select a date and frequency.
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal()">
+                        Cancel
+                    </button>
+
+                    <button class="btn btn-primary"
+                        onclick="saveCompany(${companyId || "null"})">
+                        ${company ? "Save Changes" : "Create Company"}
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    `;
+
+    updatePeriodPreview();
+
+    document.getElementById("payFrequency")
+        .addEventListener("change", updatePeriodPreview);
+
+    document.getElementById("payPeriodStart")
+        .addEventListener("change", updatePeriodPreview);
+}
+
+function updatePeriodPreview() {
+    const start = document.getElementById("payPeriodStart")?.value;
+    const frequency = document.getElementById("payFrequency")?.value;
+    const preview = document.getElementById("periodPreview");
+
+    if (!start || !frequency || !preview) return;
+
+    const period = calculatePeriod(start, frequency);
+
+    preview.innerHTML =
+        `<strong>${formatDate(period.start)}</strong>
+        → <strong>${formatDate(period.end)}</strong>`;
+}
+
+function saveCompany(companyId) {
+    const name = document.getElementById("companyName").value.trim();
+    const frequency = document.getElementById("payFrequency").value;
+    const start = document.getElementById("payPeriodStart").value;
+
+    if (!name || !start) {
+        alert("Please complete all required fields.");
+        return;
+    }
+
+    if (companyId) {
+        const company = getCompany(companyId);
+
+        company.name = name;
+        company.payFrequency = frequency;
+        company.payPeriodStart = start;
+
+        addActivity(
+            "UPDATE_COMPANY",
+            `Updated company ${name}.`
+        );
+
+    } else {
+        const company = {
+            id: id(),
+            name,
+            payFrequency: frequency,
+            payPeriodStart: start,
+            active: true
+        };
+
+        db.companies.push(company);
+        selectedCompanyId = company.id;
+
+        addActivity(
+            "CREATE_COMPANY",
+            `Created company ${name}.`
+        );
+    }
+
+    saveDB();
+    closeModal();
+    render();
+}
+
+function deleteCompany(companyId) {
+    const company = getCompany(companyId);
+
+    if (!company) return;
+
+    if (
+        !confirm(
+            `Delete ${company.name}?\n\nThis will also remove employees, managers, timesheets and payroll records for this company.`
+        )
+    ) {
+        return;
+    }
+
+    db.companies = db.companies.filter(c => c.id !== companyId);
+    db.users = db.users.filter(u => u.companyId !== companyId);
+    db.timeEntries = db.timeEntries.filter(
+        t => t.companyId !== companyId
+    );
+    db.paystubs = db.paystubs.filter(
+        p => p.companyId !== companyId
+    );
+
+    if (selectedCompanyId === companyId) {
+        selectedCompanyId = null;
+    }
+
+    addActivity(
+        "DELETE_COMPANY",
+        `Deleted company ${company.name}.`
+    );
+
+    saveDB();
+    render();
+}
+
+/* =========================================================
+   USER / EMPLOYEE / MANAGER
+========================================================= */
+
+function openUserModal(type, userId = null) {
+    const existing = userId ? getUser(userId) : null;
+
+    const companyOptions = db.companies.map(c => `
+        <option value="${c.id}"
+            ${existing?.companyId === c.id ? "selected" : ""}>
+            ${escapeHTML(c.name)}
+        </option>
+    `).join("");
+
+    document.getElementById("modalContainer").innerHTML = `
+        <div class="modal-overlay" onclick="closeModal(event)">
+            <div class="modal" onclick="event.stopPropagation()">
+
+                <div class="modal-header">
+                    <div class="modal-title">
+                        ${existing ? "Edit User" : "Add " + (type === "manager" ? "Manager" : "Employee")}
+                    </div>
+                    <button class="close" onclick="closeModal()">×</button>
+                </div>
+
+                <div class="grid-2">
+
+                    <div class="form-group">
+                        <label>Name *</label>
+                        <input id="userName" class="form-control"
+                            value="${escapeHTML(existing?.name || "")}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Username *</label>
+                        <input id="userUsername" class="form-control"
+                            value="${escapeHTML(existing?.username || "")}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Password ${existing ? "" : "*"}</label>
+                        <input id="userPassword" type="password" class="form-control"
+                            placeholder="${existing ? "Leave blank to keep current password" : ""}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input id="userEmail" type="email" class="form-control"
+                            value="${escapeHTML(existing?.email || "")}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input id="userPhone" class="form-control"
+                            value="${escapeHTML(existing?.phone || "")}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hourly Rate</label>
+                        <input id="userRate" type="number" step="0.01"
+                            class="form-control"
+                            value="${existing?.rate ?? ""}">
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label>Address</label>
+                    <textarea id="userAddress" class="form-control"
+                        rows="3">${escapeHTML(existing?.address || "")}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Company *</label>
+                    <select id="userCompany" class="form-control">
+                        <option value="">Select company</option>
+                        ${companyOptions}
+                    </select>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal()">
+                        Cancel
+                    </button>
+
+                    <button class="btn btn-primary"
+                        onclick="saveUser('${type}', ${userId || "null"})">
+                        Save
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    `;
+}
+
+function saveUser(type, userId) {
+    const name = document.getElementById("userName").value.trim();
+    const username = document.getElementById("userUsername").value.trim();
+    const password = document.getElementById("userPassword").value;
+    const companyId = Number(document.getElementById("userCompany").value);
+
+    if (!name || !username || !companyId) {
+        alert("Name, username and company are required.");
+        return;
+    }
+
+    const duplicate = db.users.find(
+        u =>
+            u.username.toLowerCase() === username.toLowerCase() &&
+            u.id !== userId
+    );
+
+    if (duplicate) {
+        alert("That username is already in use.");
+        return;
+    }
+
+    if (userId) {
+        const user = getUser(userId);
+
+        user.name = name;
+        user.username = username;
+        user.email = document.getElementById("userEmail").value.trim();
+        user.phone = document.getElementById("userPhone").value.trim();
+        user.address = document.getElementById("userAddress").value.trim();
+        user.rate = Number(document.getElementById("userRate").value || 0);
+        user.companyId = companyId;
+
+        if (password) {
+            user.password = password;
+        }
+
+        addActivity(
+            "UPDATE_EMPLOYEE",
+            `Updated ${type} ${name}.`
+        );
+
+    } else {
+        if (!password) {
+            alert("Password is required.");
+            return;
+        }
+
+        const user = {
+            id: id(),
+            role: type,
+            name,
+            username,
+            password,
+            email: document.getElementById("userEmail").value.trim(),
+            phone: document.getElementById("userPhone").value.trim(),
+            address: document.getElementById("userAddress").value.trim(),
+            rate: Number(document.getElementById("userRate").value || 0),
+            companyId,
+            active: true
+        };
+
+        db.users.push(user);
+
+        addActivity(
+            type === "manager"
+                ? "CREATE_MANAGER"
+                : "CREATE_EMPLOYEE",
+            `Created ${type} ${name}.`
+        );
+    }
+
+    saveDB();
+    closeModal();
+    render();
+}
+
+function deleteUser(userId) {
+    const user = getUser(userId);
+
+    if (!user) return;
+
+    if (!confirm(`Delete ${user.name}?`)) return;
+
+    db.users = db.users.filter(u => u.id !== userId);
+
+    addActivity(
+        "DELETE_EMPLOYEE",
+        `Deleted ${user.name}.`
+    );
+
+    saveDB();
+    render();
+}
+
+/* =========================================================
+   TIME TRACKING
+========================================================= */
+
+function getCurrentPeriodForEmployee() {
+    const company = currentCompany();
+    return companyPeriod(company);
+}
+
+function employeeClockIn() {
+    const company = currentCompany();
+    const period = getCurrentPeriodForEmployee();
+
+    if (!company || !period) return;
+
+    const existing = db.timeEntries.find(
+        t =>
+            t.employeeId === currentUser.id &&
+            t.date === today() &&
+            !t.endTime
+    );
+
+    if (existing) {
+        alert("You are already clocked in.");
+        return;
+    }
+
+    db.timeEntries.push({
+        id: id(),
+        employeeId: currentUser.id,
+        companyId: company.id,
+        date: today(),
+        startTime: new Date().toISOString(),
+        endTime: null,
+        hours: 0,
+        status: "open",
+        periodStart: period.start,
+        periodEnd: period.end
+    });
+
+    saveDB();
+    render();
+}
+
+function employeeClockOut() {
+    const entry = db.timeEntries.find(
+        t =>
+            t.employeeId === currentUser.id &&
+            t.date === today() &&
+            !t.endTime
+    );
+
+    if (!entry) {
+        alert("You are not currently clocked in.");
+        return;
+    }
+
+    entry.endTime = new Date().toISOString();
+
+    const start = new Date(entry.startTime);
+    const end = new Date(entry.endTime);
+
+    entry.hours = Number(
+        ((end - start) / 3600000).toFixed(2)
+    );
+
+    saveDB();
+    render();
+}
+
+function submitTimesheet() {
+    const company = currentCompany();
+    const period = companyPeriod(company);
+
+    const entries = db.timeEntries.filter(
+        t =>
+            t.employeeId === currentUser.id &&
+            t.periodStart === period.start &&
+            t.periodEnd === period.end
+    );
+
+    if (!entries.length) {
+        alert("There are no hours to submit.");
+        return;
+    }
+
+    if (entries.some(e => !e.endTime)) {
+        alert("Please clock out before submitting.");
+        return;
+    }
+
+    entries.forEach(e => {
+        if (e.status !== "approved") {
+            e.status = "submitted";
+        }
+    });
+
+    saveDB();
+    render();
+}
+
+/* =========================================================
+   MANAGER APPROVAL
+========================================================= */
+
+function approveEmployeeTimesheet(employeeId, periodStart, periodEnd) {
+    const entries = db.timeEntries.filter(
+        t =>
+            t.employeeId === employeeId &&
+            t.periodStart === periodStart &&
+            t.periodEnd === periodEnd
+    );
+
+    if (!entries.length) return;
+
+    entries.forEach(e => {
+        e.status = "approved";
+        e.approvedBy = currentUser.id;
+        e.approvedAt = new Date().toISOString();
+    });
+
+    const employee = getUser(employeeId);
+
+    addActivity(
+        "APPROVE_PAYSTUB",
+        `Approved ${employee.name}'s hours for ${formatDate(periodStart)} - ${formatDate(periodEnd)}.`
+    );
+
+    saveDB();
+    render();
+}
+
+/* =========================================================
+   PAYROLL
+========================================================= */
+
+function getEmployeeHours(employeeId, start, end) {
+    return db.timeEntries
+        .filter(
+            t =>
+                t.employeeId === employeeId &&
+                t.periodStart === start &&
+                t.periodEnd === end &&
+                t.status === "approved"
+        )
+        .reduce(
+            (sum, t) => sum + Number(t.hours || 0),
+            0
+        );
+}
+
+function issuePaystub(employeeId, start, end) {
+    const employee = getUser(employeeId);
+    const company = getCompany(employee.companyId);
+
+    const existing = db.paystubs.find(
+        p =>
+            p.employeeId === employeeId &&
+            p.periodStart === start &&
+            p.periodEnd === end
+    );
+
+    if (existing) {
+        alert("A paystub has already been issued for this period.");
+        return;
+    }
+
+    const hours = getEmployeeHours(
+        employeeId,
+        start,
+        end
+    );
+
+    if (hours <= 0) {
+        alert("No approved hours found.");
+        return;
+    }
+
+    const gross = hours * Number(employee.rate || 0);
+
+    db.paystubs.push({
+        id: id(),
+        employeeId,
+        companyId: company.id,
+        periodStart: start,
+        periodEnd: end,
+        hours,
+        rate: Number(employee.rate || 0),
+        gross,
+        issuedAt: new Date().toISOString(),
+        issuedBy: currentUser.id
+    });
+
+    db.timeEntries
+        .filter(
+            t =>
+                t.employeeId === employeeId &&
+                t.periodStart === start &&
+                t.periodEnd === end
+        )
+        .forEach(t => t.status = "issued");
+
+    addActivity(
+        "ISSUE_PAYSTUB",
+        `Issued paystub for ${employee.name}, ${formatDate(start)} - ${formatDate(end)}.`
+    );
+
+    saveDB();
+
+    openPaystub(
+        db.paystubs[db.paystubs.length - 1].id
+    );
+}
+
+/* =========================================================
+   CSV EXPORT
+========================================================= */
+
+function exportPayrollCSV() {
+    const company = currentCompany();
+
+    if (!company) {
+        alert("Please select a company.");
+        return;
+    }
+
+    const period = companyPeriod(company);
+
+    const rows = db.users
+        .filter(
+            u =>
+                u.companyId === company.id &&
+                u.role === "employee"
+        )
+        .map(employee => {
+            const hours = getEmployeeHours(
+                employee.id,
+                period.start,
+                period.end
+            );
+
+            return [
+                employee.name,
+                employee.username,
+                period.start,
+                period.end,
+                hours,
+                employee.rate,
+                hours * employee.rate
+            ];
+        });
+
+    if (!rows.length) {
+        alert("No payroll records found.");
+        return;
+    }
+
+    let csv =
+        "Employee,Username,Period Start,Period End,Hours,Hourly Rate,Gross Pay\n";
+
+    rows.forEach(row => {
+        csv += row.join(",") + "\n";
+    });
+
+    const blob = new Blob([csv], {
+        type: "text/csv;charset=utf-8;"
+    });
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download =
+        `${company.name.replace(/\s+/g, "_")}_Payroll.csv`;
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+}
+
+/* =========================================================
+   PAYSTUB
+========================================================= */
+
+function openPaystub(paystubId) {
+    const p = db.paystubs.find(x => x.id === paystubId);
+
+    if (!p) return;
+
+    const employee = getUser(p.employeeId);
+    const company = getCompany(p.companyId);
+
+    document.getElementById("modalContainer").innerHTML = `
+        <div class="modal-overlay">
+            <div class="modal" style="max-width:900px">
+
+                <div class="modal-header">
+                    <div class="modal-title">
+                        Paystub
+                    </div>
+
+                    <button class="close"
+                        onclick="closeModal()">
+                        ×
+                    </button>
+                </div>
+
+                <div class="print-area paystub">
+
+                    <div class="paystub-header">
+
+                        <div>
+                            <div class="paystub-logo">
+                                LEVORO
+                            </div>
+
+                            <div>
+                                ${escapeHTML(company.name)}
+                            </div>
+                        </div>
+
+                        <div>
+                            <strong>PAYSTUB</strong><br>
+                            ${formatDate(p.periodStart)}
+                            -
+                            ${formatDate(p.periodEnd)}
+                        </div>
+
+                    </div>
+
+                    <div class="grid-2">
+
+                        <div>
+                            <strong>Employee</strong><br>
+                            ${escapeHTML(employee.name)}<br>
+                            ${escapeHTML(employee.email || "")}<br>
+                            ${escapeHTML(employee.address || "")}
+                        </div>
+
+                        <div>
+                            <strong>Pay Period</strong><br>
+                            ${formatDate(p.periodStart)}
+                            -
+                            ${formatDate(p.periodEnd)}
+                        </div>
+
+                    </div>
+
+                    <br>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Hours</th>
+                                <th>Rate</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td>Regular Hours</td>
+                                <td>${p.hours.toFixed(2)}</td>
+                                <td>${money(p.rate)}</td>
+                                <td>${money(p.gross)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="text-align:right;margin-top:35px;">
+                        <div>Gross Pay</div>
+                        <div class="paystub-total">
+                            ${money(p.gross)}
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-secondary"
+                        onclick="closeModal()">
+                        Close
+                    </button>
+
+                    <button class="btn btn-primary"
+                        onclick="window.print()">
+                        Print Paystub
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    `;
+}
+
+/* =========================================================
+   ACTIVITY LOG
+========================================================= */
+
+function renderActivity() {
+    const from =
+        document.getElementById("activityFrom")?.value || "";
+
+    const to =
+        document.getElementById("activityTo")?.value || "";
+
+    let logs = [...db.activity];
+
+    if (from) {
+        logs = logs.filter(
+            l => l.timestamp.slice(0,10) >= from
+        );
+    }
+
+    if (to) {
+        logs = logs.filter(
+            l => l.timestamp.slice(0,10) <= to
+        );
+    }
+
+    logs.sort(
+        (a,b) =>
+            new Date(b.timestamp) -
+            new Date(a.timestamp)
+    );
+
+    const tbody = document.getElementById("activityRows");
+
+    if (!tbody) return;
+
+    tbody.innerHTML = logs.map(log => `
+        <tr>
+            <td>${formatDateTime(log.timestamp)}</td>
+            <td>
+                <span class="badge badge-open">
+                    ${escapeHTML(log.action)}
+                </span>
+            </td>
+            <td>${escapeHTML(log.description)}</td>
+            <td>${escapeHTML(log.userName)}</td>
+        </tr>
+    `).join("") || `
+        <tr>
+            <td colspan="4" class="empty">
+                No activity found.
+            </td>
+        </tr>
+    `;
+}
+
+function clearActivityFilters() {
+    document.getElementById("activityFrom").value = "";
+    document.getElementById("activityTo").value = "";
+    renderActivity();
+}
+
+function printActivity() {
+    window.print();
+}
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function navigate(page) {
+    currentPage = page;
+    render();
+}
+
+/* =========================================================
+   PAGE RENDER
+========================================================= */
+
+function render() {
+    const app = document.getElementById("app");
+
+    if (!currentUser) {
+        renderLogin();
+        return;
+    }
+
+    app.innerHTML = `
+        <div class="app-shell">
+
+            ${renderSidebar()}
+
+            <main class="main">
+
+                <div class="topbar">
+                    <div class="page-title">
+                        ${pageTitle()}
+                    </div>
+
+                    <button class="btn btn-secondary btn-small"
+                        onclick="logout()">
+                        Logout
+                    </button>
+                </div>
+
+                <div class="content">
+                    ${renderPage()}
+                </div>
+
+            </main>
+
+        </div>
+
+        <div id="modalContainer"></div>
+    `;
+}
 
 function renderLogin() {
-
-    return `
-        <div class="login-screen">
+    document.getElementById("app").innerHTML = `
+        <div class="login-page">
 
             <div class="login-card">
 
                 <div class="logo">
-                    <div class="logo-mark">L</div>
-                    <h1>LEVORO</h1>
-                    <p>Payroll & Time Tracking</p>
+                    LEVORO
+                </div>
+
+                <div class="login-subtitle">
+                    Payroll & Time Tracking
+                </div>
+
+                <div id="loginError"
+                    class="login-error hidden">
                 </div>
 
                 <div class="form-group">
                     <label>Username</label>
                     <input
                         id="loginUsername"
-                        class="input"
-                        placeholder="Enter username"
+                        class="form-control"
                         autocomplete="username"
+                        placeholder="Enter your username"
                         onkeydown="if(event.key==='Enter') login()"
                     >
                 </div>
 
                 <div class="form-group">
                     <label>Password</label>
-                    <input
-                        id="loginPassword"
-                        class="input"
-                        type="password"
-                        placeholder="Enter password"
-                        autocomplete="current-password"
-                        onkeydown="if(event.key==='Enter') login()"
-                    >
+
+                    <div class="password-wrap">
+
+                        <input
+                            id="loginPassword"
+                            type="password"
+                            class="form-control"
+                            autocomplete="current-password"
+                            placeholder="Enter your password"
+                            onkeydown="if(event.key==='Enter') login()"
+                        >
+
+                        <button
+                            class="password-toggle"
+                            onclick="togglePassword()">
+                            Show
+                        </button>
+
+                    </div>
                 </div>
 
                 <button
-                    class="btn btn-primary btn-block"
-                    onclick="login()"
-                >
+                    class="btn btn-primary full"
+                    onclick="login()">
                     Sign In
                 </button>
-
-                <div class="demo-box">
-                    <strong>Demo Accounts</strong><br>
-                    Admin: admin / admin123<br>
-                    Manager: manager / manager123<br>
-                    Employee: employee / employee123
-                </div>
 
             </div>
 
@@ -1162,406 +1783,186 @@ function renderLogin() {
     `;
 }
 
-/* ============================================================
-   SIDEBAR
-============================================================ */
+function renderSidebar() {
+    const admin = currentUser.role === "admin";
+    const manager = currentUser.role === "manager";
+    const employee = currentUser.role === "employee";
 
-function navigation() {
+    let nav = "";
 
-    if (currentUser.role === "ADMIN") {
+    nav += navButton("dashboard", "Dashboard");
 
-        return `
-            <div class="nav-section">Management</div>
-
-            ${nav("dashboard","▦","Dashboard")}
-            ${nav("companies","▣","Companies")}
-            ${nav("employees","♙","Employees")}
-            ${nav("managers","♟","Managers")}
-
-            <div class="nav-section">Payroll</div>
-
-            ${nav("timesheets","◷","Timesheets")}
-            ${nav("payroll","$","Payroll")}
-            ${nav("reports","▤","Reports")}
-
-            <div class="nav-section">System</div>
-
-            ${nav("activity","◉","Activity Log")}
-        `;
-
+    if (admin) {
+        nav += navButton("companies", "Companies");
+        nav += navButton("employees", "Employees");
+        nav += navButton("managers", "Managers");
+        nav += navButton("payroll", "Payroll");
+        nav += navButton("activity", "Activity Log");
     }
 
-    if (currentUser.role === "MANAGER") {
+    if (manager) {
+        nav += navButton("timesheets", "Timesheets");
+        nav += navButton("payroll", "Payroll");
+    }
 
-        return `
-            <div class="nav-section">Management</div>
-
-            ${nav("dashboard","▦","Dashboard")}
-            ${nav("employees","♙","Employees")}
-            ${nav("timesheets","◷","Timesheets")}
-
-            <div class="nav-section">Payroll</div>
-
-            ${nav("payroll","$","Payroll")}
-            ${nav("reports","▤","Reports")}
-        `;
+    if (employee) {
+        nav += navButton("time", "My Time");
+        nav += navButton("profile", "My Profile");
     }
 
     return `
-        <div class="nav-section">My Workspace</div>
+        <aside class="sidebar">
 
-        ${nav("dashboard","▦","Dashboard")}
-        ${nav("clock","◷","Time Clock")}
-        ${nav("timesheets","▤","My Timesheets")}
-        ${nav("profile","♙","My Profile")}
+            <div class="sidebar-logo">
+                LEVORO
+            </div>
+
+            <div class="sidebar-user">
+                <strong>
+                    ${escapeHTML(currentUser.name)}
+                </strong>
+                <span>
+                    ${currentUser.role.toUpperCase()}
+                </span>
+            </div>
+
+            ${nav}
+
+        </aside>
     `;
 }
 
-function nav(page, icon, text) {
-
+function navButton(page, text) {
     return `
         <button
             class="nav-item ${currentPage === page ? "active" : ""}"
-            onclick="go('${page}')"
-        >
-            <span class="nav-icon">${icon}</span>
+            onclick="navigate('${page}')">
             <span>${text}</span>
         </button>
     `;
 }
 
-function go(page) {
-    currentPage = page;
-    render();
+function pageTitle() {
+    const titles = {
+        dashboard: "Dashboard",
+        companies: "Companies",
+        employees: "Employees",
+        managers: "Managers",
+        payroll: "Payroll",
+        timesheets: "Timesheets",
+        time: "My Time",
+        profile: "My Profile",
+        activity: "Activity Log"
+    };
+
+    return titles[currentPage] || "Dashboard";
 }
 
-/* ============================================================
-   APP SHELL
-============================================================ */
+function renderPage() {
+    if (currentPage === "dashboard")
+        return renderDashboard();
 
-function renderApp(content, title) {
+    if (currentPage === "companies")
+        return renderCompanies();
 
-    return `
-        <div class="app">
+    if (currentPage === "employees")
+        return renderEmployees();
 
-            <aside class="sidebar">
+    if (currentPage === "managers")
+        return renderManagers();
 
-                <div class="sidebar-brand">
-                    <div class="sidebar-brand-mark">L</div>
-                    <span>LEVORO</span>
-                </div>
+    if (currentPage === "timesheets")
+        return renderTimesheets();
 
-                <nav class="nav">
-                    ${navigation()}
-                </nav>
+    if (currentPage === "payroll")
+        return renderPayroll();
 
-            </aside>
+    if (currentPage === "time")
+        return renderEmployeeTime();
 
-            <main class="main">
+    if (currentPage === "profile")
+        return renderProfile();
 
-                <header class="topbar">
+    if (currentPage === "activity")
+        return renderActivityPage();
 
-                    <div class="topbar-title">
-                        ${escapeHTML(title)}
-                    </div>
-
-                    <div class="topbar-user">
-
-                        <div class="avatar">
-                            ${escapeHTML(initials(currentUser.name))}
-                        </div>
-
-                        <div class="topbar-user-name">
-                            <strong>${escapeHTML(currentUser.name)}</strong>
-                            <div style="font-size:10px;color:#6b7280;">
-                                ${currentUser.role}
-                            </div>
-                        </div>
-
-                        <button
-                            class="btn btn-secondary btn-sm"
-                            onclick="logout()"
-                        >
-                            Logout
-                        </button>
-
-                    </div>
-
-                </header>
-
-                <div class="content">
-                    ${content}
-                </div>
-
-            </main>
-
-        </div>
-    `;
+    return "";
 }
 
-/* ============================================================
-   ADMIN DASHBOARD
-============================================================ */
+/* =========================================================
+   DASHBOARD
+========================================================= */
 
-function adminDashboard() {
+function renderDashboard() {
+    if (currentUser.role === "employee") {
+        return renderEmployeeDashboard();
+    }
 
-    const employees = db.users.filter(u => u.role === "EMPLOYEE");
-    const managers = db.users.filter(u => u.role === "MANAGER");
-    const pending = db.timesheets.filter(t => t.status === "PENDING");
+    if (currentUser.role === "manager") {
+        return renderManagerDashboard();
+    }
 
     return `
         <div class="stats">
 
-            <div class="stat">
+            <div class="stat-card">
                 <div class="stat-label">Companies</div>
-                <div class="stat-value">${db.companies.length}</div>
-                <div class="stat-note">Total companies</div>
+                <div class="stat-value">
+                    ${db.companies.length}
+                </div>
             </div>
 
-            <div class="stat">
+            <div class="stat-card">
                 <div class="stat-label">Employees</div>
-                <div class="stat-value">${employees.length}</div>
-                <div class="stat-note">Active employees</div>
+                <div class="stat-value">
+                    ${db.users.filter(u => u.role === "employee").length}
+                </div>
             </div>
 
-            <div class="stat">
+            <div class="stat-card">
                 <div class="stat-label">Managers</div>
-                <div class="stat-value">${managers.length}</div>
-                <div class="stat-note">Company managers</div>
-            </div>
-
-            <div class="stat">
-                <div class="stat-label">Pending Timesheets</div>
-                <div class="stat-value">${pending.length}</div>
-                <div class="stat-note">Awaiting approval</div>
-            </div>
-
-        </div>
-
-        <div class="grid-2">
-
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Companies</div>
-                        <div class="card-subtitle">
-                            Company overview
-                        </div>
-                    </div>
-
-                    <button
-                        class="btn btn-primary btn-sm"
-                        onclick="openCompanyModal()"
-                    >
-                        + Add Company
-                    </button>
-                </div>
-
-                <div class="card-body">
-
-                    ${db.companies.map(c => {
-
-                        const employees =
-                            db.users.filter(
-                                u => u.companyId === c.id
-                                && u.role === "EMPLOYEE"
-                            ).length;
-
-                        return `
-                            <div class="company-item">
-
-                                <div>
-                                    <div class="company-name">
-                                        ${escapeHTML(c.name)}
-                                    </div>
-
-                                    <div class="company-meta">
-                                        ${employees} employees
-                                    </div>
-                                </div>
-
-                                <button
-                                    class="btn btn-secondary btn-sm"
-                                    onclick="selectCompany(${c.id})"
-                                >
-                                    View
-                                </button>
-
-                            </div>
-                        `;
-
-                    }).join("")}
-
+                <div class="stat-value">
+                    ${db.users.filter(u => u.role === "manager").length}
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">
-                            Recent Activity
-                        </div>
-                        <div class="card-subtitle">
-                            Latest system events
-                        </div>
-                    </div>
-
-                    <button
-                        class="btn btn-secondary btn-sm"
-                        onclick="go('activity')"
-                    >
-                        View All
-                    </button>
+            <div class="stat-card">
+                <div class="stat-label">Paystubs Issued</div>
+                <div class="stat-value">
+                    ${db.paystubs.length}
                 </div>
-
-                <div class="card-body">
-
-                    ${db.activity.slice(0,6).map(a => `
-                        <div style="
-                            padding:10px 0;
-                            border-bottom:1px solid #f0f1f3;
-                        ">
-
-                            <div style="font-size:11px;font-weight:700;">
-                                ${escapeHTML(a.action)}
-                            </div>
-
-                            <div style="
-                                color:#6b7280;
-                                font-size:11px;
-                                margin-top:3px;
-                            ">
-                                ${escapeHTML(a.description)}
-                            </div>
-
-                            <div style="
-                                color:#9ca3af;
-                                font-size:10px;
-                                margin-top:4px;
-                            ">
-                                ${formatDateTime(a.timestamp)}
-                            </div>
-
-                        </div>
-                    `).join("") || `
-                        <div class="empty">
-                            No activity yet.
-                        </div>
-                    `}
-
-                </div>
-            </div>
-
-        </div>
-    `;
-}
-
-/* ============================================================
-   MANAGER DASHBOARD
-============================================================ */
-
-function managerDashboard() {
-
-    const companyId = currentUser.companyId;
-
-    const employees =
-        db.users.filter(
-            u => u.companyId === companyId
-            && u.role === "EMPLOYEE"
-        );
-
-    const pending =
-        db.timesheets.filter(
-            t => t.companyId === companyId
-            && t.status === "PENDING"
-        );
-
-    const approved =
-        db.timesheets.filter(
-            t => t.companyId === companyId
-            && t.status === "APPROVED"
-        );
-
-    let totalHours =
-        approved.reduce(
-            (sum,t) => sum + Number(t.totalHours || 0),
-            0
-        );
-
-    let payroll =
-        approved.reduce((sum,t) => {
-
-            const employee =
-                db.users.find(u => u.id === t.employeeId);
-
-            return sum +
-                (Number(t.totalHours || 0) *
-                 Number(employee?.hourlyRate || 0));
-
-        },0);
-
-    return `
-        <div class="stats">
-
-            <div class="stat">
-                <div class="stat-label">Company Employees</div>
-                <div class="stat-value">${employees.length}</div>
-            </div>
-
-            <div class="stat">
-                <div class="stat-label">Pending Timesheets</div>
-                <div class="stat-value">${pending.length}</div>
-            </div>
-
-            <div class="stat">
-                <div class="stat-label">Approved Hours</div>
-                <div class="stat-value">${totalHours.toFixed(2)}</div>
-            </div>
-
-            <div class="stat">
-                <div class="stat-label">Approved Gross Pay</div>
-                <div class="stat-value">${money(payroll)}</div>
             </div>
 
         </div>
 
         <div class="card">
             <div class="card-header">
-                <div>
-                    <div class="card-title">
-                        ${escapeHTML(companyName(companyId))}
-                    </div>
-                    <div class="card-subtitle">
-                        Company management overview
-                    </div>
+                <div class="card-title">
+                    Payroll Workflow
                 </div>
             </div>
 
-            <div class="card-body">
+            <div class="grid-3">
 
-                <div class="grid-3">
+                <div>
+                    <strong>1. Employee</strong>
+                    <p style="color:#697386;">
+                        Records daily start and end times.
+                    </p>
+                </div>
 
-                    <button
-                        class="btn btn-primary"
-                        onclick="go('timesheets')"
-                    >
-                        Review Timesheets
-                    </button>
+                <div>
+                    <strong>2. Manager</strong>
+                    <p style="color:#697386;">
+                        Reviews and approves employee hours.
+                    </p>
+                </div>
 
-                    <button
-                        class="btn btn-secondary"
-                        onclick="go('payroll')"
-                    >
-                        View Payroll
-                    </button>
-
-                    <button
-                        class="btn btn-secondary"
-                        onclick="go('employees')"
-                    >
-                        View Employees
-                    </button>
-
+                <div>
+                    <strong>3. Admin</strong>
+                    <p style="color:#697386;">
+                        Receives approved hours and issues paystubs.
+                    </p>
                 </div>
 
             </div>
@@ -1569,253 +1970,205 @@ function managerDashboard() {
     `;
 }
 
-/* ============================================================
-   EMPLOYEE DASHBOARD
-============================================================ */
+/* =========================================================
+   COMPANIES
+========================================================= */
 
-function employeeDashboard() {
+function renderCompanies() {
+    const selected = getCompany(selectedCompanyId);
 
-    const today = todayISO();
+    const companies = db.companies.map(company => {
+        const employeeCount = db.users.filter(
+            u =>
+                u.companyId === company.id &&
+                u.role === "employee"
+        ).length;
 
-    const todaySessions =
-        db.timesheets.filter(
-            t => t.employeeId === currentUser.id
-            && t.workDate === today
-        );
-
-    const totalToday =
-        todaySessions.reduce(
-            (sum,t) => sum + Number(t.totalHours || 0),
-            0
-        );
-
-    const openShift =
-        todaySessions.find(t => t.startTime && !t.endTime);
-
-    return `
-        <div class="stats">
-
-            <div class="stat">
-                <div class="stat-label">Hourly Rate</div>
-                <div class="stat-value">
-                    ${money(currentUser.hourlyRate)}
-                </div>
-            </div>
-
-            <div class="stat">
-                <div class="stat-label">Today's Hours</div>
-                <div class="stat-value">
-                    ${totalToday.toFixed(2)}
-                </div>
-            </div>
-
-            <div class="stat">
-                <div class="stat-label">Company</div>
-                <div class="stat-value" style="font-size:18px;">
-                    ${escapeHTML(companyName(currentUser.companyId))}
-                </div>
-            </div>
-
-            <div class="stat">
-                <div class="stat-label">Status</div>
-                <div class="stat-value" style="font-size:18px;">
-                    ${openShift ? "Working" : "Off Duty"}
-                </div>
-            </div>
-
-        </div>
-
-        ${clockCard()}
-
-        <div class="card">
-
-            <div class="card-header">
-                <div>
-                    <div class="card-title">
-                        Recent Timesheets
-                    </div>
-                </div>
-
-                <button
-                    class="btn btn-secondary btn-sm"
-                    onclick="go('timesheets')"
-                >
-                    View All
-                </button>
-            </div>
-
-            <div class="card-body">
-
-                ${renderEmployeeTimesheetTable(
-                    db.timesheets
-                    .filter(t => t.employeeId === currentUser.id)
-                    .slice(-5)
-                    .reverse()
-                )}
-
-            </div>
-
-        </div>
-    `;
-}
-
-/* ============================================================
-   CLOCK
-============================================================ */
-
-function clockCard() {
-
-    const today = todayISO();
-
-    const openShift =
-        db.timesheets.find(
-            t => t.employeeId === currentUser.id
-            && t.workDate === today
-            && t.startTime
-            && !t.endTime
-        );
-
-    return `
-        <div class="card clock-card">
-
-            <div style="font-size:12px;color:#6b7280;">
-                ${formatDate(new Date())}
-            </div>
-
+        return `
             <div
-                id="liveClock"
-                class="current-time"
-            >
-                ${new Date().toLocaleTimeString([], {
-                    hour:"numeric",
-                    minute:"2-digit",
-                    second:"2-digit"
-                })}
+                class="company-list-item
+                ${selectedCompanyId === company.id ? "selected" : ""}"
+                onclick="selectedCompanyId=${company.id};render()">
+
+                <div class="company-name">
+                    ${escapeHTML(company.name)}
+                </div>
+
+                <div class="company-meta">
+                    ${company.payFrequency === "biweekly"
+                        ? "Bi-Weekly"
+                        : company.payFrequency.charAt(0).toUpperCase() +
+                          company.payFrequency.slice(1)}
+                    • ${employeeCount} employees
+                </div>
+
+            </div>
+        `;
+    }).join("");
+
+    return `
+        <div class="company-layout">
+
+            <div class="card">
+
+                <div class="card-header">
+                    <div class="card-title">
+                        Companies
+                    </div>
+
+                    <button
+                        class="btn btn-primary btn-small"
+                        onclick="openCompanyModal()">
+                        + Add
+                    </button>
+                </div>
+
+                ${companies || `
+                    <div class="empty">
+                        No companies yet.
+                    </div>
+                `}
+
             </div>
 
-            <div class="clock-status">
+            <div class="card">
 
                 ${
-                    openShift
-                    ? `
-                        <strong style="color:#16a34a;">
-                            ● Currently Working
-                        </strong>
-
-                        <div style="margin-top:5px;">
-                            Started at
-                            ${new Date(openShift.startTime)
-                                .toLocaleTimeString([],{
-                                    hour:"numeric",
-                                    minute:"2-digit"
-                                })}
-                        </div>
-                    `
+                    selected
+                    ? renderCompanyDetails(selected)
                     : `
-                        You are currently off duty.
+                        <div class="empty">
+                            <h3>Select a company</h3>
+                            <p>
+                                Choose a company from the left to manage
+                                payroll settings and employees.
+                            </p>
+                        </div>
                     `
                 }
 
             </div>
 
-            ${
-                openShift
-                ? `
-                    <button
-                        class="btn btn-danger"
-                        onclick="clockOut()"
-                    >
-                        End Work
-                    </button>
-                `
-                : `
-                    <button
-                        class="btn btn-primary"
-                        onclick="clockIn()"
-                    >
-                        Start Work
-                    </button>
-                `
-            }
+        </div>
+    `;
+}
+
+function renderCompanyDetails(company) {
+    const period = companyPeriod(company);
+
+    const employees = db.users.filter(
+        u =>
+            u.companyId === company.id &&
+            u.role === "employee"
+    ).length;
+
+    const managers = db.users.filter(
+        u =>
+            u.companyId === company.id &&
+            u.role === "manager"
+    ).length;
+
+    return `
+        <div class="card-header">
+
+            <div>
+                <div class="card-title">
+                    ${escapeHTML(company.name)}
+                </div>
+
+                <div style="color:#697386;margin-top:5px;">
+                    ${company.payFrequency === "biweekly"
+                        ? "Bi-Weekly"
+                        : company.payFrequency.charAt(0).toUpperCase() +
+                          company.payFrequency.slice(1)}
+                    payroll
+                </div>
+            </div>
+
+            <div>
+                <button
+                    class="btn btn-secondary btn-small"
+                    onclick="openCompanyModal(${company.id})">
+                    Edit
+                </button>
+
+                <button
+                    class="btn btn-danger btn-small"
+                    onclick="deleteCompany(${company.id})">
+                    Delete
+                </button>
+            </div>
+
+        </div>
+
+        <div class="grid-3">
+
+            <div class="stat-card">
+                <div class="stat-label">Employees</div>
+                <div class="stat-value">${employees}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Managers</div>
+                <div class="stat-value">${managers}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Current Period</div>
+                <div style="font-weight:800;margin-top:10px;">
+                    ${formatDate(period.start)}
+                    -
+                    ${formatDate(period.end)}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card"
+            style="background:#f8f9fc;margin-top:20px;">
+
+            <strong>Pay Period Configuration</strong>
+
+            <p>
+                First period starts:
+                <strong>${formatDate(company.payPeriodStart)}</strong>
+            </p>
+
+            <p>
+                Frequency:
+                <strong>
+                    ${company.payFrequency === "biweekly"
+                        ? "Bi-Weekly"
+                        : company.payFrequency.charAt(0).toUpperCase() +
+                          company.payFrequency.slice(1)}
+                </strong>
+            </p>
+
+            <p>
+                Current period:
+                <strong>
+                    ${formatDate(period.start)}
+                    -
+                    ${formatDate(period.end)}
+                </strong>
+            </p>
 
         </div>
     `;
 }
 
-function clockIn() {
-
-    const now = new Date();
-
-    db.timesheets.push({
-        id: uid(),
-        employeeId: currentUser.id,
-        companyId: currentUser.companyId,
-        workDate: todayISO(),
-        startTime: now.toISOString(),
-        endTime: null,
-        totalHours: 0,
-        status: "PENDING",
-        approvedBy: null,
-        approvedAt: null
-    });
-
-    logActivity(
-        "CLOCK_IN",
-        `${currentUser.name} started work`
-    );
-
-    render();
-}
-
-function clockOut() {
-
-    const now = new Date();
-
-    const shift =
-        db.timesheets.find(
-            t => t.employeeId === currentUser.id
-            && t.workDate === todayISO()
-            && t.startTime
-            && !t.endTime
-        );
-
-    if (!shift) return;
-
-    shift.endTime = now.toISOString();
-
-    const start = new Date(shift.startTime);
-    const end = new Date(shift.endTime);
-
-    shift.totalHours =
-        Math.max(
-            0,
-            (end - start) / 3600000
-        );
-
-    saveDB();
-
-    logActivity(
-        "CLOCK_OUT",
-        `${currentUser.name} ended work (${shift.totalHours.toFixed(2)} hours)`
-    );
-
-    render();
-}
-
-/* ============================================================
+/* =========================================================
    EMPLOYEES
-============================================================ */
+========================================================= */
 
-function employeesPage() {
+function renderEmployees() {
+    let employees = db.users.filter(
+        u => u.role === "employee"
+    );
 
-    let employees;
-
-    if (currentUser.role === "ADMIN") {
-        employees = db.users.filter(u => u.role === "EMPLOYEE");
-    } else {
-        employees = db.users.filter(
-            u => u.role === "EMPLOYEE"
-            && u.companyId === currentUser.companyId
+    if (selectedCompanyId) {
+        employees = employees.filter(
+            e => e.companyId === selectedCompanyId
         );
     }
 
@@ -1829,23 +2182,16 @@ function employeesPage() {
                         Employees
                     </div>
 
-                    <div class="card-subtitle">
-                        ${employees.length} employee(s)
+                    <div style="color:#697386;font-size:13px;">
+                        Manage employee information and hourly rates.
                     </div>
                 </div>
 
-                ${
-                    currentUser.role === "ADMIN"
-                    ? `
-                        <button
-                            class="btn btn-primary btn-sm"
-                            onclick="openUserModal('EMPLOYEE')"
-                        >
-                            + Add Employee
-                        </button>
-                    `
-                    : ""
-                }
+                <button
+                    class="btn btn-primary"
+                    onclick="openUserModal('employee')">
+                    + Add Employee
+                </button>
 
             </div>
 
@@ -1855,10 +2201,10 @@ function employeesPage() {
 
                     <thead>
                         <tr>
-                            <th>Employee</th>
+                            <th>Name</th>
+                            <th>Username</th>
                             <th>Company</th>
                             <th>Email</th>
-                            <th>Phone</th>
                             <th>Rate</th>
                             <th>Actions</th>
                         </tr>
@@ -1866,70 +2212,62 @@ function employeesPage() {
 
                     <tbody>
 
-                    ${employees.map(e => `
-                        <tr>
+                    ${
+                        employees.map(e => `
+                            <tr>
 
-                            <td>
-                                <strong>${escapeHTML(e.name)}</strong>
-                                <div style="font-size:10px;color:#6b7280;">
+                                <td>
+                                    <strong>
+                                        ${escapeHTML(e.name)}
+                                    </strong>
+                                </td>
+
+                                <td>
                                     @${escapeHTML(e.username)}
-                                </div>
-                            </td>
+                                </td>
 
-                            <td>
-                                ${escapeHTML(companyName(e.companyId))}
-                            </td>
+                                <td>
+                                    ${escapeHTML(
+                                        getCompany(e.companyId)?.name || "-"
+                                    )}
+                                </td>
 
-                            <td>
-                                ${escapeHTML(e.email || "—")}
-                            </td>
+                                <td>
+                                    ${escapeHTML(e.email || "-")}
+                                </td>
 
-                            <td>
-                                ${escapeHTML(e.phone || "—")}
-                            </td>
+                                <td>
+                                    ${money(e.rate)}/hr
+                                </td>
 
-                            <td>
-                                <strong>${money(e.hourlyRate)}</strong>
-                            </td>
-
-                            <td>
-
-                                <div class="actions">
+                                <td>
 
                                     <button
-                                        class="btn btn-secondary btn-sm"
-                                        onclick="openUserModal('EMPLOYEE',${e.id})"
-                                    >
+                                        class="btn btn-secondary btn-small"
+                                        onclick="openUserModal('employee',${e.id})">
                                         Edit
                                     </button>
 
-                                    ${
-                                        currentUser.role === "ADMIN"
-                                        ? `
-                                            <button
-                                                class="btn btn-danger btn-sm"
-                                                onclick="deleteUser(${e.id})"
-                                            >
-                                                Delete
-                                            </button>
-                                        `
-                                        : ""
-                                    }
+                                    <button
+                                        class="btn btn-danger btn-small"
+                                        onclick="deleteUser(${e.id})">
+                                        Delete
+                                    </button>
 
-                                </div>
+                                </td>
 
-                            </td>
-
-                        </tr>
-                    `).join("") || `
-                        <tr>
-                            <td colspan="6">
-                                <div class="empty">
-                                    <strong>No employees found.</strong>
-                                </div>
-                            </td>
-                        </tr>
-                    `}
+                            </tr>
+                        `).join("")
+                        ||
+                        `
+                            <tr>
+                                <td colspan="6"
+                                    class="empty">
+                                    No employees found.
+                                </td>
+                            </tr>
+                        `
+                    }
 
                     </tbody>
 
@@ -1941,14 +2279,14 @@ function employeesPage() {
     `;
 }
 
-/* ============================================================
+/* =========================================================
    MANAGERS
-============================================================ */
+========================================================= */
 
-function managersPage() {
-
-    const managers =
-        db.users.filter(u => u.role === "MANAGER");
+function renderManagers() {
+    const managers = db.users.filter(
+        u => u.role === "manager"
+    );
 
     return `
         <div class="card">
@@ -1960,15 +2298,14 @@ function managersPage() {
                         Managers
                     </div>
 
-                    <div class="card-subtitle">
-                        Manage company managers
+                    <div style="color:#697386;font-size:13px;">
+                        Managers can only access their assigned company.
                     </div>
                 </div>
 
                 <button
-                    class="btn btn-primary btn-sm"
-                    onclick="openUserModal('MANAGER')"
-                >
+                    class="btn btn-primary"
+                    onclick="openUserModal('manager')">
                     + Add Manager
                 </button>
 
@@ -1980,55 +2317,68 @@ function managersPage() {
 
                     <thead>
                         <tr>
-                            <th>Manager</th>
+                            <th>Name</th>
+                            <th>Username</th>
                             <th>Company</th>
                             <th>Email</th>
-                            <th>Phone</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
 
                     <tbody>
 
-                    ${managers.map(m => `
-                        <tr>
+                    ${
+                        managers.map(m => `
+                            <tr>
 
-                            <td>
-                                <strong>${escapeHTML(m.name)}</strong>
-                                <div style="font-size:10px;color:#6b7280;">
+                                <td>
+                                    <strong>
+                                        ${escapeHTML(m.name)}
+                                    </strong>
+                                </td>
+
+                                <td>
                                     @${escapeHTML(m.username)}
-                                </div>
-                            </td>
+                                </td>
 
-                            <td>
-                                ${escapeHTML(companyName(m.companyId))}
-                            </td>
+                                <td>
+                                    ${escapeHTML(
+                                        getCompany(m.companyId)?.name || "-"
+                                    )}
+                                </td>
 
-                            <td>${escapeHTML(m.email || "—")}</td>
-                            <td>${escapeHTML(m.phone || "—")}</td>
+                                <td>
+                                    ${escapeHTML(m.email || "-")}
+                                </td>
 
-                            <td>
-                                <div class="actions">
+                                <td>
 
                                     <button
-                                        class="btn btn-secondary btn-sm"
-                                        onclick="openUserModal('MANAGER',${m.id})"
-                                    >
+                                        class="btn btn-secondary btn-small"
+                                        onclick="openUserModal('manager',${m.id})">
                                         Edit
                                     </button>
 
                                     <button
-                                        class="btn btn-danger btn-sm"
-                                        onclick="deleteUser(${m.id})"
-                                    >
+                                        class="btn btn-danger btn-small"
+                                        onclick="deleteUser(${m.id})">
                                         Delete
                                     </button>
 
-                                </div>
-                            </td>
+                                </td>
 
-                        </tr>
-                    `).join("")}
+                            </tr>
+                        `).join("")
+                        ||
+                        `
+                            <tr>
+                                <td colspan="5"
+                                    class="empty">
+                                    No managers found.
+                                </td>
+                            </tr>
+                        `
+                    }
 
                     </tbody>
 
@@ -2040,28 +2390,202 @@ function managersPage() {
     `;
 }
 
-/* ============================================================
-   TIMESHEETS
-============================================================ */
+/* =========================================================
+   EMPLOYEE TIME PAGE
+========================================================= */
 
-function timesheetsPage() {
+function renderEmployeeTime() {
+    const company = currentCompany();
+    const period = companyPeriod(company);
 
-    let records;
+    const openEntry = db.timeEntries.find(
+        e =>
+            e.employeeId === currentUser.id &&
+            !e.endTime
+    );
 
-    if (currentUser.role === "ADMIN") {
-        records = [...db.timesheets];
-    } else if (currentUser.role === "MANAGER") {
-        records = db.timesheets.filter(
-            t => t.companyId === currentUser.companyId
-        );
-    } else {
-        records = db.timesheets.filter(
-            t => t.employeeId === currentUser.id
-        );
-    }
+    const entries = db.timeEntries.filter(
+        e =>
+            e.employeeId === currentUser.id &&
+            e.periodStart === period.start &&
+            e.periodEnd === period.end
+    );
 
-    records.sort((a,b) =>
-        new Date(b.startTime) - new Date(a.startTime)
+    const total = entries.reduce(
+        (sum,e) => sum + Number(e.hours || 0),
+        0
+    );
+
+    return `
+        <div class="card">
+
+            <div class="card-header">
+                <div>
+                    <div class="card-title">
+                        Current Pay Period
+                    </div>
+
+                    <div style="color:#697386;">
+                        ${formatDate(period.start)}
+                        -
+                        ${formatDate(period.end)}
+                    </div>
+                </div>
+
+                <span class="badge badge-open">
+                    ${company.payFrequency === "biweekly"
+                        ? "BI-WEEKLY"
+                        : company.payFrequency.toUpperCase()}
+                </span>
+            </div>
+
+            <div class="clock-card">
+
+                <div class="clock-date">
+                    ${new Date().toLocaleDateString(
+                        "en-CA",
+                        {
+                            weekday:"long",
+                            year:"numeric",
+                            month:"long",
+                            day:"numeric"
+                        }
+                    )}
+                </div>
+
+                <div class="clock-time"
+                    id="liveClock">
+                    ${new Date().toLocaleTimeString()}
+                </div>
+
+                ${
+                    openEntry
+                    ? `
+                        <button
+                            class="btn btn-danger clock-button"
+                            onclick="employeeClockOut()">
+                            Clock Out
+                        </button>
+                    `
+                    : `
+                        <button
+                            class="btn btn-success clock-button"
+                            onclick="employeeClockIn()">
+                            Clock In
+                        </button>
+                    `
+                }
+
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <div>
+                    <div class="card-title">
+                        My Hours
+                    </div>
+
+                    <div style="color:#697386;">
+                        Total:
+                        <strong>${total.toFixed(2)} hours</strong>
+                    </div>
+                </div>
+
+                <button
+                    class="btn btn-primary"
+                    onclick="submitTimesheet()">
+                    Submit Timesheet
+                </button>
+
+            </div>
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th>Hours</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    ${
+                        entries.map(e => `
+                            <tr>
+                                <td>${formatDate(e.date)}</td>
+
+                                <td>
+                                    ${new Date(e.startTime)
+                                        .toLocaleTimeString([], {
+                                            hour:"2-digit",
+                                            minute:"2-digit"
+                                        })}
+                                </td>
+
+                                <td>
+                                    ${
+                                        e.endTime
+                                        ? new Date(e.endTime)
+                                            .toLocaleTimeString([], {
+                                                hour:"2-digit",
+                                                minute:"2-digit"
+                                            })
+                                        : "-"
+                                    }
+                                </td>
+
+                                <td>
+                                    ${Number(e.hours || 0).toFixed(2)}
+                                </td>
+
+                                <td>
+                                    ${statusBadge(e.status)}
+                                </td>
+                            </tr>
+                        `).join("")
+                        ||
+                        `
+                            <tr>
+                                <td colspan="5"
+                                    class="empty">
+                                    No hours recorded for this pay period.
+                                </td>
+                            </tr>
+                        `
+                    }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    `;
+}
+
+/* =========================================================
+   MANAGER TIMESHEETS
+========================================================= */
+
+function renderTimesheets() {
+    const company = currentCompany();
+    const period = companyPeriod(company);
+
+    const employees = db.users.filter(
+        u =>
+            u.role === "employee" &&
+            u.companyId === company.id
     );
 
     return `
@@ -2071,341 +2595,171 @@ function timesheetsPage() {
 
                 <div>
                     <div class="card-title">
-                        ${currentUser.role === "EMPLOYEE"
-                            ? "My Timesheets"
-                            : "Timesheet Approval"}
+                        Timesheet Approval
                     </div>
 
-                    <div class="card-subtitle">
-                        Review recorded work hours
+                    <div style="color:#697386;">
+                        ${escapeHTML(company.name)}
+                        •
+                        ${formatDate(period.start)}
+                        -
+                        ${formatDate(period.end)}
                     </div>
                 </div>
 
             </div>
 
-            <div class="card-body">
+            <div class="table-wrap">
 
-                ${
-                    currentUser.role !== "EMPLOYEE"
-                    ? `
-                        <div class="filters no-print" style="margin-bottom:15px;">
+                <table>
 
-                            <div class="filter-item">
-                                <label>From Date</label>
-                                <input
-                                    id="tsFrom"
-                                    type="date"
-                                    value="${todayISO()}"
-                                >
-                            </div>
-
-                            <div class="filter-item">
-                                <label>To Date</label>
-                                <input
-                                    id="tsTo"
-                                    type="date"
-                                    value="${todayISO()}"
-                                >
-                            </div>
-
-                            <button
-                                class="btn btn-primary"
-                                onclick="filterTimesheets()"
-                            >
-                                Filter
-                            </button>
-
-                        </div>
-                    `
-                    : ""
-                }
-
-                <div id="timesheetTable">
-                    ${renderTimesheetTable(records)}
-                </div>
-
-            </div>
-
-        </div>
-    `;
-}
-
-function renderTimesheetTable(records) {
-
-    return `
-        <div class="table-wrap">
-
-            <table>
-
-                <thead>
-                    <tr>
-                        <th>Employee</th>
-                        <th>Date</th>
-                        <th>Start</th>
-                        <th>End</th>
-                        <th>Hours</th>
-                        <th>Status</th>
-                        <th class="no-print">Actions</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                ${records.map(t => {
-
-                    const employee =
-                        db.users.find(
-                            u => u.id === t.employeeId
-                        );
-
-                    return `
+                    <thead>
                         <tr>
-
-                            <td>
-                                <strong>
-                                    ${escapeHTML(
-                                        employee?.name || "Unknown"
-                                    )}
-                                </strong>
-                            </td>
-
-                            <td>
-                                ${formatDate(t.workDate)}
-                            </td>
-
-                            <td>
-                                ${t.startTime
-                                    ? new Date(t.startTime)
-                                        .toLocaleTimeString([],{
-                                            hour:"numeric",
-                                            minute:"2-digit"
-                                        })
-                                    : "—"}
-                            </td>
-
-                            <td>
-                                ${t.endTime
-                                    ? new Date(t.endTime)
-                                        .toLocaleTimeString([],{
-                                            hour:"numeric",
-                                            minute:"2-digit"
-                                        })
-                                    : "Working"}
-                            </td>
-
-                            <td>
-                                <strong>
-                                    ${Number(t.totalHours || 0).toFixed(2)}
-                                </strong>
-                            </td>
-
-                            <td>
-                                ${statusBadge(t.status)}
-                            </td>
-
-                            <td class="no-print">
-
-                                ${
-                                    currentUser.role !== "EMPLOYEE"
-                                    && t.status === "PENDING"
-                                    && t.endTime
-                                    ? `
-                                        <div class="actions">
-
-                                            <button
-                                                class="btn btn-success btn-sm"
-                                                onclick="approveTimesheet(${t.id})"
-                                            >
-                                                Approve
-                                            </button>
-
-                                            <button
-                                                class="btn btn-danger btn-sm"
-                                                onclick="rejectTimesheet(${t.id})"
-                                            >
-                                                Reject
-                                            </button>
-
-                                        </div>
-                                    `
-                                    : ""
-                                }
-
-                            </td>
-
+                            <th>Employee</th>
+                            <th>Hours</th>
+                            <th>Rate</th>
+                            <th>Gross Pay</th>
+                            <th>Status</th>
+                            <th>Action</th>
                         </tr>
-                    `;
+                    </thead>
 
-                }).join("") || `
-                    <tr>
-                        <td colspan="7">
-                            <div class="empty">
-                                <strong>No timesheets found.</strong>
-                                No work hours have been recorded.
-                            </div>
-                        </td>
-                    </tr>
-                `}
+                    <tbody>
 
-                </tbody>
+                    ${
+                        employees.map(employee => {
 
-            </table>
+                            const entries =
+                                db.timeEntries.filter(
+                                    e =>
+                                        e.employeeId === employee.id &&
+                                        e.periodStart === period.start &&
+                                        e.periodEnd === period.end
+                                );
+
+                            const hours = entries.reduce(
+                                (s,e) =>
+                                    s + Number(e.hours || 0),
+                                0
+                            );
+
+                            const submitted =
+                                entries.some(
+                                    e =>
+                                        e.status === "submitted"
+                                );
+
+                            const approved =
+                                entries.length &&
+                                entries.every(
+                                    e =>
+                                        e.status === "approved" ||
+                                        e.status === "issued"
+                                );
+
+                            return `
+                                <tr>
+
+                                    <td>
+                                        <strong>
+                                            ${escapeHTML(employee.name)}
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        ${hours.toFixed(2)}
+                                    </td>
+
+                                    <td>
+                                        ${money(employee.rate)}
+                                    </td>
+
+                                    <td>
+                                        ${money(
+                                            hours * employee.rate
+                                        )}
+                                    </td>
+
+                                    <td>
+                                        ${
+                                            approved
+                                            ? `<span class="badge badge-approved">Approved</span>`
+                                            : submitted
+                                            ? `<span class="badge badge-submitted">Pending Approval</span>`
+                                            : `<span class="badge badge-open">Open</span>`
+                                        }
+                                    </td>
+
+                                    <td>
+
+                                        ${
+                                            submitted && !approved
+                                            ? `
+                                                <button
+                                                    class="btn btn-success btn-small"
+                                                    onclick="approveEmployeeTimesheet(
+                                                        ${employee.id},
+                                                        '${period.start}',
+                                                        '${period.end}'
+                                                    )">
+                                                    Approve
+                                                </button>
+                                            `
+                                            : ""
+                                        }
+
+                                    </td>
+
+                                </tr>
+                            `;
+                        }).join("")
+                        ||
+                        `
+                            <tr>
+                                <td colspan="6"
+                                    class="empty">
+                                    No employees found.
+                                </td>
+                            </tr>
+                        `
+                    }
+
+                    </tbody>
+
+                </table>
+
+            </div>
 
         </div>
     `;
 }
 
-function renderEmployeeTimesheetTable(records) {
-    return renderTimesheetTable(records);
-}
+/* =========================================================
+   PAYROLL PAGE
+========================================================= */
 
-function filterTimesheets() {
+function renderPayroll() {
+    const company = currentCompany();
 
-    const from = document.getElementById("tsFrom").value;
-    const to = document.getElementById("tsTo").value;
-
-    let records = db.timesheets.filter(t => {
-
-        if (
-            currentUser.role !== "ADMIN"
-            && t.companyId !== currentUser.companyId
-        ) return false;
-
-        if (from && t.workDate < from) return false;
-        if (to && t.workDate > to) return false;
-
-        return true;
-    });
-
-    document.getElementById("timesheetTable").innerHTML =
-        renderTimesheetTable(records);
-}
-
-function approveTimesheet(id) {
-
-    const t = db.timesheets.find(x => x.id === id);
-
-    if (!t) return;
-
-    t.status = "APPROVED";
-    t.approvedBy = currentUser.id;
-    t.approvedAt = new Date().toISOString();
-
-    saveDB();
-
-    const employee = db.users.find(
-        u => u.id === t.employeeId
-    );
-
-    logActivity(
-        "APPROVE_TIMESHEET",
-        `${currentUser.name} approved ${employee?.name}'s timesheet for ${t.workDate}`
-    );
-
-    render();
-}
-
-function rejectTimesheet(id) {
-
-    const t = db.timesheets.find(x => x.id === id);
-
-    if (!t) return;
-
-    t.status = "REJECTED";
-
-    saveDB();
-
-    const employee = db.users.find(
-        u => u.id === t.employeeId
-    );
-
-    logActivity(
-        "REJECT_TIMESHEET",
-        `${currentUser.name} rejected ${employee?.name}'s timesheet for ${t.workDate}`
-    );
-
-    render();
-}
-
-/* ============================================================
-   PAYROLL
-============================================================ */
-
-function payrollPage() {
-
-    let records = db.timesheets.filter(
-        t => t.status === "APPROVED"
-    );
-
-    if (currentUser.role !== "ADMIN") {
-        records = records.filter(
-            t => t.companyId === currentUser.companyId
-        );
+    if (!company) {
+        return `
+            <div class="card">
+                <div class="empty">
+                    No company selected.
+                </div>
+            </div>
+        `;
     }
 
-    const grouped = {};
+    const period = companyPeriod(company);
 
-    records.forEach(t => {
-
-        if (!grouped[t.employeeId]) {
-            grouped[t.employeeId] = {
-                employeeId: t.employeeId,
-                hours: 0
-            };
-        }
-
-        grouped[t.employeeId].hours +=
-            Number(t.totalHours || 0);
-    });
-
-    const rows = Object.values(grouped);
-
-    const totalHours =
-        rows.reduce((sum,r) => sum + r.hours,0);
-
-    const totalPay =
-        rows.reduce((sum,r) => {
-
-            const employee =
-                db.users.find(u => u.id === r.employeeId);
-
-            return sum +
-                r.hours *
-                Number(employee?.hourlyRate || 0);
-
-        },0);
+    const employees = db.users.filter(
+        u =>
+            u.role === "employee" &&
+            u.companyId === company.id
+    );
 
     return `
-        <div class="stats">
-
-            <div class="stat">
-                <div class="stat-label">Employees</div>
-                <div class="stat-value">${rows.length}</div>
-            </div>
-
-            <div class="stat">
-                <div class="stat-label">Approved Hours</div>
-                <div class="stat-value">
-                    ${totalHours.toFixed(2)}
-                </div>
-            </div>
-
-            <div class="stat">
-                <div class="stat-label">Gross Payroll</div>
-                <div class="stat-value">
-                    ${money(totalPay)}
-                </div>
-            </div>
-
-            <div class="stat">
-                <div class="stat-label">Status</div>
-                <div class="stat-value" style="font-size:18px;">
-                    Approved
-                </div>
-            </div>
-
-        </div>
-
         <div class="card">
 
             <div class="card-header">
@@ -2415,15 +2769,18 @@ function payrollPage() {
                         Payroll
                     </div>
 
-                    <div class="card-subtitle">
-                        Based on approved timesheets
+                    <div style="color:#697386;">
+                        ${escapeHTML(company.name)}
+                        •
+                        ${formatDate(period.start)}
+                        -
+                        ${formatDate(period.end)}
                     </div>
                 </div>
 
                 <button
-                    class="btn btn-primary btn-sm"
-                    onclick="exportPayrollCSV()"
-                >
+                    class="btn btn-secondary"
+                    onclick="exportPayrollCSV()">
                     Export CSV
                 </button>
 
@@ -2436,9 +2793,8 @@ function payrollPage() {
                     <thead>
                         <tr>
                             <th>Employee</th>
-                            <th>Company</th>
                             <th>Hours</th>
-                            <th>Hourly Rate</th>
+                            <th>Rate</th>
                             <th>Gross Pay</th>
                             <th>Status</th>
                             <th>Action</th>
@@ -2447,96 +2803,90 @@ function payrollPage() {
 
                     <tbody>
 
-                    ${rows.map(row => {
+                    ${
+                        employees.map(employee => {
 
-                        const employee =
-                            db.users.find(
-                                u => u.id === row.employeeId
-                            );
+                            const hours =
+                                getEmployeeHours(
+                                    employee.id,
+                                    period.start,
+                                    period.end
+                                );
 
-                        const gross =
-                            row.hours *
-                            Number(employee?.hourlyRate || 0);
+                            const gross =
+                                hours * employee.rate;
 
-                        const existing =
-                            db.paystubs.find(
-                                p =>
-                                p.employeeId === row.employeeId
-                                && p.status === "APPROVED"
-                            );
+                            const paystub =
+                                db.paystubs.find(
+                                    p =>
+                                        p.employeeId === employee.id &&
+                                        p.periodStart === period.start &&
+                                        p.periodEnd === period.end
+                                );
 
-                        return `
-                            <tr>
+                            return `
+                                <tr>
 
-                                <td>
-                                    <strong>
-                                        ${escapeHTML(
-                                            employee?.name || ""
-                                        )}
-                                    </strong>
-                                </td>
+                                    <td>
+                                        <strong>
+                                            ${escapeHTML(employee.name)}
+                                        </strong>
+                                    </td>
 
-                                <td>
-                                    ${escapeHTML(
-                                        companyName(employee?.companyId)
-                                    )}
-                                </td>
+                                    <td>
+                                        ${hours.toFixed(2)}
+                                    </td>
 
-                                <td>
-                                    ${row.hours.toFixed(2)}
-                                </td>
+                                    <td>
+                                        ${money(employee.rate)}
+                                    </td>
 
-                                <td>
-                                    ${money(employee?.hourlyRate)}
-                                </td>
-
-                                <td>
-                                    <strong>
+                                    <td>
                                         ${money(gross)}
-                                    </strong>
-                                </td>
+                                    </td>
 
-                                <td>
-                                    ${existing
-                                        ? statusBadge("APPROVED")
-                                        : statusBadge("PENDING")}
-                                </td>
+                                    <td>
+                                        ${
+                                            paystub
+                                            ? `<span class="badge badge-issued">Paystub Issued</span>`
+                                            : hours > 0
+                                            ? `<span class="badge badge-approved">Approved</span>`
+                                            : `<span class="badge badge-open">Waiting</span>`
+                                        }
+                                    </td>
 
-                                <td>
+                                    <td>
 
-                                    ${
-                                        currentUser.role !== "EMPLOYEE"
-                                        && !existing
-                                        ? `
-                                            <button
-                                                class="btn btn-success btn-sm"
-                                                onclick="approvePaystub(
-                                                    ${employee.id},
-                                                    ${row.hours},
-                                                    ${gross}
-                                                )"
-                                            >
-                                                Approve Paystub
-                                            </button>
-                                        `
-                                        : ""
-                                    }
+                                        ${
+                                            paystub
+                                            ? `
+                                                <button
+                                                    class="btn btn-secondary btn-small"
+                                                    onclick="openPaystub(${paystub.id})">
+                                                    View Paystub
+                                                </button>
+                                            `
+                                            : hours > 0
+                                            ? `
+                                                <button
+                                                    class="btn btn-primary btn-small"
+                                                    onclick="issuePaystub(
+                                                        ${employee.id},
+                                                        '${period.start}',
+                                                        '${period.end}'
+                                                    )">
+                                                    Issue Paystub
+                                                </button>
+                                            `
+                                            : "-"
+                                        }
 
-                                </td>
+                                    </td>
 
-                            </tr>
-                        `;
-
-                    }).join("") || `
-                        <tr>
-                            <td colspan="7">
-                                <div class="empty">
-                                    <strong>No approved payroll.</strong>
-                                    Approve timesheets first.
-                                </div>
-                            </td>
-                        </tr>
-                    `}
+                                </tr>
+                            `;
+                        }).join("")
+                    }
 
                     </tbody>
 
@@ -2548,882 +2898,107 @@ function payrollPage() {
     `;
 }
 
-function approvePaystub(employeeId,hours,grossPay) {
+/* =========================================================
+   EMPLOYEE PROFILE
+========================================================= */
 
-    const employee =
-        db.users.find(u => u.id === employeeId);
-
-    if (!employee) return;
-
-    db.paystubs.push({
-        id: uid(),
-        employeeId,
-        companyId: employee.companyId,
-        payPeriodStart: todayISO(),
-        payPeriodEnd: todayISO(),
-        totalHours: hours,
-        hourlyRate: employee.hourlyRate,
-        grossPay,
-        status: "APPROVED",
-        approvedBy: currentUser.id,
-        approvedAt: new Date().toISOString()
-    });
-
-    saveDB();
-
-    logActivity(
-        "APPROVE_PAYSTUB",
-        `${currentUser.name} approved paystub for ${employee.name} (${money(grossPay)})`
-    );
-
-    render();
-}
-
-function exportPayrollCSV() {
-
-    let records = db.timesheets.filter(
-        t => t.status === "APPROVED"
-    );
-
-    if (currentUser.role !== "ADMIN") {
-        records = records.filter(
-            t => t.companyId === currentUser.companyId
-        );
-    }
-
-    const rows = [[
-        "Employee Name",
-        "Username",
-        "Company",
-        "Date",
-        "Hours",
-        "Hourly Rate",
-        "Gross Pay",
-        "Status"
-    ]];
-
-    records.forEach(t => {
-
-        const employee =
-            db.users.find(
-                u => u.id === t.employeeId
-            );
-
-        const gross =
-            Number(t.totalHours || 0) *
-            Number(employee?.hourlyRate || 0);
-
-        rows.push([
-            employee?.name || "",
-            employee?.username || "",
-            companyName(t.companyId),
-            t.workDate,
-            Number(t.totalHours || 0).toFixed(2),
-            Number(employee?.hourlyRate || 0).toFixed(2),
-            gross.toFixed(2),
-            "APPROVED"
-        ]);
-    });
-
-    const csv = rows
-        .map(row =>
-            row.map(value =>
-                `"${String(value).replace(/"/g,'""')}"`
-            ).join(",")
-        )
-        .join("\n");
-
-    const blob =
-        new Blob([csv],{type:"text/csv;charset=utf-8;"});
-
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-
-    link.href = url;
-    link.download =
-        `LEVORO_Payroll_${todayISO()}.csv`;
-
-    link.click();
-
-    URL.revokeObjectURL(url);
-
-    logActivity(
-        "EXPORT_PAYROLL",
-        `${currentUser.name} exported payroll CSV`
-    );
-}
-
-/* ============================================================
-   ACTIVITY LOG
-============================================================ */
-
-function activityPage() {
-
-    const today = todayISO();
-
+function renderProfile() {
     return `
         <div class="card">
 
             <div class="card-header">
-
-                <div>
-                    <div class="card-title">
-                        System Activity Log
-                    </div>
-
-                    <div class="card-subtitle">
-                        Track all important LEVORO activity
-                    </div>
+                <div class="card-title">
+                    My Profile
                 </div>
-
-                <button
-                    class="btn btn-secondary btn-sm no-print"
-                    onclick="printActivity()"
-                >
-                    Print Log
-                </button>
-
             </div>
 
-            <div class="card-body">
+            <div class="grid-2">
 
-                <div class="filters no-print">
-
-                    <div class="filter-item">
-                        <label>From Date</label>
-                        <input
-                            id="activityFrom"
-                            type="date"
-                            value="${today}"
-                        >
-                    </div>
-
-                    <div class="filter-item">
-                        <label>To Date</label>
-                        <input
-                            id="activityTo"
-                            type="date"
-                            value="${today}"
-                        >
-                    </div>
-
-                    <button
-                        class="btn btn-primary"
-                        onclick="filterActivity()"
-                    >
-                        Apply Filter
-                    </button>
-
-                    <button
-                        class="btn btn-secondary"
-                        onclick="clearActivityFilter()"
-                    >
-                        Clear
-                    </button>
-
+                <div class="form-group">
+                    <label>Name</label>
+                    <input
+                        class="form-control"
+                        value="${escapeHTML(currentUser.name)}"
+                        id="profileName">
                 </div>
 
-                <div class="print-title">
-
-                    <h1>LEVORO</h1>
-
-                    <h2>System Activity Report</h2>
-
-                    <p>
-                        Generated:
-                        ${formatDateTime(new Date())}
-                    </p>
-
+                <div class="form-group">
+                    <label>Email</label>
+                    <input
+                        class="form-control"
+                        value="${escapeHTML(currentUser.email || "")}"
+                        id="profileEmail">
                 </div>
 
-                <div id="activityTable"
-                     style="margin-top:20px;">
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input
+                        class="form-control"
+                        value="${escapeHTML(currentUser.phone || "")}"
+                        id="profilePhone">
+                </div>
 
-                    ${renderActivityTable(
-                        db.activity.filter(
-                            a => a.timestamp.startsWith(today)
-                        )
-                    )}
-
+                <div class="form-group">
+                    <label>Hourly Rate</label>
+                    <input
+                        class="form-control"
+                        value="${money(currentUser.rate)}/hr"
+                        disabled>
                 </div>
 
             </div>
 
-        </div>
-    `;
-}
-
-function renderActivityTable(records) {
-
-    return `
-        <div class="table-wrap">
-
-            <table>
-
-                <thead>
-                    <tr>
-                        <th>Action</th>
-                        <th>Description</th>
-                        <th>User</th>
-                        <th>Role</th>
-                        <th>Company</th>
-                        <th>Date / Time</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                ${records.map(a => `
-                    <tr>
-
-                        <td>
-                            <strong>
-                                ${escapeHTML(a.action)}
-                            </strong>
-                        </td>
-
-                        <td>
-                            ${escapeHTML(a.description)}
-                        </td>
-
-                        <td>
-                            ${escapeHTML(a.userName)}
-                        </td>
-
-                        <td>
-                            ${roleBadge(a.userRole)}
-                        </td>
-
-                        <td>
-                            ${escapeHTML(a.companyName || "System")}
-                        </td>
-
-                        <td>
-                            ${formatDateTime(a.timestamp)}
-                        </td>
-
-                    </tr>
-                `).join("") || `
-                    <tr>
-                        <td colspan="6">
-                            <div class="empty">
-                                <strong>No activity found.</strong>
-                                Try another date range.
-                            </div>
-                        </td>
-                    </tr>
-                `}
-
-                </tbody>
-
-            </table>
-
-        </div>
-    `;
-}
-
-function filterActivity() {
-
-    const from =
-        document.getElementById("activityFrom").value;
-
-    const to =
-        document.getElementById("activityTo").value;
-
-    let records = db.activity.filter(a => {
-
-        const date =
-            new Date(a.timestamp)
-                .toISOString()
-                .split("T")[0];
-
-        if (from && date < from) return false;
-        if (to && date > to) return false;
-
-        return true;
-    });
-
-    document.getElementById("activityTable").innerHTML =
-        renderActivityTable(records);
-}
-
-function clearActivityFilter() {
-
-    document.getElementById("activityFrom").value = "";
-    document.getElementById("activityTo").value = "";
-
-    document.getElementById("activityTable").innerHTML =
-        renderActivityTable(db.activity);
-}
-
-function printActivity() {
-
-    logActivity(
-        "PRINT_ACTIVITY_LOG",
-        `${currentUser.name} printed the activity log`
-    );
-
-    window.print();
-}
-
-/* ============================================================
-   PROFILE
-============================================================ */
-
-function profilePage() {
-
-    return `
-        <div class="card">
-
-            <div class="card-body">
-
-                <div class="profile-header">
-
-                    <div class="profile-avatar">
-                        ${escapeHTML(initials(currentUser.name))}
-                    </div>
-
-                    <div>
-                        <div class="profile-name">
-                            ${escapeHTML(currentUser.name)}
-                        </div>
-
-                        <div class="profile-company">
-                            ${escapeHTML(
-                                companyName(currentUser.companyId)
-                            )}
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="form-grid">
-
-                    <div class="form-group">
-                        <label>Name</label>
-                        <input
-                            id="profileName"
-                            class="input"
-                            value="${escapeHTML(currentUser.name)}"
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label>Username</label>
-                        <input
-                            class="input"
-                            value="${escapeHTML(currentUser.username)}"
-                            disabled
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input
-                            id="profileEmail"
-                            class="input"
-                            value="${escapeHTML(currentUser.email || "")}"
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label>Phone</label>
-                        <input
-                            id="profilePhone"
-                            class="input"
-                            value="${escapeHTML(currentUser.phone || "")}"
-                        >
-                    </div>
-
-                    <div class="form-group full">
-                        <label>Address</label>
-                        <textarea
-                            id="profileAddress"
-                        >${escapeHTML(currentUser.address || "")}</textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Hourly Rate</label>
-                        <input
-                            class="input"
-                            value="${money(currentUser.hourlyRate)}"
-                            disabled
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label>Role</label>
-                        <input
-                            class="input"
-                            value="${currentUser.role}"
-                            disabled
-                        >
-                    </div>
-
-                </div>
-
-                <button
-                    class="btn btn-primary"
-                    onclick="saveProfile()"
-                >
-                    Save Changes
-                </button>
-
+            <div class="form-group">
+                <label>Address</label>
+                <textarea
+                    class="form-control"
+                    id="profileAddress"
+                    rows="3">${escapeHTML(currentUser.address || "")}</textarea>
             </div>
+
+            <button
+                class="btn btn-primary"
+                onclick="saveProfile()">
+                Save Profile
+            </button>
 
         </div>
     `;
 }
 
 function saveProfile() {
-
-    const user =
-        db.users.find(u => u.id === currentUser.id);
-
-    if (!user) return;
-
-    user.name =
+    currentUser.name =
         document.getElementById("profileName").value.trim();
 
-    user.email =
+    currentUser.email =
         document.getElementById("profileEmail").value.trim();
 
-    user.phone =
+    currentUser.phone =
         document.getElementById("profilePhone").value.trim();
 
-    user.address =
+    currentUser.address =
         document.getElementById("profileAddress").value.trim();
 
-    currentUser = user;
+    const stored = getUser(currentUser.id);
 
-    saveDB();
+    Object.assign(stored, currentUser);
 
-    logActivity(
+    addActivity(
         "UPDATE_PROFILE",
-        `${currentUser.name} updated their profile`
+        `${currentUser.name} updated their profile.`
     );
-
-    alert("Profile updated successfully.");
-
-    render();
-}
-
-/* ============================================================
-   COMPANY MODAL
-============================================================ */
-
-function openCompanyModal() {
-
-    showModal(`
-        <div class="modal-header">
-            <strong>Add Company</strong>
-            <button class="btn btn-secondary btn-sm"
-                onclick="closeModal()">✕</button>
-        </div>
-
-        <div class="modal-body">
-
-            <div class="form-group">
-                <label>Company Name *</label>
-                <input
-                    id="companyName"
-                    class="input"
-                    placeholder="Company name"
-                >
-            </div>
-
-        </div>
-
-        <div class="modal-footer">
-
-            <button
-                class="btn btn-secondary"
-                onclick="closeModal()"
-            >
-                Cancel
-            </button>
-
-            <button
-                class="btn btn-primary"
-                onclick="saveCompany()"
-            >
-                Save Company
-            </button>
-
-        </div>
-    `);
-}
-
-function saveCompany() {
-
-    const name =
-        document.getElementById("companyName").value.trim();
-
-    if (!name) {
-        alert("Company name is required.");
-        return;
-    }
-
-    const company = {
-        id: uid(),
-        name,
-        createdAt: new Date().toISOString()
-    };
-
-    db.companies.push(company);
 
     saveDB();
-
-    logActivity(
-        "CREATE_COMPANY",
-        `${currentUser.name} created company "${name}"`
-    );
-
-    closeModal();
     render();
+
+    alert("Profile updated.");
 }
 
-function selectCompany(id) {
-
-    selectedCompanyId = id;
-
-    if (currentUser.role === "ADMIN") {
-        currentPage = "employees";
-    }
-
-    render();
-}
-
-/* ============================================================
-   USER MODAL
-============================================================ */
-
-function openUserModal(role,id=null) {
-
-    const user =
-        id
-        ? db.users.find(u => u.id === id)
-        : null;
-
-    const isEdit = !!user;
-
-    showModal(`
-
-        <div class="modal-header">
-
-            <strong>
-                ${isEdit ? "Edit" : "Add"}
-                ${role === "MANAGER" ? "Manager" : "Employee"}
-            </strong>
-
-            <button
-                class="btn btn-secondary btn-sm"
-                onclick="closeModal()"
-            >
-                ✕
-            </button>
-
-        </div>
-
-        <div class="modal-body">
-
-            <div class="form-grid">
-
-                <div class="form-group">
-                    <label>Name *</label>
-                    <input
-                        id="userName"
-                        class="input"
-                        value="${escapeHTML(user?.name || "")}"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label>Username *</label>
-                    <input
-                        id="userUsername"
-                        class="input"
-                        value="${escapeHTML(user?.username || "")}"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label>
-                        Password ${isEdit ? "" : "*"}
-                    </label>
-
-                    <input
-                        id="userPassword"
-                        class="input"
-                        type="password"
-                        placeholder="${isEdit ? "Leave blank to keep current" : ""}"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label>Email</label>
-                    <input
-                        id="userEmail"
-                        class="input"
-                        value="${escapeHTML(user?.email || "")}"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label>Phone</label>
-                    <input
-                        id="userPhone"
-                        class="input"
-                        value="${escapeHTML(user?.phone || "")}"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label>Hourly Rate</label>
-                    <input
-                        id="userRate"
-                        class="input"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value="${user?.hourlyRate || 0}"
-                        ${role === "MANAGER" ? "disabled" : ""}
-                    >
-                </div>
-
-                <div class="form-group full">
-                    <label>Address</label>
-                    <textarea
-                        id="userAddress"
-                    >${escapeHTML(user?.address || "")}</textarea>
-                </div>
-
-                <div class="form-group full">
-
-                    <label>Company *</label>
-
-                    <select id="userCompany">
-
-                        <option value="">
-                            Select company
-                        </option>
-
-                        ${db.companies.map(c => `
-                            <option
-                                value="${c.id}"
-                                ${user?.companyId === c.id ? "selected" : ""}
-                            >
-                                ${escapeHTML(c.name)}
-                            </option>
-                        `).join("")}
-
-                    </select>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="modal-footer">
-
-            <button
-                class="btn btn-secondary"
-                onclick="closeModal()"
-            >
-                Cancel
-            </button>
-
-            <button
-                class="btn btn-primary"
-                onclick="saveUser('${role}',${id || "null"})"
-            >
-                ${isEdit ? "Save Changes" : "Create User"}
-            </button>
-
-        </div>
-    `);
-}
-
-function saveUser(role,id) {
-
-    const name =
-        document.getElementById("userName").value.trim();
-
-    const username =
-        document.getElementById("userUsername").value.trim();
-
-    const password =
-        document.getElementById("userPassword").value;
-
-    const email =
-        document.getElementById("userEmail").value.trim();
-
-    const phone =
-        document.getElementById("userPhone").value.trim();
-
-    const address =
-        document.getElementById("userAddress").value.trim();
-
-    const companyId =
-        Number(document.getElementById("userCompany").value);
-
-    const rate =
-        Number(document.getElementById("userRate").value || 0);
-
-    if (!name || !username || !companyId) {
-        alert("Please complete all required fields.");
-        return;
-    }
-
-    if (!id && !password) {
-        alert("Password is required.");
-        return;
-    }
-
-    const duplicate =
-        db.users.find(
-            u =>
-            u.username.toLowerCase() === username.toLowerCase()
-            && u.id !== id
-        );
-
-    if (duplicate) {
-        alert("That username is already in use.");
-        return;
-    }
-
-    if (id) {
-
-        const user =
-            db.users.find(u => u.id === id);
-
-        if (!user) return;
-
-        user.name = name;
-        user.username = username;
-        user.email = email;
-        user.phone = phone;
-        user.address = address;
-        user.companyId = companyId;
-
-        if (password)
-            user.password = password;
-
-        if (role === "EMPLOYEE")
-            user.hourlyRate = rate;
-
-        saveDB();
-
-        logActivity(
-            role === "EMPLOYEE"
-                ? "UPDATE_EMPLOYEE"
-                : "UPDATE_MANAGER",
-            `${currentUser.name} updated ${role.toLowerCase()} ${name}`
-        );
-
-    } else {
-
-        const newUser = {
-            id: uid(),
-            name,
-            username,
-            password,
-            email,
-            phone,
-            address,
-            role,
-            companyId,
-            hourlyRate:
-                role === "EMPLOYEE"
-                ? rate
-                : 0
-        };
-
-        db.users.push(newUser);
-
-        saveDB();
-
-        logActivity(
-            role === "EMPLOYEE"
-                ? "CREATE_EMPLOYEE"
-                : "CREATE_MANAGER",
-            `${currentUser.name} created ${role.toLowerCase()} ${name}`
-        );
-    }
-
-    closeModal();
-    render();
-}
-
-function deleteUser(id) {
-
-    const user =
-        db.users.find(u => u.id === id);
-
-    if (!user) return;
-
-    if (
-        !confirm(
-            `Delete ${user.name}?\n\nThis action cannot be undone.`
-        )
-    ) return;
-
-    db.users =
-        db.users.filter(u => u.id !== id);
-
-    saveDB();
-
-    logActivity(
-        user.role === "EMPLOYEE"
-            ? "DELETE_EMPLOYEE"
-            : "DELETE_MANAGER",
-        `${currentUser.name} deleted ${user.role.toLowerCase()} ${user.name}`
-    );
-
-    render();
-}
-
-/* ============================================================
-   MODAL
-============================================================ */
-
-function showModal(content) {
-
-    let modal =
-        document.getElementById("modalRoot");
-
-    if (!modal) {
-
-        modal = document.createElement("div");
-
-        modal.id = "modalRoot";
-
-        document.body.appendChild(modal);
-    }
-
-    modal.className = "modal-backdrop";
-
-    modal.innerHTML =
-        `<div class="modal">${content}</div>`;
-}
-
-function closeModal() {
-
-    const modal =
-        document.getElementById("modalRoot");
-
-    if (modal)
-        modal.remove();
-}
-
-/* ============================================================
-   COMPANIES PAGE
-============================================================ */
-
-function companiesPage() {
-
+/* =========================================================
+   ACTIVITY PAGE
+========================================================= */
+
+function renderActivityPage() {
     return `
         <div class="card">
 
@@ -3431,20 +3006,52 @@ function companiesPage() {
 
                 <div>
                     <div class="card-title">
-                        Companies
+                        Activity Log
                     </div>
 
-                    <div class="card-subtitle">
-                        Manage all LEVORO companies
+                    <div style="color:#697386;">
+                        Choose the dates you want to review.
                     </div>
                 </div>
 
                 <button
-                    class="btn btn-primary btn-sm"
-                    onclick="openCompanyModal()"
-                >
-                    + Add Company
+                    class="btn btn-secondary"
+                    onclick="printActivity()">
+                    Print
                 </button>
+
+            </div>
+
+            <div class="grid-3">
+
+                <div class="form-group">
+                    <label>From Date</label>
+                    <input
+                        type="date"
+                        id="activityFrom"
+                        class="form-control"
+                        onchange="renderActivity()">
+                </div>
+
+                <div class="form-group">
+                    <label>To Date</label>
+                    <input
+                        type="date"
+                        id="activityTo"
+                        class="form-control"
+                        onchange="renderActivity()">
+                </div>
+
+                <div class="form-group"
+                    style="display:flex;align-items:end;gap:8px;">
+
+                    <button
+                        class="btn btn-secondary"
+                        onclick="clearActivityFilters()">
+                        Clear
+                    </button>
+
+                </div>
 
             </div>
 
@@ -3454,63 +3061,14 @@ function companiesPage() {
 
                     <thead>
                         <tr>
-                            <th>Company</th>
-                            <th>Employees</th>
-                            <th>Managers</th>
-                            <th>Created</th>
-                            <th>Actions</th>
+                            <th>Date & Time</th>
+                            <th>Action</th>
+                            <th>Description</th>
+                            <th>User</th>
                         </tr>
                     </thead>
 
-                    <tbody>
-
-                    ${db.companies.map(c => {
-
-                        const employees =
-                            db.users.filter(
-                                u => u.companyId === c.id
-                                && u.role === "EMPLOYEE"
-                            ).length;
-
-                        const managers =
-                            db.users.filter(
-                                u => u.companyId === c.id
-                                && u.role === "MANAGER"
-                            ).length;
-
-                        return `
-                            <tr>
-
-                                <td>
-                                    <strong>
-                                        ${escapeHTML(c.name)}
-                                    </strong>
-                                </td>
-
-                                <td>${employees}</td>
-                                <td>${managers}</td>
-
-                                <td>
-                                    ${formatDate(c.createdAt)}
-                                </td>
-
-                                <td>
-
-                                    <button
-                                        class="btn btn-danger btn-sm"
-                                        onclick="deleteCompany(${c.id})"
-                                    >
-                                        Delete
-                                    </button>
-
-                                </td>
-
-                            </tr>
-                        `;
-
-                    }).join("")}
-
-                    </tbody>
+                    <tbody id="activityRows"></tbody>
 
                 </table>
 
@@ -3520,282 +3078,294 @@ function companiesPage() {
     `;
 }
 
-function deleteCompany(id) {
+/* =========================================================
+   EMPLOYEE DASHBOARD
+========================================================= */
 
-    const company =
-        db.companies.find(c => c.id === id);
+function renderEmployeeDashboard() {
+    const company = currentCompany();
+    const period = companyPeriod(company);
 
-    if (!company) return;
-
-    const users =
-        db.users.filter(
-            u => u.companyId === id
-        );
-
-    if (
-        !confirm(
-            `Delete "${company.name}"?\n\n` +
-            `This will remove ${users.length} employee/manager record(s).`
-        )
-    ) return;
-
-    db.companies =
-        db.companies.filter(c => c.id !== id);
-
-    db.users =
-        db.users.filter(u => u.companyId !== id);
-
-    db.timesheets =
-        db.timesheets.filter(t => t.companyId !== id);
-
-    db.paystubs =
-        db.paystubs.filter(p => p.companyId !== id);
-
-    saveDB();
-
-    logActivity(
-        "DELETE_COMPANY",
-        `${currentUser.name} deleted company "${company.name}"`
+    const entries = db.timeEntries.filter(
+        e =>
+            e.employeeId === currentUser.id &&
+            e.periodStart === period.start &&
+            e.periodEnd === period.end
     );
 
-    render();
-}
-
-/* ============================================================
-   REPORTS
-============================================================ */
-
-function reportsPage() {
+    const hours = entries.reduce(
+        (sum,e) => sum + Number(e.hours || 0),
+        0
+    );
 
     return `
-        <div class="grid-2">
+        <div class="stats">
 
-            <div class="card">
-
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">
-                            Payroll Report
-                        </div>
-
-                        <div class="card-subtitle">
-                            Export approved payroll
-                        </div>
-                    </div>
+            <div class="stat-card">
+                <div class="stat-label">
+                    Current Pay Period
                 </div>
 
-                <div class="card-body">
-
-                    <p style="color:#6b7280;font-size:12px;">
-                        Export approved employee hours,
-                        hourly rates and gross pay for accounting.
-                    </p>
-
-                    <button
-                        class="btn btn-primary"
-                        onclick="exportPayrollCSV()"
-                    >
-                        Export Payroll CSV
-                    </button>
-
+                <div style="font-weight:800;margin-top:10px;">
+                    ${formatDate(period.start)}
+                    -
+                    ${formatDate(period.end)}
                 </div>
-
             </div>
 
-            <div class="card">
-
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">
-                            Activity Report
-                        </div>
-
-                        <div class="card-subtitle">
-                            Print filtered system activity
-                        </div>
-                    </div>
+            <div class="stat-card">
+                <div class="stat-label">
+                    Hours
                 </div>
 
-                <div class="card-body">
-
-                    <p style="color:#6b7280;font-size:12px;">
-                        Use the Activity Log to select a date range
-                        and print the report.
-                    </p>
-
-                    <button
-                        class="btn btn-secondary"
-                        onclick="go('activity')"
-                    >
-                        Open Activity Log
-                    </button>
-
+                <div class="stat-value">
+                    ${hours.toFixed(2)}
                 </div>
-
             </div>
+
+            <div class="stat-card">
+                <div class="stat-label">
+                    Hourly Rate
+                </div>
+
+                <div class="stat-value">
+                    ${money(currentUser.rate)}
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">
+                    Company
+                </div>
+
+                <div style="font-weight:800;margin-top:10px;">
+                    ${escapeHTML(company.name)}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                Time Tracking
+            </div>
+
+            <p style="color:#697386;">
+                Record your hours for the current pay period.
+            </p>
+
+            <button
+                class="btn btn-primary"
+                onclick="navigate('time')">
+                Open My Time
+            </button>
+        </div>
+    `;
+}
+
+/* =========================================================
+   MANAGER DASHBOARD
+========================================================= */
+
+function renderManagerDashboard() {
+    const company = currentCompany();
+    const period = companyPeriod(company);
+
+    const employees = db.users.filter(
+        u =>
+            u.companyId === company.id &&
+            u.role === "employee"
+    );
+
+    let pending = 0;
+
+    employees.forEach(employee => {
+        const entries = db.timeEntries.filter(
+            e =>
+                e.employeeId === employee.id &&
+                e.periodStart === period.start &&
+                e.periodEnd === period.end
+        );
+
+        if (
+            entries.some(
+                e => e.status === "submitted"
+            )
+        ) {
+            pending++;
+        }
+    });
+
+    return `
+        <div class="stats">
+
+            <div class="stat-card">
+                <div class="stat-label">Company</div>
+                <div style="font-weight:800;margin-top:10px;">
+                    ${escapeHTML(company.name)}
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Employees</div>
+                <div class="stat-value">
+                    ${employees.length}
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">
+                    Pending Approvals
+                </div>
+
+                <div class="stat-value">
+                    ${pending}
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">
+                    Current Period
+                </div>
+
+                <div style="font-weight:800;margin-top:10px;">
+                    ${formatDate(period.start)}
+                    -
+                    ${formatDate(period.end)}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <div class="card-title">
+                Manager Workflow
+            </div>
+
+            <p style="color:#697386;">
+                Employees enter their hours. Once submitted,
+                review them here and approve the timesheets.
+                Approved hours then become available to payroll.
+            </p>
+
+            <button
+                class="btn btn-primary"
+                onclick="navigate('timesheets')">
+                Review Timesheets
+            </button>
 
         </div>
     `;
 }
 
-/* ============================================================
-   MAIN RENDER
-============================================================ */
+/* =========================================================
+   STATUS
+========================================================= */
 
-function render() {
+function statusBadge(status) {
+    const labels = {
+        open: "Open",
+        submitted: "Submitted",
+        approved: "Approved",
+        issued: "Paystub Issued",
+        closed: "Closed"
+    };
 
-    const app =
-        document.getElementById("app");
+    const classes = {
+        open: "badge-open",
+        submitted: "badge-submitted",
+        approved: "badge-approved",
+        issued: "badge-issued",
+        closed: "badge-closed"
+    };
 
-    if (!currentUser) {
-        app.innerHTML = renderLogin();
+    return `
+        <span class="badge ${classes[status] || "badge-open"}">
+            ${labels[status] || status}
+        </span>
+    `;
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+function closeModal(event) {
+    if (
+        event &&
+        event.target &&
+        !event.target.classList.contains("modal-overlay")
+    ) {
         return;
     }
 
-    let content = "";
-    let title = "Dashboard";
+    document.getElementById("modalContainer").innerHTML = "";
+}
 
-    if (currentUser.role === "ADMIN") {
+/* =========================================================
+   CLOCK
+========================================================= */
 
-        switch(currentPage) {
+setInterval(() => {
+    const clock = document.getElementById("liveClock");
 
-            case "companies":
-                title = "Companies";
-                content = companiesPage();
-                break;
+    if (clock) {
+        clock.textContent =
+            new Date().toLocaleTimeString();
+    }
+}, 1000);
 
-            case "employees":
-                title = "Employees";
-                content = employeesPage();
-                break;
+/* =========================================================
+   DEMO INITIALIZATION
+========================================================= */
 
-            case "managers":
-                title = "Managers";
-                content = managersPage();
-                break;
+/*
+    The application starts completely blank.
 
-            case "timesheets":
-                title = "Timesheets";
-                content = timesheetsPage();
-                break;
+    For your real system, users should be created by Admin.
 
-            case "payroll":
-                title = "Payroll";
-                content = payrollPage();
-                break;
+    To make the first login possible while testing,
+    use the browser console ONCE and run:
 
-            case "reports":
-                title = "Reports";
-                content = reportsPage();
-                break;
+    createInitialAdmin()
 
-            case "activity":
-                title = "Activity Log";
-                content = activityPage();
-                break;
+    Then remove this function before production.
+*/
 
-            default:
-                title = "Admin Dashboard";
-                content = adminDashboard();
-        }
-
-    } else if (currentUser.role === "MANAGER") {
-
-        switch(currentPage) {
-
-            case "employees":
-                title = "Employees";
-                content = employeesPage();
-                break;
-
-            case "timesheets":
-                title = "Timesheet Approval";
-                content = timesheetsPage();
-                break;
-
-            case "payroll":
-                title = "Payroll";
-                content = payrollPage();
-                break;
-
-            case "reports":
-                title = "Reports";
-                content = reportsPage();
-                break;
-
-            default:
-                title = "Manager Dashboard";
-                content = managerDashboard();
-        }
-
-    } else {
-
-        switch(currentPage) {
-
-            case "clock":
-                title = "Time Clock";
-                content = clockCard();
-                break;
-
-            case "timesheets":
-                title = "My Timesheets";
-                content = timesheetsPage();
-                break;
-
-            case "profile":
-                title = "My Profile";
-                content = profilePage();
-                break;
-
-            default:
-                title = "Employee Dashboard";
-                content = employeeDashboard();
-        }
+function createInitialAdmin() {
+    if (db.users.some(u => u.role === "admin")) {
+        alert("An admin already exists.");
+        return;
     }
 
-    app.innerHTML =
-        renderApp(content,title);
+    db.users.push({
+        id: id(),
+        role: "admin",
+        name: "System Administrator",
+        username: "admin",
+        password: "admin123",
+        email: "",
+        phone: "",
+        address: "",
+        rate: 0,
+        companyId: null,
+        active: true
+    });
 
-    startClock();
+    saveDB();
+
+    alert(
+        "Admin created.\n\nUsername: admin\nPassword: admin123"
+    );
 }
 
-/* ============================================================
-   LIVE CLOCK
-============================================================ */
-
-let clockInterval = null;
-
-function startClock() {
-
-    if (clockInterval)
-        clearInterval(clockInterval);
-
-    clockInterval =
-        setInterval(() => {
-
-            const clock =
-                document.getElementById("liveClock");
-
-            if (clock) {
-
-                clock.textContent =
-                    new Date().toLocaleTimeString([],{
-                        hour:"numeric",
-                        minute:"2-digit",
-                        second:"2-digit"
-                    });
-            }
-
-        },1000);
-}
-
-/* ============================================================
+/* =========================================================
    START
-============================================================ */
+========================================================= */
 
 loadDB();
 render();
-
 </script>
 
 </body>
