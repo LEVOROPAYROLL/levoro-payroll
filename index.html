@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEVORO - Payroll Management System</title>
+    <title>LEVORO - Enterprise Payroll</title>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
             min-height: 100vh;
         }
         @media print {
             body { background: white; }
             .no-print { display: none !important; }
-            .print-section { page-break-inside: avoid; }
         }
     </style>
 </head>
@@ -47,8 +46,6 @@
           const [oldPassword, setOldPassword] = useState('');
           const [newPassword, setNewPassword] = useState('');
           const [confirmPassword, setConfirmPassword] = useState('');
-          const [passwordError, setPasswordError] = useState('');
-          const [passwordSuccess, setPasswordSuccess] = useState('');
           const [newCompanyName, setNewCompanyName] = useState('');
           const [newPayrollType, setNewPayrollType] = useState('weekly');
           const [newPayrollStartDate, setNewPayrollStartDate] = useState('2026-01-01');
@@ -114,11 +111,7 @@
                 setCurrentUser(user);
                 setSelectedCompany(user.companyId);
                 setProfileData(user);
-                if (user.role === 'manager') {
-                  setUserRole('manager');
-                } else {
-                  setUserRole('employee');
-                }
+                setUserRole(user.role);
                 addLog('LOGIN', `${user.name} logged in`);
                 setLoginUsername('');
                 setLoginPassword('');
@@ -130,23 +123,17 @@
 
           const handleChangePassword = (e) => {
             e.preventDefault();
-            setPasswordError('');
-            setPasswordSuccess('');
             
             if (!oldPassword || !newPassword || !confirmPassword) {
-              setPasswordError('Please fill all fields');
+              alert('Please fill all fields');
               return;
             }
             if (currentUser.password !== oldPassword) {
-              setPasswordError('Old password is incorrect');
-              return;
-            }
-            if (newPassword.length < 6) {
-              setPasswordError('New password must be at least 6 characters');
+              alert('Old password is incorrect');
               return;
             }
             if (newPassword !== confirmPassword) {
-              setPasswordError('New passwords do not match');
+              alert('Passwords do not match');
               return;
             }
             
@@ -158,14 +145,14 @@
             setOldPassword('');
             setNewPassword('');
             setConfirmPassword('');
-            setPasswordSuccess('Password changed successfully!');
-            setTimeout(() => { setShowChangePassword(false); setPasswordSuccess(''); }, 2000);
+            setShowChangePassword(false);
+            alert('Password changed!');
           };
 
           const handleAddCompany = (e) => {
             e.preventDefault();
             if (!newCompanyName.trim()) {
-              alert('Please enter company name');
+              alert('Enter company name');
               return;
             }
             const newComp = {
@@ -184,7 +171,7 @@
                 name: newManagerName,
                 username: newManagerUsername,
                 password: newManagerPassword,
-                email: `${newManagerUsername}@${newCompanyName.toLowerCase().replace(/\s/g, '')}.com`,
+                email: `${newManagerUsername}@company.com`,
                 hourlyRate: 0,
                 companyId: newComp.id,
                 role: 'manager',
@@ -205,8 +192,8 @@
 
           const handleAddEmployee = (e) => {
             e.preventDefault();
-            if (!newEmployeeName.trim() || !newEmployeeUsername.trim()) {
-              alert('Please fill in required fields');
+            if (!newEmployeeName.trim() || !newEmployeeUsername.trim() || !newEmployeePassword.trim()) {
+              alert('Name, Username, and Password are required!');
               return;
             }
             const newEmp = {
@@ -240,7 +227,7 @@
             setEmployees(employees.map(emp => 
               emp.id === editingEmp.id ? { ...emp, ...editingEmp } : emp
             ));
-            addLog('UPDATE_EMPLOYEE', `${editingEmp.name} information updated`);
+            addLog('UPDATE_EMPLOYEE', `${editingEmp.name} updated`);
             setEditingEmp(null);
           };
 
@@ -257,14 +244,12 @@
           const addTimeEntry = (e, date, startTime, endTime) => {
             e.preventDefault();
             if (!startTime || !endTime) {
-              alert('Please enter both times');
+              alert('Enter start and end time');
               return;
             }
             const [sh, sm] = startTime.split(':').map(Number);
             const [eh, em] = endTime.split(':').map(Number);
-            const startMin = sh * 60 + sm;
-            const endMin = eh * 60 + em;
-            const hours = Math.max(0, (endMin - startMin) / 60).toFixed(2);
+            const hours = Math.max(0, (eh * 60 + em - sh * 60 - sm) / 60).toFixed(2);
             
             const newEntry = {
               id: Date.now(),
@@ -277,12 +262,12 @@
               submittedAt: new Date().toISOString()
             };
             setTimesheets([...timesheets, newEntry]);
-            addLog('ADD_TIMESHEET', `${currentUser.name} logged ${hours} hours`);
+            addLog('ADD_TIMESHEET', `Logged ${hours} hours`);
           };
 
           const approvePaystub = (employeeId, periodStart) => {
             const employee = employees.find(e => e.id === employeeId);
-            const periodEnd = new Date(new Date(periodStart).getTime() + (employee.payPeriod === 'weekly' ? 6 : 13) * 24 * 60 * 60 * 1000);
+            const periodEnd = new Date(new Date(periodStart).getTime() + 6 * 24 * 60 * 60 * 1000);
             const periodTimesheets = timesheets.filter(ts => {
               const tsDate = new Date(ts.date);
               return ts.employeeId === employeeId && tsDate >= new Date(periodStart) && tsDate <= periodEnd;
@@ -302,12 +287,12 @@
               approvedBy: currentUser.name,
               approvedAt: new Date().toISOString()
             }]);
-            addLog('APPROVE_PAYSTUB', `${employee.name}'s paystub approved`);
+            addLog('APPROVE_PAYSTUB', `${employee.name} paystub approved`);
           };
 
           const exportPayroll = () => {
             const companyName = companies.find(c => c.id === selectedCompany)?.name || 'LEVORO';
-            let csv = 'Company,Employee,Period Start,Total Hours,Hourly Rate,Gross Pay,Status,Approved By,Approved Date\n';
+            let csv = 'Company,Employee,Period,Total Hours,Rate,Gross Pay,Status,Approved By,Date\n';
             
             const companyEmployees = employees.filter(e => e.companyId === selectedCompany && e.role === 'employee');
             companyEmployees.forEach(emp => {
@@ -321,7 +306,7 @@
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${companyName}_Payroll_${new Date().toISOString().split('T')[0]}.csv`;
+            a.download = `${companyName}_Payroll.csv`;
             a.click();
           };
 
@@ -344,62 +329,29 @@
             setCurrentUser(null);
             setUserRole(null);
             setSelectedCompany(null);
-            setLoginError('');
           };
 
-          // ========== LOGIN SCREEN ==========
+          // ========== LOGIN ==========
           if (!currentUser) {
             return (
               <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
                 <div style={{ width: '100%', maxWidth: '420px' }}>
                   <div style={{ background: 'white', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)', overflow: 'hidden' }}>
-                    <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '40px 30px', textAlign: 'center' }}>
-                      <h1 style={{ color: 'white', margin: '0 0 8px 0', fontSize: '32px', fontWeight: 700 }}>LEVORO</h1>
-                      <p style={{ color: 'rgba(255,255,255,0.9)', margin: 0, fontSize: '14px' }}>Payroll Management System</p>
+                    <div style={{ background: 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)', padding: '50px 30px', textAlign: 'center' }}>
+                      <h1 style={{ color: 'white', margin: '0 0 8px 0', fontSize: '36px', fontWeight: 700 }}>LEVORO</h1>
+                      <p style={{ color: 'rgba(255,255,255,0.95)', margin: 0, fontSize: '14px' }}>Enterprise Payroll System</p>
                     </div>
 
                     <div style={{ padding: '40px 30px' }}>
                       <form onSubmit={handleLogin}>
                         <div style={{ marginBottom: '20px' }}>
                           <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '8px', color: '#333' }}>Username</label>
-                          <input
-                            type="text"
-                            value={loginUsername}
-                            onChange={(e) => { setLoginUsername(e.target.value); setLoginError(''); }}
-                            placeholder="Enter your username"
-                            style={{
-                              width: '100%',
-                              padding: '12px 14px',
-                              fontSize: '14px',
-                              border: '1px solid #ddd',
-                              borderRadius: '8px',
-                              boxSizing: 'border-box',
-                              transition: 'border-color 0.3s'
-                            }}
-                            onFocus={(e) => e.target.style.borderColor = '#667eea'}
-                            onBlur={(e) => e.target.style.borderColor = '#ddd'}
-                          />
+                          <input type="text" value={loginUsername} onChange={(e) => { setLoginUsername(e.target.value); setLoginError(''); }} placeholder="Enter username" style={{ width: '100%', padding: '12px', fontSize: '14px', border: '1px solid #ddd', borderRadius: '8px' }} />
                         </div>
 
-                        <div style={{ marginBottom: '28px' }}>
+                        <div style={{ marginBottom: '20px' }}>
                           <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '8px', color: '#333' }}>Password</label>
-                          <input
-                            type="password"
-                            value={loginPassword}
-                            onChange={(e) => { setLoginPassword(e.target.value); setLoginError(''); }}
-                            placeholder="Enter your password"
-                            style={{
-                              width: '100%',
-                              padding: '12px 14px',
-                              fontSize: '14px',
-                              border: '1px solid #ddd',
-                              borderRadius: '8px',
-                              boxSizing: 'border-box',
-                              transition: 'border-color 0.3s'
-                            }}
-                            onFocus={(e) => e.target.style.borderColor = '#667eea'}
-                            onBlur={(e) => e.target.style.borderColor = '#ddd'}
-                          />
+                          <input type="password" value={loginPassword} onChange={(e) => { setLoginPassword(e.target.value); setLoginError(''); }} placeholder="Enter password" style={{ width: '100%', padding: '12px', fontSize: '14px', border: '1px solid #ddd', borderRadius: '8px' }} />
                         </div>
 
                         {loginError && (
@@ -408,125 +360,77 @@
                           </div>
                         )}
 
-                        <button
-                          type="submit"
-                          style={{
-                            width: '100%',
-                            padding: '12px',
-                            fontSize: '14px',
-                            fontWeight: 600,
-                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            transition: 'transform 0.2s'
-                          }}
-                          onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
-                          onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
-                        >
+                        <button type="submit" style={{ width: '100%', padding: '12px', fontSize: '14px', fontWeight: 600, background: 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
                           Sign In
                         </button>
                       </form>
                     </div>
-                  </div>
-
-                  <div style={{ textAlign: 'center', marginTop: '30px', color: 'rgba(255,255,255,0.9)', fontSize: '13px' }}>
-                    <p style={{ margin: '0 0 8px 0' }}>© 2026 LEVORO. All rights reserved.</p>
-                    <p style={{ margin: 0 }}>Enterprise Payroll Management Solution</p>
                   </div>
                 </div>
               </div>
             );
           }
 
-          // ========== ADMIN VIEW ==========
+          // ========== ADMIN ==========
           if (userRole === 'admin') {
             const selectedComp = companies.find(c => c.id === selectedCompany);
             const companyEmps = selectedCompany ? employees.filter(e => e.companyId === selectedCompany) : [];
 
             return (
               <div style={{ minHeight: '100vh', background: '#f8f9fa', padding: '20px' }}>
-                <div className="no-print" style={{ maxWidth: '1600px', margin: '0 auto' }}>
+                <div style={{ maxWidth: '1600px', margin: '0 auto' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-                    <div>
-                      <h1 style={{ margin: '0 0 4px 0', fontSize: '28px', fontWeight: 700, color: '#333' }}>LEVORO Admin</h1>
-                      <p style={{ margin: 0, fontSize: '13px', color: '#666' }}>Welcome, {currentUser.name}</p>
-                    </div>
-                    <button onClick={handleLogout} style={{ padding: '10px 20px', fontSize: '14px', background: '#f0f0f0', border: '1px solid #ddd', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>Sign Out</button>
+                    <h1 style={{ margin: 0, fontSize: '28px', fontWeight: 700, color: '#e74c3c' }}>✓ LEVORO Admin</h1>
+                    <button onClick={handleLogout} style={{ padding: '10px 20px', fontSize: '14px', background: '#e74c3c', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>Sign Out</button>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) 1fr', gap: '24px', marginBottom: '24px' }}>
-                    {/* Companies Section */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '24px', marginBottom: '24px' }}>
                     <div style={{ background: 'white', border: '1px solid #e0e0e0', borderRadius: '12px', padding: '24px' }}>
-                      <h2 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: 600, color: '#333' }}>Companies</h2>
-                      <div style={{ display: 'grid', gap: '12px', maxHeight: '500px', overflowY: 'auto', marginBottom: '16px' }}>
-                        {companies.length === 0 ? (
-                          <p style={{ color: '#999', fontSize: '13px', margin: 0 }}>No companies yet</p>
-                        ) : (
-                          companies.map(comp => (
-                            <div key={comp.id} onClick={() => setSelectedCompany(comp.id)} style={{ background: selectedCompany === comp.id ? '#f0f4ff' : '#fafafa', border: `2px solid ${selectedCompany === comp.id ? '#667eea' : '#e0e0e0'}`, borderRadius: '8px', padding: '12px', cursor: 'pointer', transition: 'all 0.2s' }}>
-                              <p style={{ margin: '0 0 4px 0', fontSize: '13px', fontWeight: 600, color: '#333' }}>{comp.name}</p>
-                              <p style={{ margin: '0', fontSize: '11px', color: '#666' }}>{comp.payrollType} • {employees.filter(e => e.companyId === comp.id).length} users</p>
-                              <button className="no-print" onClick={(e) => { e.stopPropagation(); setCompanies(companies.filter(c => c.id !== comp.id)); }} style={{ marginTop: '8px', width: '100%', padding: '6px', fontSize: '11px', background: '#ffe0e0', color: '#c33', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Delete</button>
-                            </div>
-                          ))
-                        )}
+                      <h2 style={{ margin: '0 0 16px 0', fontSize: '16px', fontWeight: 600 }}>Companies</h2>
+                      <div style={{ maxHeight: '500px', overflowY: 'auto', marginBottom: '16px' }}>
+                        {companies.map(comp => (
+                          <div key={comp.id} onClick={() => setSelectedCompany(comp.id)} style={{ background: selectedCompany === comp.id ? '#fef5f5' : '#fafafa', border: `2px solid ${selectedCompany === comp.id ? '#e74c3c' : '#e0e0e0'}`, borderRadius: '8px', padding: '12px', marginBottom: '8px', cursor: 'pointer' }}>
+                            <p style={{ margin: '0 0 4px 0', fontSize: '13px', fontWeight: 600 }}>{comp.name}</p>
+                            <p style={{ margin: '0', fontSize: '11px', color: '#666' }}>{comp.payrollType} • {employees.filter(e => e.companyId === comp.id).length} users</p>
+                            <button onClick={(e) => { e.stopPropagation(); setCompanies(companies.filter(c => c.id !== comp.id)); }} style={{ marginTop: '8px', width: '100%', padding: '6px', fontSize: '11px', background: '#ffe0e0', color: '#c33', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Delete</button>
+                          </div>
+                        ))}
                       </div>
-                      <button className="no-print" onClick={() => setShowAddCompany(!showAddCompany)} style={{ width: '100%', padding: '10px', fontSize: '13px', background: '#667eea', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>+ Add Company</button>
+                      <button onClick={() => setShowAddCompany(!showAddCompany)} style={{ width: '100%', padding: '10px', fontSize: '13px', background: '#e74c3c', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>+ Add Company</button>
 
                       {showAddCompany && (
-                        <form onSubmit={handleAddCompany} style={{ background: '#f8f9fa', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '16px', marginTop: '16px' }}>
-                          <div style={{ marginBottom: '12px' }}>
-                            <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, marginBottom: '4px' }}>Company Name *</label>
-                            <input type="text" value={newCompanyName} onChange={(e) => setNewCompanyName(e.target.value)} style={{ width: '100%', padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
-                          </div>
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
-                            <div>
-                              <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, marginBottom: '4px' }}>Type</label>
-                              <select value={newPayrollType} onChange={(e) => setNewPayrollType(e.target.value)} style={{ width: '100%', padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }}>
-                                <option value="weekly">Weekly</option>
-                                <option value="biweekly">Bi-Weekly</option>
-                              </select>
-                            </div>
-                            <div>
-                              <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, marginBottom: '4px' }}>Start Date</label>
-                              <input type="date" value={newPayrollStartDate} onChange={(e) => setNewPayrollStartDate(e.target.value)} style={{ width: '100%', padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
-                            </div>
-                          </div>
-                          <h4 style={{ margin: '12px 0 8px 0', fontSize: '12px' }}>Manager (Optional)</h4>
-                          <input type="text" value={newManagerName} onChange={(e) => setNewManagerName(e.target.value)} placeholder="Name" style={{ width: '100%', padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '8px' }} />
-                          <input type="text" value={newManagerUsername} onChange={(e) => setNewManagerUsername(e.target.value)} placeholder="Username" style={{ width: '100%', padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '8px' }} />
-                          <input type="password" value={newManagerPassword} onChange={(e) => setNewManagerPassword(e.target.value)} placeholder="Password" style={{ width: '100%', padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '8px' }} />
-                          <button type="submit" style={{ width: '100%', padding: '8px', fontSize: '12px', background: '#667eea', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>Create</button>
+                        <form onSubmit={handleAddCompany} style={{ background: '#f8f9fa', borderRadius: '8px', padding: '16px', marginTop: '16px' }}>
+                          <input type="text" value={newCompanyName} onChange={(e) => setNewCompanyName(e.target.value)} placeholder="Name" style={{ width: '100%', padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '8px' }} />
+                          <select value={newPayrollType} onChange={(e) => setNewPayrollType(e.target.value)} style={{ width: '100%', padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '8px' }}>
+                            <option value="weekly">Weekly</option>
+                            <option value="biweekly">Bi-Weekly</option>
+                          </select>
+                          <input type="date" value={newPayrollStartDate} onChange={(e) => setNewPayrollStartDate(e.target.value)} style={{ width: '100%', padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '8px' }} />
+                          <input type="text" value={newManagerName} onChange={(e) => setNewManagerName(e.target.value)} placeholder="Manager Name" style={{ width: '100%', padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '8px' }} />
+                          <input type="text" value={newManagerUsername} onChange={(e) => setNewManagerUsername(e.target.value)} placeholder="Manager Username" style={{ width: '100%', padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '8px' }} />
+                          <input type="password" value={newManagerPassword} onChange={(e) => setNewManagerPassword(e.target.value)} placeholder="Manager Password" style={{ width: '100%', padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '8px' }} />
+                          <button type="submit" style={{ width: '100%', padding: '8px', fontSize: '12px', background: '#e74c3c', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Create</button>
                         </form>
                       )}
                     </div>
 
-                    {/* Activity Log */}
                     <div style={{ background: 'white', border: '1px solid #e0e0e0', borderRadius: '12px', padding: '24px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                        <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: '#333' }}>Activity Log</h2>
-                        <button className="no-print" onClick={() => window.print()} style={{ padding: '6px 12px', fontSize: '12px', background: '#667eea', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>🖨️ Print</button>
+                        <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 600 }}>Activity Log</h2>
+                        <button onClick={() => window.print()} style={{ padding: '6px 12px', fontSize: '12px', background: '#e74c3c', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>🖨️ Print</button>
                       </div>
 
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
-                        <div>
-                          <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, marginBottom: '4px' }}>From</label>
-                          <input type="date" value={logFilterStart} onChange={(e) => setLogFilterStart(e.target.value)} style={{ width: '100%', padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
-                        </div>
-                        <div>
-                          <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, marginBottom: '4px' }}>To</label>
-                          <input type="date" value={logFilterEnd} onChange={(e) => setLogFilterEnd(e.target.value)} style={{ width: '100%', padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
-                        </div>
+                        <input type="date" value={logFilterStart} onChange={(e) => setLogFilterStart(e.target.value)} style={{ padding: '6px', fontSize: '12px', border: '2px solid #e74c3c', borderRadius: '6px' }} />
+                        <input type="date" value={logFilterEnd} onChange={(e) => setLogFilterEnd(e.target.value)} style={{ padding: '6px', fontSize: '12px', border: '2px solid #e74c3c', borderRadius: '6px' }} />
                       </div>
 
-                      <div className="print-section" style={{ background: '#fafafa', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '12px', maxHeight: '600px', overflowY: 'auto', fontSize: '12px' }}>
+                      <div style={{ background: '#fafafa', borderRadius: '8px', padding: '12px', maxHeight: '500px', overflowY: 'auto', fontSize: '12px' }}>
                         {getFilteredLogs().length === 0 ? (
-                          <p style={{ color: '#999', margin: 0 }}>No activity logs</p>
+                          <p style={{ margin: 0, color: '#999' }}>No logs in date range</p>
                         ) : (
                           getFilteredLogs().map(log => (
-                            <div key={log.id} style={{ borderBottom: '1px solid #e0e0e0', paddingBottom: '8px', marginBottom: '8px', paddingLeft: '8px', borderLeft: '3px solid #667eea' }}>
+                            <div key={log.id} style={{ borderBottom: '1px solid #e0e0e0', paddingBottom: '8px', marginBottom: '8px', paddingLeft: '8px', borderLeft: '3px solid #e74c3c' }}>
                               <p style={{ margin: '0 0 2px 0', fontWeight: 600, color: '#333' }}>{log.action}</p>
                               <p style={{ margin: '0 0 2px 0', color: '#666', fontSize: '11px' }}>{log.description}</p>
                               <p style={{ margin: 0, color: '#999', fontSize: '10px' }}>{new Date(log.timestamp).toLocaleString()}</p>
@@ -537,26 +441,24 @@
                     </div>
                   </div>
 
-                  {/* Manage Company */}
                   {selectedCompany && selectedComp && (
                     <div style={{ background: 'white', border: '1px solid #e0e0e0', borderRadius: '12px', padding: '24px' }}>
-                      <h2 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: 600, color: '#333' }}>Manage {selectedComp.name}</h2>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                        <p style={{ margin: 0, fontSize: '13px', color: '#666' }}>{companyEmps.length} total users</p>
-                        <button className="no-print" onClick={() => setShowAddEmployee(!showAddEmployee)} style={{ padding: '8px 16px', fontSize: '13px', background: '#667eea', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>+ Add Employee</button>
+                        <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 600 }}>Manage {selectedComp.name}</h2>
+                        <button onClick={() => setShowAddEmployee(!showAddEmployee)} style={{ padding: '8px 16px', fontSize: '13px', background: '#e74c3c', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>+ Add Employee</button>
                       </div>
 
                       {showAddEmployee && (
-                        <form onSubmit={handleAddEmployee} style={{ background: '#f8f9fa', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '16px', marginBottom: '16px' }}>
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px', marginBottom: '12px' }}>
+                        <form onSubmit={handleAddEmployee} style={{ background: '#f8f9fa', borderRadius: '8px', padding: '16px', marginBottom: '16px' }}>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px' }}>
                             <input type="text" placeholder="Name *" value={newEmployeeName} onChange={(e) => setNewEmployeeName(e.target.value)} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
                             <input type="text" placeholder="Username *" value={newEmployeeUsername} onChange={(e) => setNewEmployeeUsername(e.target.value)} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
-                            <input type="password" placeholder="Password" value={newEmployeePassword} onChange={(e) => setNewEmployeePassword(e.target.value)} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <input type="password" placeholder="Password *" value={newEmployeePassword} onChange={(e) => setNewEmployeePassword(e.target.value)} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
                             <input type="email" placeholder="Email" value={newEmployeeEmail} onChange={(e) => setNewEmployeeEmail(e.target.value)} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
                             <input type="text" placeholder="Phone" value={newEmployeePhone} onChange={(e) => setNewEmployeePhone(e.target.value)} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
                             <input type="text" placeholder="Address" value={newEmployeeAddress} onChange={(e) => setNewEmployeeAddress(e.target.value)} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
                             <input type="number" placeholder="Hourly Rate" step="0.01" value={newEmployeeRate} onChange={(e) => setNewEmployeeRate(e.target.value)} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
-                            <button type="submit" style={{ padding: '8px', fontSize: '12px', background: '#667eea', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>Add</button>
+                            <button type="submit" style={{ padding: '8px', fontSize: '12px', background: '#e74c3c', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Add</button>
                           </div>
                         </form>
                       )}
@@ -565,24 +467,24 @@
                         {companyEmps.map(emp => (
                           <div key={emp.id} style={{ background: '#f8f9fa', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '12px' }}>
                             {editingEmp?.id === emp.id ? (
-                              <form onSubmit={updateEmployee} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '8px' }}>
+                              <form onSubmit={updateEmployee} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: '8px' }}>
                                 <input type="text" value={editingEmp.name} onChange={(e) => setEditingEmp({...editingEmp, name: e.target.value})} style={{ padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
                                 <input type="email" value={editingEmp.email} onChange={(e) => setEditingEmp({...editingEmp, email: e.target.value})} style={{ padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
                                 <input type="text" value={editingEmp.phone} onChange={(e) => setEditingEmp({...editingEmp, phone: e.target.value})} style={{ padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
                                 <input type="text" value={editingEmp.address} onChange={(e) => setEditingEmp({...editingEmp, address: e.target.value})} style={{ padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
                                 <input type="number" value={editingEmp.hourlyRate} onChange={(e) => setEditingEmp({...editingEmp, hourlyRate: parseFloat(e.target.value)})} style={{ padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
-                                <button type="submit" style={{ padding: '6px', fontSize: '12px', background: '#1d9e75', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Save</button>
+                                <button type="submit" style={{ padding: '6px', fontSize: '12px', background: '#27ae60', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Save</button>
                                 <button type="button" onClick={() => setEditingEmp(null)} style={{ padding: '6px', fontSize: '12px', background: '#ddd', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Cancel</button>
                               </form>
                             ) : (
                               <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '12px', alignItems: 'center' }}>
                                 <div>
-                                  <p style={{ margin: '0 0 2px 0', fontSize: '13px', fontWeight: 600, color: '#333' }}>{emp.name} <span style={{ fontSize: '11px', background: '#e8e8e8', padding: '2px 6px', borderRadius: '4px', marginLeft: '6px' }}>{emp.role}</span></p>
+                                  <p style={{ margin: '0 0 2px 0', fontSize: '13px', fontWeight: 600 }}>{emp.name} <span style={{ fontSize: '11px', background: '#e8e8e8', padding: '2px 6px', borderRadius: '4px', marginLeft: '6px' }}>{emp.role}</span></p>
                                   <p style={{ margin: 0, fontSize: '11px', color: '#666' }}>@{emp.username} • {emp.email} • ${emp.hourlyRate}</p>
                                 </div>
-                                <div className="no-print" style={{ display: 'flex', gap: '4px' }}>
-                                  <button onClick={() => setEditingEmp(emp)} style={{ padding: '4px 8px', fontSize: '11px', background: '#667eea', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Edit</button>
-                                  <button onClick={() => setEmployees(employees.filter(e => e.id !== emp.id))} style={{ padding: '4px 8px', fontSize: '11px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Delete</button>
+                                <div style={{ display: 'flex', gap: '4px' }}>
+                                  <button onClick={() => setEditingEmp(emp)} style={{ padding: '4px 8px', fontSize: '11px', background: '#e74c3c', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Edit</button>
+                                  <button onClick={() => setEmployees(employees.filter(e => e.id !== emp.id))} style={{ padding: '4px 8px', fontSize: '11px', background: '#c0392b', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Delete</button>
                                 </div>
                               </div>
                             )}
@@ -596,20 +498,15 @@
             );
           }
 
-          // ========== EMPLOYEE VIEW ==========
+          // ========== EMPLOYEE ==========
           if (userRole === 'employee' && currentUser) {
             const company = companies.find(c => c.id === selectedCompany);
-            const today = new Date();
             const periodStart = new Date(company.payrollStartDate);
             const periodEnd = new Date(periodStart);
-            if (company.payrollType === 'weekly') {
-              periodEnd.setDate(periodEnd.getDate() + 6);
-            } else {
-              periodEnd.setDate(periodEnd.getDate() + 13);
-            }
+            periodEnd.setDate(periodEnd.getDate() + 6);
 
             const weekDays = [];
-            for (let i = 0; i < (company.payrollType === 'weekly' ? 7 : 14); i++) {
+            for (let i = 0; i < 7; i++) {
               const d = new Date(periodStart);
               d.setDate(d.getDate() + i);
               weekDays.push(d);
@@ -619,66 +516,41 @@
 
             return (
               <div style={{ minHeight: '100vh', background: '#f8f9fa', padding: '20px' }}>
-                <div className="no-print" style={{ maxWidth: '900px', margin: '0 auto' }}>
+                <div style={{ maxWidth: '900px', margin: '0 auto' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-                    <div>
-                      <h1 style={{ margin: '0 0 4px 0', fontSize: '28px', fontWeight: 700, color: '#333' }}>{companyName}</h1>
-                      <p style={{ margin: 0, fontSize: '13px', color: '#666' }}>Welcome, {currentUser.name}</p>
+                    <h1 style={{ margin: 0, fontSize: '28px', fontWeight: 700, color: '#333' }}>{companyName}</h1>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button onClick={() => setShowChangePassword(!showChangePassword)} style={{ padding: '6px 12px', fontSize: '12px', background: '#f39c12', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>🔑 Password</button>
+                      <button onClick={handleLogout} style={{ padding: '10px 20px', fontSize: '14px', background: '#e74c3c', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Sign Out</button>
                     </div>
-                    <button onClick={handleLogout} style={{ padding: '10px 20px', fontSize: '14px', background: '#f0f0f0', border: '1px solid #ddd', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>Sign Out</button>
                   </div>
 
-                  {/* Profile Card */}
+                  {showChangePassword && (
+                    <form onSubmit={handleChangePassword} style={{ background: 'white', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '16px', marginBottom: '16px' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
+                        <input type="password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} placeholder="Old Password" style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                        <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="New Password" style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                        <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm" style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                      </div>
+                      <button type="submit" style={{ width: '100%', marginTop: '8px', padding: '8px', fontSize: '12px', background: '#f39c12', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Change Password</button>
+                    </form>
+                  )}
+
                   <div style={{ background: 'white', border: '1px solid #e0e0e0', borderRadius: '12px', padding: '24px', marginBottom: '24px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                      <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#333' }}>My Profile</h2>
-                      <div style={{ display: 'flex', gap: '8px' }}>
-                        <button onClick={() => setEditingProfile(!editingProfile)} style={{ padding: '6px 12px', fontSize: '12px', background: '#667eea', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>{editingProfile ? 'Cancel' : 'Edit'}</button>
-                        <button onClick={() => setShowChangePassword(!showChangePassword)} style={{ padding: '6px 12px', fontSize: '12px', background: '#f39c12', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>🔑 Password</button>
-                      </div>
+                      <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 600 }}>My Profile</h2>
+                      <button onClick={() => setEditingProfile(!editingProfile)} style={{ padding: '6px 12px', fontSize: '12px', background: '#e74c3c', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>{editingProfile ? 'Cancel' : 'Edit'}</button>
                     </div>
-
-                    {showChangePassword && (
-                      <form onSubmit={handleChangePassword} style={{ background: '#f8f9fa', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '12px', marginBottom: '12px' }}>
-                        <div style={{ marginBottom: '8px' }}>
-                          <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, marginBottom: '2px' }}>Old Password</label>
-                          <input type="password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} style={{ width: '100%', padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
-                        </div>
-                        <div style={{ marginBottom: '8px' }}>
-                          <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, marginBottom: '2px' }}>New Password</label>
-                          <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} style={{ width: '100%', padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
-                        </div>
-                        <div style={{ marginBottom: '8px' }}>
-                          <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, marginBottom: '2px' }}>Confirm Password</label>
-                          <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} style={{ width: '100%', padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
-                        </div>
-                        {passwordError && <p style={{ color: '#c33', fontSize: '11px', margin: '8px 0' }}>⚠️ {passwordError}</p>}
-                        {passwordSuccess && <p style={{ color: '#1d9e75', fontSize: '11px', margin: '8px 0' }}>✓ {passwordSuccess}</p>}
-                        <button type="submit" style={{ width: '100%', padding: '8px', fontSize: '12px', background: '#f39c12', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>Change Password</button>
-                      </form>
-                    )}
 
                     {editingProfile ? (
                       <form onSubmit={updateEmployeeProfile}>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                          <div>
-                            <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, marginBottom: '4px' }}>Name</label>
-                            <input type="text" value={profileData.name || ''} onChange={(e) => setProfileData({...profileData, name: e.target.value})} style={{ width: '100%', padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
-                          </div>
-                          <div>
-                            <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, marginBottom: '4px' }}>Email</label>
-                            <input type="email" value={profileData.email || ''} onChange={(e) => setProfileData({...profileData, email: e.target.value})} style={{ width: '100%', padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
-                          </div>
-                          <div>
-                            <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, marginBottom: '4px' }}>Phone</label>
-                            <input type="text" value={profileData.phone || ''} onChange={(e) => setProfileData({...profileData, phone: e.target.value})} style={{ width: '100%', padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
-                          </div>
-                          <div>
-                            <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, marginBottom: '4px' }}>Address</label>
-                            <input type="text" value={profileData.address || ''} onChange={(e) => setProfileData({...profileData, address: e.target.value})} style={{ width: '100%', padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
-                          </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                          <input type="text" value={profileData.name || ''} onChange={(e) => setProfileData({...profileData, name: e.target.value})} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                          <input type="email" value={profileData.email || ''} onChange={(e) => setProfileData({...profileData, email: e.target.value})} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                          <input type="text" value={profileData.phone || ''} onChange={(e) => setProfileData({...profileData, phone: e.target.value})} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                          <input type="text" value={profileData.address || ''} onChange={(e) => setProfileData({...profileData, address: e.target.value})} style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
                         </div>
-                        <button type="submit" style={{ width: '100%', padding: '8px', fontSize: '12px', background: '#667eea', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>Save Changes</button>
+                        <button type="submit" style={{ width: '100%', marginTop: '8px', padding: '8px', fontSize: '12px', background: '#e74c3c', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Save</button>
                       </form>
                     ) : (
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '12px' }}>
@@ -690,10 +562,9 @@
                     )}
                   </div>
 
-                  {/* Time Entry */}
                   <div style={{ background: 'white', border: '1px solid #e0e0e0', borderRadius: '12px', padding: '24px' }}>
-                    <h2 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 600, color: '#333' }}>Log Your Hours</h2>
-                    <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#666' }}>{company?.payrollType === 'weekly' ? 'Week' : 'Period'} of {periodStart.toLocaleDateString()} - {periodEnd.toLocaleDateString()}</p>
+                    <h2 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 600 }}>Log Hours</h2>
+                    <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#666' }}>Week of {periodStart.toLocaleDateString()} - {periodEnd.toLocaleDateString()}</p>
                     
                     <div style={{ display: 'grid', gap: '8px' }}>
                       {weekDays.map((day, idx) => {
@@ -704,17 +575,17 @@
 
                         return (
                           <div key={idx} style={{ background: '#f8f9fa', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '12px' }}>
-                            <p style={{ margin: '0 0 8px 0', fontSize: '12px', fontWeight: 600, color: '#333' }}>{day.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</p>
+                            <p style={{ margin: '0 0 8px 0', fontSize: '12px', fontWeight: 600 }}>{day.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</p>
                             {entry ? (
                               <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '8px', alignItems: 'center' }}>
                                 <p style={{ margin: 0, fontSize: '12px', color: '#666' }}>{entry.startTime} - {entry.endTime} ({entry.hours}h)</p>
-                                <button className="no-print" onClick={() => setTimesheets(timesheets.filter(ts => ts.id !== entry.id))} style={{ padding: '4px 8px', fontSize: '11px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Delete</button>
+                                <button onClick={() => setTimesheets(timesheets.filter(ts => ts.id !== entry.id))} style={{ padding: '4px 8px', fontSize: '11px', background: '#c0392b', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Delete</button>
                               </div>
                             ) : (
                               <form onSubmit={(e) => addTimeEntry(e, dateStr, start, end)} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
                                 <input type="time" value={start} onChange={(e) => setStart(e.target.value)} style={{ padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
                                 <input type="time" value={end} onChange={(e) => setEnd(e.target.value)} style={{ padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
-                                <button type="submit" style={{ padding: '6px 8px', fontSize: '11px', background: '#667eea', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>+ Add</button>
+                                <button type="submit" style={{ padding: '6px', fontSize: '11px', background: '#e74c3c', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>+ Add</button>
                               </form>
                             )}
                           </div>
@@ -727,7 +598,7 @@
             );
           }
 
-          // ========== MANAGER VIEW ==========
+          // ========== MANAGER ==========
           if (userRole === 'manager' && currentUser && selectedCompany) {
             const company = companies.find(c => c.id === selectedCompany);
             const companyName = company?.name || 'LEVORO';
@@ -735,47 +606,34 @@
 
             return (
               <div style={{ minHeight: '100vh', background: '#f8f9fa', padding: '20px' }}>
-                <div className="no-print" style={{ maxWidth: '1000px', margin: '0 auto' }}>
+                <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-                    <div>
-                      <h1 style={{ margin: '0 0 4px 0', fontSize: '28px', fontWeight: 700, color: '#333' }}>{companyName} - Manager</h1>
-                      <p style={{ margin: 0, fontSize: '13px', color: '#666' }}>Welcome, {currentUser.name}</p>
-                    </div>
+                    <h1 style={{ margin: 0, fontSize: '28px', fontWeight: 700, color: '#333' }}>{companyName} - Manager</h1>
                     <div style={{ display: 'flex', gap: '8px' }}>
-                      <button onClick={() => setShowChangePassword(!showChangePassword)} style={{ padding: '6px 12px', fontSize: '12px', background: '#f39c12', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>🔑 Password</button>
-                      <button onClick={handleLogout} style={{ padding: '10px 20px', fontSize: '14px', background: '#f0f0f0', border: '1px solid #ddd', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>Sign Out</button>
+                      <button onClick={() => setShowChangePassword(!showChangePassword)} style={{ padding: '6px 12px', fontSize: '12px', background: '#f39c12', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>🔑 Password</button>
+                      <button onClick={handleLogout} style={{ padding: '10px 20px', fontSize: '14px', background: '#e74c3c', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Sign Out</button>
                     </div>
                   </div>
 
                   {showChangePassword && (
-                    <form onSubmit={handleChangePassword} style={{ background: 'white', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '12px', marginBottom: '12px' }}>
+                    <form onSubmit={handleChangePassword} style={{ background: 'white', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '16px', marginBottom: '16px' }}>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
-                        <div>
-                          <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, marginBottom: '2px' }}>Old Password</label>
-                          <input type="password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} style={{ width: '100%', padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
-                        </div>
-                        <div>
-                          <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, marginBottom: '2px' }}>New Password</label>
-                          <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} style={{ width: '100%', padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
-                        </div>
-                        <div>
-                          <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, marginBottom: '2px' }}>Confirm</label>
-                          <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} style={{ width: '100%', padding: '6px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
-                        </div>
+                        <input type="password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} placeholder="Old Password" style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                        <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="New Password" style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                        <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm" style={{ padding: '8px', fontSize: '12px', border: '1px solid #ddd', borderRadius: '6px' }} />
                       </div>
-                      {passwordError && <p style={{ color: '#c33', fontSize: '11px', margin: '8px 0 0 0' }}>⚠️ {passwordError}</p>}
-                      <button type="submit" style={{ width: '100%', padding: '8px', marginTop: '8px', fontSize: '12px', background: '#f39c12', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>Change Password</button>
+                      <button type="submit" style={{ width: '100%', marginTop: '8px', padding: '8px', fontSize: '12px', background: '#f39c12', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Change Password</button>
                     </form>
                   )}
 
                   <div style={{ background: 'white', border: '1px solid #e0e0e0', borderRadius: '12px', padding: '24px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                      <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#333' }}>Team Approvals</h2>
-                      <button className="no-print" onClick={exportPayroll} style={{ padding: '8px 16px', fontSize: '12px', background: '#667eea', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>📥 Export Payroll</button>
+                      <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 600 }}>Team Approvals</h2>
+                      <button onClick={exportPayroll} style={{ padding: '8px 16px', fontSize: '12px', background: '#e74c3c', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>📥 Export Payroll</button>
                     </div>
 
                     {companyEmployees.length === 0 ? (
-                      <p style={{ color: '#999', fontSize: '13px', margin: 0 }}>No employees in this company</p>
+                      <p style={{ color: '#999', fontSize: '13px', margin: 0 }}>No employees</p>
                     ) : (
                       <div style={{ display: 'grid', gap: '8px' }}>
                         {companyEmployees.map(emp => {
@@ -789,13 +647,13 @@
                             <div key={emp.id} style={{ background: '#f8f9fa', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '12px' }}>
                               <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '12px', alignItems: 'center' }}>
                                 <div>
-                                  <p style={{ margin: '0 0 4px 0', fontSize: '13px', fontWeight: 600, color: '#333' }}>{emp.name}</p>
+                                  <p style={{ margin: '0 0 4px 0', fontSize: '13px', fontWeight: 600 }}>{emp.name}</p>
                                   <p style={{ margin: 0, fontSize: '12px', color: '#666' }}>{totalHours.toFixed(2)}h × ${emp.hourlyRate}/hr = <strong>${grossPay}</strong></p>
                                 </div>
                                 {paystub && paystub.status === 'approved' ? (
-                                  <div style={{ fontSize: '12px', color: '#1d9e75', fontWeight: 600 }}>✓ Approved</div>
+                                  <div style={{ fontSize: '12px', color: '#27ae60', fontWeight: 600 }}>✓ Approved</div>
                                 ) : (
-                                  <button className="no-print" onClick={() => approvePaystub(emp.id, periodStart.toISOString().split('T')[0])} style={{ padding: '6px 12px', fontSize: '12px', background: '#1d9e75', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>Approve</button>
+                                  <button onClick={() => approvePaystub(emp.id, periodStart.toISOString().split('T')[0])} style={{ padding: '6px 12px', fontSize: '12px', background: '#27ae60', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Approve</button>
                                 )}
                               </div>
                             </div>
