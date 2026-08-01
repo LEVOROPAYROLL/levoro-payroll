@@ -16,64 +16,89 @@
     <div id="root"></div>
     <script type="text/babel">
         const { useState, useEffect } = React;
-
         const LEVOROPayroll = () => {
           const [currentUser, setCurrentUser] = useState(null);
           const [userRole, setUserRole] = useState(null);
           const [selectedCompany, setSelectedCompany] = useState(null);
-          const [loginEmail, setLoginEmail] = useState('');
+          const [loginUsername, setLoginUsername] = useState('');
           const [loginPassword, setLoginPassword] = useState('');
           const [companies, setCompanies] = useState([]);
           const [employees, setEmployees] = useState([]);
           const [timesheets, setTimesheets] = useState([]);
           const [paystubs, setPaystubs] = useState([]);
+          const [activityLog, setActivityLog] = useState([]);
           const [showAddCompany, setShowAddCompany] = useState(false);
           const [newCompanyName, setNewCompanyName] = useState('');
+          const [newPayrollType, setNewPayrollType] = useState('weekly');
+          const [newPayrollStartDate, setNewPayrollStartDate] = useState('2026-01-01');
+          const [newManagerName, setNewManagerName] = useState('');
+          const [newManagerUsername, setNewManagerUsername] = useState('');
+          const [newManagerPassword, setNewManagerPassword] = useState('');
           const [showAddEmployee, setShowAddEmployee] = useState(false);
           const [newEmployeeName, setNewEmployeeName] = useState('');
+          const [newEmployeeUsername, setNewEmployeeUsername] = useState('');
+          const [newEmployeePassword, setNewEmployeePassword] = useState('');
           const [newEmployeeEmail, setNewEmployeeEmail] = useState('');
-          const [newEmployeePayPeriod, setNewEmployeePayPeriod] = useState('weekly');
+          const [newEmployeePhone, setNewEmployeePhone] = useState('');
+          const [newEmployeeAddress, setNewEmployeeAddress] = useState('');
           const [newEmployeeRate, setNewEmployeeRate] = useState('15.00');
+          const [editingProfile, setEditingProfile] = useState(false);
+          const [profileData, setProfileData] = useState({});
 
-          // Load data from localStorage
           useEffect(() => {
             const compData = localStorage.getItem('levoro_companies');
             const empData = localStorage.getItem('levoro_employees');
             const tsData = localStorage.getItem('levoro_timesheets');
             const psData = localStorage.getItem('levoro_paystubs');
+            const logData = localStorage.getItem('levoro_activity_log');
             
             if (compData) setCompanies(JSON.parse(compData));
             if (empData) setEmployees(JSON.parse(empData));
             if (tsData) setTimesheets(JSON.parse(tsData));
             if (psData) setPaystubs(JSON.parse(psData));
+            if (logData) setActivityLog(JSON.parse(logData));
           }, []);
 
-          // Save data to localStorage
           useEffect(() => {
             localStorage.setItem('levoro_companies', JSON.stringify(companies));
             localStorage.setItem('levoro_employees', JSON.stringify(employees));
             localStorage.setItem('levoro_timesheets', JSON.stringify(timesheets));
             localStorage.setItem('levoro_paystubs', JSON.stringify(paystubs));
-          }, [companies, employees, timesheets, paystubs]);
+            localStorage.setItem('levoro_activity_log', JSON.stringify(activityLog));
+          }, [companies, employees, timesheets, paystubs, activityLog]);
+
+          const addLog = (action, description) => {
+            setActivityLog([...activityLog, {
+              id: Date.now(),
+              action,
+              description,
+              userId: currentUser?.id,
+              userName: currentUser?.name,
+              timestamp: new Date().toISOString()
+            }]);
+          };
 
           const handleLogin = (e) => {
             e.preventDefault();
-            if (loginEmail === 'admin@levoro.com' && loginPassword === 'admin123') {
-              setCurrentUser({ email: 'admin@levoro.com' });
+            if (loginUsername === 'admin' && loginPassword === 'admin123') {
+              setCurrentUser({ id: 'admin', username: 'admin', name: 'Admin', role: 'admin' });
               setUserRole('admin');
-              setLoginEmail('');
+              addLog('LOGIN', 'Admin logged in');
+              setLoginUsername('');
               setLoginPassword('');
             } else {
-              const user = employees.find(emp => emp.email === loginEmail && emp.password === loginPassword);
+              const user = employees.find(emp => emp.username === loginUsername && emp.password === loginPassword);
               if (user) {
                 setCurrentUser(user);
                 setSelectedCompany(user.companyId);
+                setProfileData(user);
                 if (user.role === 'manager') {
                   setUserRole('manager');
                 } else {
                   setUserRole('employee');
                 }
-                setLoginEmail('');
+                addLog('LOGIN', `${user.name} logged in`);
+                setLoginUsername('');
                 setLoginPassword('');
               } else {
                 alert('Invalid credentials');
@@ -86,20 +111,42 @@
             const newComp = {
               id: Date.now(),
               name: newCompanyName,
+              payrollType: newPayrollType,
+              payrollStartDate: newPayrollStartDate,
               createdAt: new Date().toISOString()
             };
             setCompanies([...companies, newComp]);
+            addLog('CREATE_COMPANY', `Company "${newCompanyName}" created`);
+            
+            if (newManagerName && newManagerUsername && newManagerPassword) {
+              const manager = {
+                id: Date.now() + 1,
+                name: newManagerName,
+                username: newManagerUsername,
+                password: newManagerPassword,
+                email: `${newManagerUsername}@company.com`,
+                hourlyRate: 0,
+                companyId: newComp.id,
+                role: 'manager',
+                address: '',
+                phone: '',
+                createdAt: new Date().toISOString()
+              };
+              setEmployees([...employees, manager]);
+              addLog('CREATE_MANAGER', `Manager "${newManagerName}" created`);
+            }
+            
             setNewCompanyName('');
+            setNewManagerName('');
+            setNewManagerUsername('');
+            setNewManagerPassword('');
             setShowAddCompany(false);
           };
 
           const deleteCompany = (companyId) => {
             setCompanies(companies.filter(c => c.id !== companyId));
             setEmployees(employees.filter(e => e.companyId !== companyId));
-            setTimesheets(timesheets.filter(t => {
-              const emp = employees.find(e => e.id === t.employeeId);
-              return emp?.companyId !== companyId;
-            }));
+            addLog('DELETE_COMPANY', 'Company deleted');
           };
 
           const handleAddEmployee = (e) => {
@@ -107,655 +154,285 @@
             const newEmp = {
               id: Date.now(),
               name: newEmployeeName,
+              username: newEmployeeUsername,
+              password: newEmployeePassword,
               email: newEmployeeEmail,
-              password: 'password123',
-              payPeriod: newEmployeePayPeriod,
+              phone: newEmployeePhone,
+              address: newEmployeeAddress,
               hourlyRate: parseFloat(newEmployeeRate),
               companyId: selectedCompany,
               role: 'employee',
               createdAt: new Date().toISOString()
             };
             setEmployees([...employees, newEmp]);
+            addLog('CREATE_EMPLOYEE', `Employee "${newEmployeeName}" created`);
+            
             setNewEmployeeName('');
+            setNewEmployeeUsername('');
+            setNewEmployeePassword('');
             setNewEmployeeEmail('');
-            setNewEmployeePayPeriod('weekly');
+            setNewEmployeePhone('');
+            setNewEmployeeAddress('');
             setNewEmployeeRate('15.00');
             setShowAddEmployee(false);
           };
 
-          const getPeriodStart = (date = new Date(), payPeriod = 'weekly') => {
-            const d = new Date(date);
-            if (payPeriod === 'weekly') {
-              d.setDate(d.getDate() - d.getDay());
-            } else {
-              d.setDate(d.getDate() - d.getDay());
-              const weeksSinceStart = Math.floor(d.getDate() / 14);
-              d.setDate(weeksSinceStart * 14 + 1);
-            }
-            return d;
+          const updateEmployeeProfile = (e) => {
+            e.preventDefault();
+            setEmployees(employees.map(emp => 
+              emp.id === currentUser.id ? { ...emp, ...profileData } : emp
+            ));
+            setCurrentUser({ ...currentUser, ...profileData });
+            addLog('UPDATE_PROFILE', `${profileData.name} updated profile`);
+            setEditingProfile(false);
           };
 
-          const getPeriodHours = (employeeId, periodStart, payPeriod) => {
-            const periodEnd = new Date(periodStart);
-            if (payPeriod === 'weekly') {
-              periodEnd.setDate(periodEnd.getDate() + 6);
-            } else {
-              periodEnd.setDate(periodEnd.getDate() + 13);
-            }
-            
-            return timesheets.filter(ts => {
-              if (ts.employeeId !== employeeId) return false;
-              const tsDate = new Date(ts.date);
-              return tsDate >= periodStart && tsDate <= periodEnd;
-            });
+          const handleLogout = () => {
+            addLog('LOGOUT', `${currentUser.name} logged out`);
+            setCurrentUser(null);
+            setUserRole(null);
+            setSelectedCompany(null);
           };
 
-          const getPaystubStatus = (employeeId, periodStart) => {
-            return paystubs.find(p => p.employeeId === employeeId && p.periodStart === periodStart.toISOString().split('T')[0]);
-          };
-
-          const approvePaystub = (employeeId, periodStart) => {
-            const periodEntries = getPeriodHours(employeeId, periodStart, employees.find(e => e.id === employeeId)?.payPeriod || 'weekly');
-            const totalHours = periodEntries.reduce((sum, ts) => sum + parseFloat(ts.hours), 0);
-            const emp = employees.find(e => e.id === employeeId);
-            
-            const paystubId = `${employeeId}-${periodStart.toISOString().split('T')[0]}`;
-            
-            setPaystubs([...paystubs.filter(p => p.id !== paystubId), {
-              id: paystubId,
-              employeeId,
-              periodStart: periodStart.toISOString().split('T')[0],
-              status: 'approved',
-              totalHours,
-              hourlyRate: emp.hourlyRate,
-              grossPay: (totalHours * emp.hourlyRate).toFixed(2),
-              approvedBy: currentUser.name,
-              approvedAt: new Date().toISOString()
-            }]);
-          };
-
-          const rejectPaystub = (employeeId, periodStart) => {
-            setPaystubs(paystubs.filter(p => !(p.employeeId === employeeId && p.periodStart === periodStart.toISOString().split('T')[0])));
-          };
-
-          const addTimeEntry = (date, startTime, endTime) => {
-            const hours = calculateHours(startTime, endTime);
-            const newEntry = {
-              id: Date.now(),
-              employeeId: currentUser.id,
-              date,
-              startTime,
-              endTime,
-              hours,
-              submittedAt: new Date().toISOString()
-            };
-            setTimesheets([...timesheets, newEntry]);
-          };
-
-          const calculateHours = (start, end) => {
-            if (!start || !end) return 0;
-            const [sh, sm] = start.split(':').map(Number);
-            const [eh, em] = end.split(':').map(Number);
-            const startMin = sh * 60 + sm;
-            const endMin = eh * 60 + em;
-            return Math.max(0, (endMin - startMin) / 60).toFixed(2);
-          };
-
-          const deleteTimeEntry = (id) => {
-            setTimesheets(timesheets.filter(ts => ts.id !== id));
-          };
-
-          const exportPayroll = () => {
-            const companyName = companies.find(c => c.id === selectedCompany)?.name || 'LEVORO';
-            let csv = 'Company,Employee,Period Start,Total Hours,Hourly Rate,Gross Pay,Status,Approved By,Approved Date\n';
-            
-            const companyEmployees = employees.filter(e => e.companyId === selectedCompany);
-            companyEmployees.forEach(emp => {
-              const approvedPaystubs = paystubs.filter(p => p.employeeId === emp.id && p.status === 'approved');
-              approvedPaystubs.forEach(ps => {
-                csv += `${companyName},${emp.name},${ps.periodStart},${ps.totalHours.toFixed(2)},${ps.hourlyRate.toFixed(2)},$${ps.grossPay},Approved,${ps.approvedBy},${new Date(ps.approvedAt).toLocaleDateString()}\n`;
-              });
-            });
-
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${companyName}_Approved_Payroll_${new Date().toISOString().split('T')[0]}.csv`;
-            a.click();
-          };
-
-          // Employee view
-          if (userRole === 'employee' && currentUser) {
-            const employee = employees.find(e => e.id === currentUser.id);
-            const periodStart = getPeriodStart(new Date(), employee?.payPeriod || 'weekly');
-            const periodEnd = new Date(periodStart);
-            if (employee?.payPeriod === 'weekly') {
-              periodEnd.setDate(periodEnd.getDate() + 6);
-            } else {
-              periodEnd.setDate(periodEnd.getDate() + 13);
-            }
-            
-            const periodTimesheets = getPeriodHours(currentUser.id, periodStart, employee?.payPeriod || 'weekly');
-            const totalHours = periodTimesheets.reduce((sum, ts) => sum + parseFloat(ts.hours), 0);
-            const paystubStatus = getPaystubStatus(currentUser.id, periodStart);
-            const companyName = companies.find(c => c.id === selectedCompany)?.name || 'LEVORO';
-
-            const weekDays = Array.from({ length: 7 }, (_, i) => {
-              const date = new Date(periodStart);
-              date.setDate(date.getDate() + i);
-              return date;
-            });
-
-            return (
-              <div style={{ padding: '20px', maxWidth: '900px', margin: '0 auto' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                  <h1 style={{ margin: 0, fontSize: '28px', fontWeight: 500 }}>{companyName}</h1>
-                  <button onClick={() => { setCurrentUser(null); setUserRole(null); setSelectedCompany(null); }} style={{
-                    padding: '8px 16px',
-                    fontSize: '13px',
-                    background: '#f0f0f0',
-                    border: '1px solid #ddd',
-                    borderRadius: '6px',
-                    cursor: 'pointer'
-                  }}>Logout</button>
-                </div>
-
-                <div style={{ background: '#fff', border: '1px solid #ddd', borderRadius: '12px', padding: '16px', marginBottom: '24px' }}>
-                  <p style={{ margin: '0 0 4px 0', fontSize: '13px', color: '#666' }}>Welcome, {currentUser.name}</p>
-                  <h2 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: 500 }}>
-                    {employee?.payPeriod === 'weekly' ? 'Week' : 'Pay Period'} of {periodStart.toLocaleDateString()} - {periodEnd.toLocaleDateString()}
-                  </h2>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
-                    <div style={{ background: '#f9f9f9', padding: '12px', borderRadius: '8px' }}>
-                      <p style={{ margin: '0', fontSize: '12px', color: '#666' }}>Total Hours</p>
-                      <p style={{ margin: '4px 0 0 0', fontSize: '20px', fontWeight: 500 }}>{totalHours.toFixed(2)}</p>
-                    </div>
-                    <div style={{ background: '#f9f9f9', padding: '12px', borderRadius: '8px' }}>
-                      <p style={{ margin: '0', fontSize: '12px', color: '#666' }}>Rate/Hour</p>
-                      <p style={{ margin: '4px 0 0 0', fontSize: '20px', fontWeight: 500 }}>${employee?.hourlyRate.toFixed(2)}</p>
-                    </div>
-                    <div style={{ background: '#f9f9f9', padding: '12px', borderRadius: '8px' }}>
-                      <p style={{ margin: '0', fontSize: '12px', color: '#666' }}>Paystub Status</p>
-                      <p style={{ 
-                        margin: '4px 0 0 0', 
-                        fontSize: '14px', 
-                        fontWeight: 500,
-                        color: paystubStatus?.status === 'approved' ? '#1d9e75' : '#ba7517'
-                      }}>
-                        {paystubStatus?.status === 'approved' ? '✓ Approved' : '⏳ Pending'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div style={{ background: '#fff', border: '1px solid #ddd', borderRadius: '12px', padding: '16px' }}>
-                  <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 500 }}>Enter Your Hours</h3>
-                  {weekDays.map((day, idx) => {
-                    const dateStr = day.toISOString().split('T')[0];
-                    const dayEntry = periodTimesheets.find(ts => ts.date === dateStr);
-
-                    return (
-                      <div key={idx} style={{
-                        background: '#f9f9f9',
-                        border: '1px solid #ddd',
-                        borderRadius: '8px',
-                        padding: '12px',
-                        marginBottom: '8px',
-                        display: 'flex',
-                        gap: '12px',
-                        alignItems: 'center'
-                      }}>
-                        <div style={{ flex: 1 }}>
-                          <p style={{ margin: '0 0 4px 0', fontSize: '13px', fontWeight: 500 }}>{day.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</p>
-                          {dayEntry ? (
-                            <p style={{ margin: '0', fontSize: '12px', color: '#666' }}>{dayEntry.startTime} - {dayEntry.endTime} ({dayEntry.hours}h)</p>
-                          ) : (
-                            <p style={{ margin: '0', fontSize: '12px', color: '#666' }}>No entry</p>
-                          )}
-                        </div>
-                        {dayEntry && (
-                          <button onClick={() => deleteTimeEntry(dayEntry.id)} style={{
-                            padding: '6px 12px',
-                            fontSize: '12px',
-                            background: 'transparent',
-                            border: '1px solid #ddd',
-                            borderRadius: '6px',
-                            cursor: 'pointer',
-                            color: '#666'
-                          }}>Delete</button>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          }
-
-          // Manager view
-          if (userRole === 'manager' && currentUser && selectedCompany) {
-            const companyEmployees = employees.filter(e => e.companyId === selectedCompany);
-            const companyName = companies.find(c => c.id === selectedCompany)?.name || 'LEVORO';
-
-            const pendingPaystubs = [];
-            companyEmployees.forEach(emp => {
-              const periodStart = getPeriodStart(new Date(), emp.payPeriod);
-              const paystubStatus = getPaystubStatus(emp.id, periodStart);
-              if (!paystubStatus || paystubStatus.status === 'rejected') {
-                const periodEntries = getPeriodHours(emp.id, periodStart, emp.payPeriod);
-                if (periodEntries.length > 0) {
-                  pendingPaystubs.push({
-                    employee: emp,
-                    periodStart,
-                    entries: periodEntries,
-                    totalHours: periodEntries.reduce((sum, ts) => sum + parseFloat(ts.hours), 0),
-                    grossPay: (periodEntries.reduce((sum, ts) => sum + parseFloat(ts.hours), 0) * emp.hourlyRate).toFixed(2)
-                  });
-                }
-              }
-            });
-
-            return (
-              <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                  <h1 style={{ margin: 0, fontSize: '28px', fontWeight: 500 }}>{companyName} - Manager</h1>
-                  <button onClick={() => { setCurrentUser(null); setUserRole(null); setSelectedCompany(null); }} style={{
-                    padding: '8px 16px',
-                    fontSize: '13px',
-                    background: '#f0f0f0',
-                    border: '1px solid #ddd',
-                    borderRadius: '6px',
-                    cursor: 'pointer'
-                  }}>Logout</button>
-                </div>
-
-                {pendingPaystubs.length > 0 && (
-                  <div style={{ marginBottom: '24px' }}>
-                    <div style={{ background: '#fff', border: '1px solid #ddd', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
-                      <h2 style={{ margin: '0 0 12px 0', fontSize: '18px', fontWeight: 500 }}>⏳ Pending Manager Approval</h2>
-                      <p style={{ margin: '0', fontSize: '13px', color: '#666' }}>{pendingPaystubs.length} paystub(s) waiting for your approval</p>
-                    </div>
-
-                    {pendingPaystubs.map((item, idx) => (
-                      <div key={idx} style={{
-                        background: '#fff',
-                        border: '1px solid #ddd',
-                        borderRadius: '8px',
-                        padding: '16px',
-                        marginBottom: '12px'
-                      }}>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '12px', marginBottom: '12px' }}>
-                          <div>
-                            <p style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: 500 }}>{item.employee.name}</p>
-                            <p style={{ margin: '0', fontSize: '12px', color: '#666' }}>
-                              {item.periodStart.toLocaleDateString()} • {item.entries.length} day(s) • {item.totalHours.toFixed(2)}h
-                            </p>
-                          </div>
-                          <div style={{ textAlign: 'right' }}>
-                            <p style={{ margin: '0 0 4px 0', fontSize: '12px', color: '#666' }}>Gross Pay</p>
-                            <p style={{ margin: '0', fontSize: '18px', fontWeight: 500 }}>${item.grossPay}</p>
-                          </div>
-                        </div>
-
-                        <div style={{ borderTop: '1px solid #ddd', paddingTop: '12px', marginBottom: '12px' }}>
-                          {item.entries.map(entry => (
-                            <div key={entry.id} style={{ display: 'grid', gridTemplateColumns: '1fr auto', fontSize: '12px', padding: '6px 0', borderBottom: '1px solid #eee' }}>
-                              <span>{new Date(entry.date).toLocaleDateString()}</span>
-                              <span>{entry.startTime} - {entry.endTime} ({entry.hours}h)</span>
-                            </div>
-                          ))}
-                        </div>
-
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                          <button onClick={() => approvePaystub(item.employee.id, item.periodStart)} style={{
-                            flex: 1,
-                            padding: '10px',
-                            fontSize: '13px',
-                            background: '#1d9e75',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '6px',
-                            cursor: 'pointer',
-                            fontWeight: 500
-                          }}>✓ Approve for Paystub</button>
-                          <button onClick={() => rejectPaystub(item.employee.id, item.periodStart)} style={{
-                            padding: '10px 16px',
-                            fontSize: '13px',
-                            background: '#e24b4a',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '6px',
-                            cursor: 'pointer',
-                            fontWeight: 500
-                          }}>Reject</button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {pendingPaystubs.length === 0 && (
-                  <div style={{ textAlign: 'center', padding: '40px 20px', color: '#666' }}>
-                    No paystubs to review this period.
-                  </div>
-                )}
-              </div>
-            );
-          }
-
-          // Admin view
           if (userRole === 'admin') {
             const selectedComp = companies.find(c => c.id === selectedCompany);
             const companyEmps = selectedCompany ? employees.filter(e => e.companyId === selectedCompany) : [];
-            const approvedPaystubsCount = selectedCompany ? paystubs.filter(p => p.status === 'approved').length : 0;
 
             return (
-              <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
+              <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                   <h1 style={{ margin: 0, fontSize: '28px', fontWeight: 500 }}>LEVORO - Admin</h1>
-                  <button onClick={() => { setCurrentUser(null); setUserRole(null); setSelectedCompany(null); }} style={{
-                    padding: '8px 16px',
-                    fontSize: '13px',
-                    background: '#f0f0f0',
-                    border: '1px solid #ddd',
-                    borderRadius: '6px',
-                    cursor: 'pointer'
-                  }}>Logout</button>
+                  <button onClick={handleLogout} style={{ padding: '8px 16px', fontSize: '13px', background: '#f0f0f0', border: '1px solid #ddd', borderRadius: '6px', cursor: 'pointer' }}>Logout</button>
                 </div>
 
-                <div style={{ marginBottom: '24px' }}>
-                  <h2 style={{ margin: '0 0 12px 0', fontSize: '18px', fontWeight: 500 }}>Your Companies ({companies.length}/12)</h2>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px', marginBottom: '16px' }}>
-                    {companies.map(comp => (
-                      <div key={comp.id} style={{
-                        background: selectedCompany === comp.id ? '#e8f5f7' : '#fff',
-                        border: '1px solid #ddd',
-                        borderRadius: '12px',
-                        padding: '16px',
-                        cursor: 'pointer'
-                      }} onClick={() => setSelectedCompany(comp.id)}>
-                        <p style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 500 }}>{comp.name}</p>
-                        <p style={{ margin: '0', fontSize: '12px', color: '#666' }}>
-                          {employees.filter(e => e.companyId === comp.id).length} employees
-                        </p>
-                        <button onClick={(e) => { e.stopPropagation(); deleteCompany(comp.id); }} style={{
-                          marginTop: '8px',
-                          padding: '4px 8px',
-                          fontSize: '11px',
-                          background: 'transparent',
-                          border: '1px solid #ddd',
-                          borderRadius: '6px',
-                          cursor: 'pointer'
-                        }}>Delete</button>
-                      </div>
-                    ))}
+                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px', marginBottom: '24px' }}>
+                  <div>
+                    <h2 style={{ margin: '0 0 12px 0', fontSize: '18px', fontWeight: 500 }}>Companies ({companies.length})</h2>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px', marginBottom: '16px' }}>
+                      {companies.map(comp => (
+                        <div key={comp.id} style={{ background: selectedCompany === comp.id ? '#e8f5f7' : '#fff', border: '1px solid #ddd', borderRadius: '12px', padding: '16px', cursor: 'pointer' }} onClick={() => setSelectedCompany(comp.id)}>
+                          <p style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 500 }}>{comp.name}</p>
+                          <p style={{ margin: '0 0 4px 0', fontSize: '11px', color: '#666' }}>📅 {comp.payrollType}</p>
+                          <p style={{ margin: '0', fontSize: '12px', color: '#666' }}>{employees.filter(e => e.companyId === comp.id).length} users</p>
+                          <button onClick={(e) => { e.stopPropagation(); deleteCompany(comp.id); }} style={{ marginTop: '8px', padding: '4px 8px', fontSize: '11px', background: 'transparent', border: '1px solid #ddd', borderRadius: '6px', cursor: 'pointer' }}>Delete</button>
+                        </div>
+                      ))}
+                    </div>
+                    <button onClick={() => setShowAddCompany(!showAddCompany)} style={{ padding: '8px 16px', fontSize: '13px', background: '#0066cc', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>+ Add Company</button>
+
+                    {showAddCompany && (
+                      <form onSubmit={handleAddCompany} style={{ background: '#fff', border: '1px solid #ddd', borderRadius: '12px', padding: '16px', marginTop: '16px' }}>
+                        <h3 style={{ margin: '0 0 12px 0', fontSize: '16px' }}>Create Company & Manager</h3>
+                        <div style={{ marginBottom: '12px' }}>
+                          <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, marginBottom: '4px' }}>Company Name</label>
+                          <input type="text" value={newCompanyName} onChange={(e) => setNewCompanyName(e.target.value)} placeholder="e.g., ABC Logistics" style={{ width: '100%', padding: '8px', fontSize: '13px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                          <div>
+                            <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, marginBottom: '4px' }}>Payroll Type</label>
+                            <select value={newPayrollType} onChange={(e) => setNewPayrollType(e.target.value)} style={{ width: '100%', padding: '8px', fontSize: '13px', border: '1px solid #ddd', borderRadius: '6px' }}>
+                              <option value="weekly">Weekly</option>
+                              <option value="biweekly">Bi-Weekly</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, marginBottom: '4px' }}>Start Date</label>
+                            <input type="date" value={newPayrollStartDate} onChange={(e) => setNewPayrollStartDate(e.target.value)} style={{ width: '100%', padding: '8px', fontSize: '13px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                          </div>
+                        </div>
+                        <h3 style={{ margin: '12px 0 8px 0', fontSize: '14px' }}>Manager (Optional)</h3>
+                        <div style={{ marginBottom: '12px' }}>
+                          <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, marginBottom: '4px' }}>Manager Name</label>
+                          <input type="text" value={newManagerName} onChange={(e) => setNewManagerName(e.target.value)} placeholder="Full name" style={{ width: '100%', padding: '8px', fontSize: '13px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                          <div>
+                            <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, marginBottom: '4px' }}>Username</label>
+                            <input type="text" value={newManagerUsername} onChange={(e) => setNewManagerUsername(e.target.value)} placeholder="e.g., john_manager" style={{ width: '100%', padding: '8px', fontSize: '13px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                          </div>
+                          <div>
+                            <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, marginBottom: '4px' }}>Password</label>
+                            <input type="password" value={newManagerPassword} onChange={(e) => setNewManagerPassword(e.target.value)} placeholder="Password" style={{ width: '100%', padding: '8px', fontSize: '13px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                          </div>
+                        </div>
+                        <button type="submit" style={{ width: '100%', padding: '10px', fontSize: '13px', background: '#0066cc', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 500 }}>Create</button>
+                      </form>
+                    )}
                   </div>
 
-                  <button onClick={() => setShowAddCompany(!showAddCompany)} style={{
-                    padding: '8px 16px',
-                    fontSize: '13px',
-                    background: '#0066cc',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer'
-                  }}>+ Add Company</button>
-
-                  {showAddCompany && (
-                    <form onSubmit={handleAddCompany} style={{
-                      background: '#fff',
-                      border: '1px solid #ddd',
-                      borderRadius: '12px',
-                      padding: '16px',
-                      marginTop: '16px',
-                      display: 'grid',
-                      gridTemplateColumns: '1fr auto',
-                      gap: '12px'
-                    }}>
-                      <input
-                        type="text"
-                        placeholder="Company name"
-                        value={newCompanyName}
-                        onChange={(e) => setNewCompanyName(e.target.value)}
-                        style={{
-                          padding: '8px 12px',
-                          fontSize: '13px',
-                          border: '1px solid #ddd',
-                          borderRadius: '6px'
-                        }}
-                      />
-                      <button type="submit" style={{
-                        padding: '8px 16px',
-                        fontSize: '13px',
-                        background: '#0066cc',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: 'pointer'
-                      }}>Add</button>
-                    </form>
-                  )}
+                  <div>
+                    <h2 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 500 }}>Activity Log</h2>
+                    <div style={{ background: '#fff', border: '1px solid #ddd', borderRadius: '8px', padding: '12px', maxHeight: '500px', overflowY: 'auto', fontSize: '11px' }}>
+                      {activityLog.slice().reverse().map(log => (
+                        <div key={log.id} style={{ borderBottom: '1px solid #eee', paddingBottom: '8px', marginBottom: '8px' }}>
+                          <p style={{ margin: '0', fontWeight: 500, color: '#333' }}>{log.action}</p>
+                          <p style={{ margin: '2px 0 0 0', color: '#666' }}>{log.description}</p>
+                          <p style={{ margin: '2px 0 0 0', color: '#999', fontSize: '10px' }}>{new Date(log.timestamp).toLocaleString()}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
                 {selectedCompany && selectedComp && (
                   <div>
+                    <h2 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: 500 }}>Manage {selectedComp.name}</h2>
                     <div style={{ background: '#fff', border: '1px solid #ddd', borderRadius: '12px', padding: '16px', marginBottom: '24px' }}>
-                      <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 500 }}>{selectedComp.name}</h3>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px' }}>
-                        <div style={{ background: '#f9f9f9', padding: '12px', borderRadius: '8px' }}>
-                          <p style={{ margin: '0', fontSize: '12px', color: '#666' }}>Total Employees</p>
-                          <p style={{ margin: '4px 0 0 0', fontSize: '20px', fontWeight: 500 }}>{companyEmps.length}</p>
-                        </div>
-                        <div style={{ background: '#f9f9f9', padding: '12px', borderRadius: '8px' }}>
-                          <p style={{ margin: '0', fontSize: '12px', color: '#666' }}>Approved Paystubs</p>
-                          <p style={{ margin: '4px 0 0 0', fontSize: '20px', fontWeight: 500 }}>{approvedPaystubsCount}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div style={{ marginBottom: '24px' }}>
+                      <h3 style={{ margin: '0 0 12px 0', fontSize: '14px' }}>Users ({companyEmps.length})</h3>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                        <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 500 }}>Employees</h2>
-                        <button onClick={() => setShowAddEmployee(!showAddEmployee)} style={{
-                          padding: '8px 16px',
-                          fontSize: '13px',
-                          background: '#0066cc',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '6px',
-                          cursor: 'pointer'
-                        }}>+ Add Employee</button>
+                        <div></div>
+                        <button onClick={() => setShowAddEmployee(!showAddEmployee)} style={{ padding: '8px 16px', fontSize: '13px', background: '#0066cc', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>+ Add Employee</button>
                       </div>
 
                       {showAddEmployee && (
-                        <form onSubmit={handleAddEmployee} style={{
-                          background: '#fff',
-                          border: '1px solid #ddd',
-                          borderRadius: '12px',
-                          padding: '16px',
-                          marginBottom: '16px',
-                          display: 'grid',
-                          gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-                          gap: '12px'
-                        }}>
-                          <input
-                            type="text"
-                            placeholder="Employee name"
-                            value={newEmployeeName}
-                            onChange={(e) => setNewEmployeeName(e.target.value)}
-                            style={{
-                              padding: '8px 12px',
-                              fontSize: '13px',
-                              border: '1px solid #ddd',
-                              borderRadius: '6px'
-                            }}
-                          />
-                          <input
-                            type="email"
-                            placeholder="Email"
-                            value={newEmployeeEmail}
-                            onChange={(e) => setNewEmployeeEmail(e.target.value)}
-                            style={{
-                              padding: '8px 12px',
-                              fontSize: '13px',
-                              border: '1px solid #ddd',
-                              borderRadius: '6px'
-                            }}
-                          />
-                          <input
-                            type="number"
-                            placeholder="Hourly rate"
-                            step="0.01"
-                            value={newEmployeeRate}
-                            onChange={(e) => setNewEmployeeRate(e.target.value)}
-                            style={{
-                              padding: '8px 12px',
-                              fontSize: '13px',
-                              border: '1px solid #ddd',
-                              borderRadius: '6px'
-                            }}
-                          />
-                          <select value={newEmployeePayPeriod} onChange={(e) => setNewEmployeePayPeriod(e.target.value)} style={{
-                            padding: '8px 10px',
-                            fontSize: '13px',
-                            border: '1px solid #ddd',
-                            borderRadius: '6px'
-                          }}>
-                            <option value="weekly">Weekly</option>
-                            <option value="biweekly">Bi-Weekly</option>
-                          </select>
-                          <button type="submit" style={{
-                            padding: '8px 16px',
-                            fontSize: '13px',
-                            background: '#0066cc',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '6px',
-                            cursor: 'pointer'
-                          }}>Add</button>
+                        <form onSubmit={handleAddEmployee} style={{ background: '#f9f9f9', border: '1px solid #ddd', borderRadius: '8px', padding: '12px', marginBottom: '12px' }}>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+                            <input type="text" placeholder="Name" value={newEmployeeName} onChange={(e) => setNewEmployeeName(e.target.value)} style={{ padding: '8px', fontSize: '13px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <input type="text" placeholder="Username" value={newEmployeeUsername} onChange={(e) => setNewEmployeeUsername(e.target.value)} style={{ padding: '8px', fontSize: '13px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <input type="password" placeholder="Password" value={newEmployeePassword} onChange={(e) => setNewEmployeePassword(e.target.value)} style={{ padding: '8px', fontSize: '13px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <input type="email" placeholder="Email" value={newEmployeeEmail} onChange={(e) => setNewEmployeeEmail(e.target.value)} style={{ padding: '8px', fontSize: '13px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <input type="text" placeholder="Phone" value={newEmployeePhone} onChange={(e) => setNewEmployeePhone(e.target.value)} style={{ padding: '8px', fontSize: '13px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <input type="text" placeholder="Address" value={newEmployeeAddress} onChange={(e) => setNewEmployeeAddress(e.target.value)} style={{ padding: '8px', fontSize: '13px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <input type="number" placeholder="Hourly Rate" value={newEmployeeRate} onChange={(e) => setNewEmployeeRate(e.target.value)} style={{ padding: '8px', fontSize: '13px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                            <button type="submit" style={{ padding: '8px', fontSize: '13px', background: '#0066cc', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 500 }}>Add</button>
+                          </div>
                         </form>
                       )}
 
-                      <div>
-                        {companyEmps.length === 0 ? (
-                          <p style={{ color: '#666', fontSize: '13px' }}>No employees yet.</p>
-                        ) : (
-                          companyEmps.map(emp => (
-                            <div key={emp.id} style={{
-                              background: '#fff',
-                              border: '1px solid #ddd',
-                              borderRadius: '8px',
-                              padding: '12px',
-                              marginBottom: '8px',
-                              display: 'grid',
-                              gridTemplateColumns: '1fr auto',
-                              gap: '12px',
-                              alignItems: 'center'
-                            }}>
-                              <div>
-                                <p style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: 500 }}>{emp.name}</p>
-                                <p style={{ margin: '0', fontSize: '12px', color: '#666' }}>{emp.email} • ${emp.hourlyRate.toFixed(2)}/hr • {emp.payPeriod}</p>
-                              </div>
-                              <button onClick={() => setEmployees(employees.filter(e => e.id !== emp.id))} style={{
-                                padding: '6px 12px',
-                                fontSize: '12px',
-                                background: 'transparent',
-                                border: '1px solid #ddd',
-                                borderRadius: '6px',
-                                cursor: 'pointer',
-                                color: '#666'
-                              }}>Delete</button>
+                      {companyEmps.map(emp => (
+                        <div key={emp.id} style={{ background: '#f9f9f9', border: '1px solid #ddd', borderRadius: '8px', padding: '12px', marginBottom: '8px' }}>
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '12px', alignItems: 'center' }}>
+                            <div>
+                              <p style={{ margin: '0 0 2px 0', fontSize: '13px', fontWeight: 500 }}>{emp.name} <span style={{ fontSize: '11px', color: '#666', background: '#e8e8e8', padding: '2px 6px', borderRadius: '3px', marginLeft: '8px' }}>{emp.role}</span></p>
+                              <p style={{ margin: '0', fontSize: '11px', color: '#666' }}>@{emp.username} • {emp.email} • ${emp.hourlyRate.toFixed(2)}/hr</p>
                             </div>
-                          ))
-                        )}
-                      </div>
+                            <button onClick={() => setEmployees(employees.filter(e => e.id !== emp.id))} style={{ padding: '4px 12px', fontSize: '12px', background: '#e74c3c', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Delete</button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-
-                    {approvedPaystubsCount > 0 && (
-                      <button onClick={exportPayroll} style={{
-                        width: '100%',
-                        padding: '12px',
-                        fontSize: '14px',
-                        fontWeight: 500,
-                        background: '#0066cc',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: 'pointer'
-                      }}>📥 Export Approved Paystubs (CSV)</button>
-                    )}
                   </div>
                 )}
               </div>
             );
           }
 
-          // Login screen
+          if (userRole === 'employee' && currentUser) {
+            const companyName = companies.find(c => c.id === selectedCompany)?.name || 'LEVORO';
+            return (
+              <div style={{ padding: '20px', maxWidth: '900px', margin: '0 auto' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                  <h1 style={{ margin: 0, fontSize: '28px', fontWeight: 500 }}>{companyName}</h1>
+                  <button onClick={handleLogout} style={{ padding: '8px 16px', fontSize: '13px', background: '#f0f0f0', border: '1px solid #ddd', borderRadius: '6px', cursor: 'pointer' }}>Logout</button>
+                </div>
+
+                <div style={{ background: '#fff', border: '1px solid #ddd', borderRadius: '12px', padding: '16px', marginBottom: '24px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                    <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 500 }}>My Profile</h2>
+                    <button onClick={() => setEditingProfile(!editingProfile)} style={{ padding: '6px 12px', fontSize: '12px', background: '#0066cc', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
+                      {editingProfile ? 'Cancel' : 'Edit'}
+                    </button>
+                  </div>
+
+                  {editingProfile ? (
+                    <form onSubmit={updateEmployeeProfile}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, marginBottom: '4px' }}>Name</label>
+                          <input type="text" value={profileData.name || ''} onChange={(e) => setProfileData({...profileData, name: e.target.value})} style={{ width: '100%', padding: '8px', fontSize: '13px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, marginBottom: '4px' }}>Email</label>
+                          <input type="email" value={profileData.email || ''} onChange={(e) => setProfileData({...profileData, email: e.target.value})} style={{ width: '100%', padding: '8px', fontSize: '13px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, marginBottom: '4px' }}>Phone</label>
+                          <input type="text" value={profileData.phone || ''} onChange={(e) => setProfileData({...profileData, phone: e.target.value})} style={{ width: '100%', padding: '8px', fontSize: '13px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, marginBottom: '4px' }}>Address</label>
+                          <input type="text" value={profileData.address || ''} onChange={(e) => setProfileData({...profileData, address: e.target.value})} style={{ width: '100%', padding: '8px', fontSize: '13px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                        </div>
+                      </div>
+                      <button type="submit" style={{ width: '100%', padding: '10px', fontSize: '13px', background: '#0066cc', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 500 }}>Save Changes</button>
+                    </form>
+                  ) : (
+                    <div>
+                      <p style={{ margin: '0 0 8px 0', fontSize: '13px' }}><strong>Name:</strong> {currentUser.name}</p>
+                      <p style={{ margin: '0 0 8px 0', fontSize: '13px' }}><strong>Email:</strong> {currentUser.email}</p>
+                      <p style={{ margin: '0 0 8px 0', fontSize: '13px' }}><strong>Phone:</strong> {currentUser.phone || 'Not set'}</p>
+                      <p style={{ margin: '0', fontSize: '13px' }}><strong>Address:</strong> {currentUser.address || 'Not set'}</p>
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ background: '#fff', border: '1px solid #ddd', borderRadius: '12px', padding: '16px' }}>
+                  <h2 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 500 }}>Time Entry (Coming Soon)</h2>
+                  <p style={{ margin: 0, color: '#666', fontSize: '13px' }}>Time entry feature will be available soon.</p>
+                </div>
+              </div>
+            );
+          }
+
+          if (userRole === 'manager' && currentUser && selectedCompany) {
+            const companyName = companies.find(c => c.id === selectedCompany)?.name || 'LEVORO';
+            const companyEmployees = employees.filter(e => e.companyId === selectedCompany && e.role === 'employee');
+            
+            return (
+              <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                  <h1 style={{ margin: 0, fontSize: '28px', fontWeight: 500 }}>{companyName} - Manager</h1>
+                  <button onClick={handleLogout} style={{ padding: '8px 16px', fontSize: '13px', background: '#f0f0f0', border: '1px solid #ddd', borderRadius: '6px', cursor: 'pointer' }}>Logout</button>
+                </div>
+
+                <div style={{ background: '#fff', border: '1px solid #ddd', borderRadius: '12px', padding: '16px', marginBottom: '24px' }}>
+                  <h2 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 500 }}>My Team ({companyEmployees.length} employees)</h2>
+                  {companyEmployees.length === 0 ? (
+                    <p style={{ margin: 0, color: '#666', fontSize: '13px' }}>No employees in this company yet.</p>
+                  ) : (
+                    <div>
+                      {companyEmployees.map(emp => (
+                        <div key={emp.id} style={{ background: '#f9f9f9', border: '1px solid #ddd', borderRadius: '8px', padding: '12px', marginBottom: '8px' }}>
+                          <p style={{ margin: '0 0 4px 0', fontSize: '13px', fontWeight: 500 }}>{emp.name}</p>
+                          <p style={{ margin: '0', fontSize: '12px', color: '#666' }}>@{emp.username} • {emp.email} • ${emp.hourlyRate.toFixed(2)}/hr</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ background: '#fff', border: '1px solid #ddd', borderRadius: '12px', padding: '16px' }}>
+                  <h2 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 500 }}>Approvals (Coming Soon)</h2>
+                  <p style={{ margin: 0, color: '#666', fontSize: '13px' }}>Time entry approvals will be available soon.</p>
+                </div>
+              </div>
+            );
+          }
+
           return (
             <div style={{ padding: '40px 20px', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ width: '100%', maxWidth: '400px' }}>
-                <h1 style={{ textAlign: 'center', margin: '0 0 24px 0', fontSize: '32px', fontWeight: 500 }}>LEVORO</h1>
+                <h1 style={{ textAlign: 'center', margin: '0 0 8px 0', fontSize: '32px', fontWeight: 500 }}>LEVORO</h1>
                 <p style={{ textAlign: 'center', margin: '0 0 32px 0', fontSize: '14px', color: '#666' }}>Payroll Time Tracking & Approval</p>
 
-                <form onSubmit={handleLogin} style={{
-                  background: '#fff',
-                  border: '1px solid #ddd',
-                  borderRadius: '12px',
-                  padding: '24px'
-                }}>
+                <form onSubmit={handleLogin} style={{ background: '#fff', border: '1px solid #ddd', borderRadius: '12px', padding: '24px' }}>
                   <div style={{ marginBottom: '16px' }}>
-                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '6px' }}>Email</label>
-                    <input
-                      type="email"
-                      value={loginEmail}
-                      onChange={(e) => setLoginEmail(e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '10px 12px',
-                        fontSize: '14px',
-                        border: '1px solid #ddd',
-                        borderRadius: '6px',
-                        boxSizing: 'border-box'
-                      }}
-                    />
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '6px' }}>Username</label>
+                    <input type="text" value={loginUsername} onChange={(e) => setLoginUsername(e.target.value)} style={{ width: '100%', padding: '10px 12px', fontSize: '14px', border: '1px solid #ddd', borderRadius: '6px', boxSizing: 'border-box' }} />
                   </div>
 
                   <div style={{ marginBottom: '24px' }}>
                     <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '6px' }}>Password</label>
-                    <input
-                      type="password"
-                      value={loginPassword}
-                      onChange={(e) => setLoginPassword(e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '10px 12px',
-                        fontSize: '14px',
-                        border: '1px solid #ddd',
-                        borderRadius: '6px',
-                        boxSizing: 'border-box'
-                      }}
-                    />
+                    <input type="password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} style={{ width: '100%', padding: '10px 12px', fontSize: '14px', border: '1px solid #ddd', borderRadius: '6px', boxSizing: 'border-box' }} />
                   </div>
 
-                  <button type="submit" style={{
-                    width: '100%',
-                    padding: '12px',
-                    fontSize: '14px',
-                    fontWeight: 500,
-                    background: '#0066cc',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    marginBottom: '16px'
-                  }}>Login</button>
+                  <button type="submit" style={{ width: '100%', padding: '12px', fontSize: '14px', fontWeight: 500, background: '#0066cc', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Login</button>
                 </form>
 
                 <div style={{ marginTop: '24px', background: '#f0f8ff', border: '1px solid #ddd', borderRadius: '12px', padding: '16px', fontSize: '12px', color: '#333' }}>
-                  <p style={{ margin: '0 0 8px 0', fontWeight: 500 }}>Demo:</p>
-                  <p style={{ margin: '0 0 4px 0' }}>Admin: admin@levoro.com / admin123</p>
-                  <p style={{ margin: '0' }}>Then add companies and employees</p>
+                  <p style={{ margin: '0 0 8px 0', fontWeight: 500 }}>Admin Demo:</p>
+                  <p style={{ margin: '0' }}>Username: <strong>admin</strong></p>
+                  <p style={{ margin: '0' }}>Password: <strong>admin123</strong></p>
                 </div>
               </div>
             </div>
